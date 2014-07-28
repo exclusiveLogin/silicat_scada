@@ -4,7 +4,7 @@
   <MACROS>
     <VERSION value="BCB.05.03"/>
     <PROJECT value="opros.exe"/>
-    <OBJFILES value="opros.obj ..\code\FormOpros.obj ..\MyCLASS\ClassArhiv.obj"/>
+    <OBJFILES value="opros.obj ..\MyCLASS\ClassArhiv.obj ..\code\FormOpros.obj"/>
     <RESFILES value="opros.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -18,7 +18,7 @@
       Dss50.bpi TeeQR50.bpi VCLIB50.bpi Vclmid50.bpi vclie50.bpi Inetdb50.bpi 
       Inet50.bpi NMFast50.bpi webmid50.bpi bcbie50.bpi dclocx50.bpi 
       bcb2kaxserver50.bpi"/>
-    <PATHCPP value=".;..\code;..\MyCLASS"/>
+    <PATHCPP value=".;..\MyCLASS;..\code"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>

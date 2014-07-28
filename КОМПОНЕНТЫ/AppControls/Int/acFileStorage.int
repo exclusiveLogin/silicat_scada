@@ -1,0 +1,145 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFileStorage.pas - FileStorage component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acFileStorage;
+
+interface
+
+uses
+  Windows, Classes, Forms,
+  acClasses;
+
+type
+  TStoredFiles = TList;
+  TacFileStorage = class;
+
+  TStoredFile = class(TPersistent)
+  private
+    FOwner: TacFileStorage;
+    FFileName: String;
+    FSize: Integer;
+    FData: TMemoryStream;
+
+    { used in FileStorage only }
+    function Extract(const FileName: String; CreatePath: Boolean): Boolean; virtual; // True if successfull    
+  public
+    constructor Create(aOwner: TacFileStorage);
+    destructor Destroy; override;
+
+    { form stream routines }
+    procedure ReadData(Stream: TStream); virtual;
+    procedure WriteData(Stream: TStream); virtual;
+
+    { utility routines }
+    function Upload(const FileName: String): Boolean; virtual; // True if successfull
+    procedure ClearData; virtual;
+
+    { some public properties }
+    property FileName: String read FFileName write FFileName;
+    property Size: Integer read FSize write FSize;
+    property Data: TMemoryStream read FData write FData;
+  end;
+
+  TacToplevelDir = (tdCurrentDir, tdWindowsDir,
+                  tdTempDir, tdSystemDir,
+                  tdMediaDir, tdCursorsDir,
+                  tdHelpDir, tdSamplesDir,
+                  tdDesktop, tdProgramFiles,
+                  tdMyDocuments, tdMyPictures,
+                  tdAppData, tdNone);
+
+  TacFileStorageOverwrite = (owIfSizeDifferent, owNever, owAlways);
+
+  TExtractTo = class(TPersistent)
+  private
+    FCreatePath: Boolean;
+    FToplevelDir: TacToplevelDir;
+    FSubdirectory: String;
+
+    procedure SetSubdirectory(Value: String);
+  public
+  published
+    property CreatePath: Boolean read FCreatePath write FCreatePath;
+    property ToplevelDir: TacToplevelDir read FToplevelDir write FToplevelDir;
+    property Subdirectory: String read FSubdirectory write SetSubdirectory;
+  end;
+
+  TAutoExtract = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FExtractTo: TExtractTo;
+    FOverwrite: TacFileStorageOverwrite;
+    FRemoveOnTerminate: Boolean;
+  public
+    constructor Create;
+    destructor Destroy; override;
+  published
+    property Enabled: Boolean read FEnabled write FEnabled;
+    property ExtractTo: TExtractTo read FExtractTo write FExtractTo;
+    property Overwrite: TacFileStorageOverwrite read FOverwrite write FOverwrite;
+    property RemoveOnTerminate: Boolean read FRemoveOnTerminate write FRemoveOnTerminate;
+  end;
+
+  TOnExtractEvent = procedure(Sender: TObject; FileName: String; FileSize: Integer; var AllowExtracting: Boolean) of object;
+  TOnExtractedEvent = procedure(Sender: TObject; FileName: String; FileSize: Integer; Successfully: Boolean) of object;
+
+  TacFileStorage = class(TacComponent)
+  private
+    FAutoExtract: TAutoExtract;
+    FFiles: TStoredFiles;
+    ExtractedFilesList: TStringList;
+
+    FOnExtract: TOnExtractEvent;
+    FOnExtracted: TOnExtractedEvent;
+
+    procedure SetNone(Value: Integer); { empty }
+  protected
+    procedure Loaded; override;
+    procedure ReadData(Stream: TStream); virtual;
+    procedure WriteData(Stream: TStream); virtual;
+    procedure DefineProperties(Filer: TFiler); override;
+  public
+    FCount: Integer;
+    FDataSize: Integer;
+
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function Extract(const FileName, OutputFile: String): Boolean;
+  published
+    property About;
+    property AutoExtract: TAutoExtract read FAutoExtract write FAutoExtract;
+    property Count: Integer read FCount write SetNone;
+    property DataSize: Integer read FDataSize write SetNone;
+    property Files: TStoredFiles read FFiles write FFiles;
+
+    property OnExtract: TOnExtractEvent read FOnExtract write FOnExtract;
+    property OnExtracted: TOnExtractedEvent read FOnExtracted write FOnExtracted;
+  end;
+
+implementation

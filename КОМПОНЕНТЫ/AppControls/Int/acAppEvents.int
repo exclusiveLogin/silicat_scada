@@ -1,0 +1,230 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAppEvents.pas - AppEvents component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acAppEvents;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics,
+  {$IFDEF D4} ActnList, {$ENDIF} Forms,
+  acClasses;
+
+type
+  TacAppKeyEvent = procedure(Sender: TObject; var Key: Word; Shift: TShiftState; KeyName: String; RepeatedKeypress: Boolean) of object;
+  TacAppMouseMoveEvent = procedure(Sender: TObject; ShiftState: TShiftState; ScreenPoint: TPoint; WindowHandle: hWnd; HitTestCode: Integer) of object;
+  TacAppMouseEvent = procedure(Sender: TObject; Button: TMouseButton; Shift: TShiftState; ScreenPoint: TPoint; WindowHandle: hWnd; HitTestCode: Integer) of object;
+
+  TacAppEvents = class(TacAppHookComponent)
+  private
+    FAbout: String;
+    FAnimateIcon: Boolean;
+    FAnimateInterval: Word;
+  {$IFNDEF D5}
+    FFixedMinimizeRestoreAnimation: Boolean;
+  {$ENDIF}
+    FHintColor: TColor;
+    FHintFont: TFont;
+    FHintHidePause: Integer;
+    FHintPause: Integer;
+    FHintShortPause: Integer;
+    FIcon: TIcon;
+    FImageList: TImageList;
+    FImageIndex: Integer;
+    FShowHint: Boolean;
+    FShowMainForm: Boolean;
+    FShowTaskIcon: Boolean;
+    FUpdateFormatSettings: Boolean;
+  {$IFDEF D3}
+    FUpdateMetricSettings: Boolean;
+  {$ENDIF}
+  {$IFDEF D4}
+    FBiDiMode: TBiDiMode;
+    FHintShortCuts: Boolean;
+    FMouseDragImmediate: Boolean;
+    FMouseDragThreshold: Integer;
+  {$ENDIF}
+  {$IFDEF D5}
+    FBiDiKeyboard: String;
+    FNonBiDiKeyboard: String;
+  {$ENDIF}
+
+    FOnActivate: TNotifyEvent;
+    FOnDeactivate: TNotifyEvent;
+    FOnException: TExceptionEvent;
+    FOnIdle: TIdleEvent;
+    FOnHelp: THelpEvent;
+    FOnHint: TNotifyEvent;
+    FOnMessage: TMessageEvent;
+    FOnMinimize: TNotifyEvent;
+    FOnRestore: TNotifyEvent;
+    FOnShowHint: TShowHintEvent;
+
+    FOnAppKeyDown, FOnAppKeyUp: TacAppKeyEvent;
+    FOnAppMouseMove: TacAppMouseMoveEvent;
+    FOnAppMouseDown, FOnAppMouseUp: TacAppMouseEvent;
+
+    FOnSettingsChanged: TNotifyEvent;
+    FOnActiveControlChange: TNotifyEvent;
+    FOnActiveFormChange: TNotifyEvent;
+  {$IFDEF D4}
+    FOnActionExecute: TActionEvent;
+    FOnActionUpdate: TActionEvent;
+    FOnShortCut: TShortCutEvent;
+  {$ENDIF}
+
+    procedure SetAnimateIcon(Value: Boolean);
+    procedure SetAnimateInterval(Value: Word);
+    function  GetHintColor: TColor;
+    procedure SetHintColor(Value: TColor);
+    procedure SetHintFont(Value: TFont);
+    function  GetHintHidePause: Integer;
+    procedure SetHintHidePause(Value: Integer);
+    function  GetHintPause: Integer;
+    procedure SetHintPause(Value: Integer);
+    function  GetHintShortPause: Integer;
+    procedure SetHintShortPause(Value: Integer);
+    function  GetIcon: TIcon;
+    procedure SetIcon(Value: TIcon);
+    procedure SetImageList(Value: TImageList);
+    procedure SetImageIndex(Value: Integer);
+    function  GetShowHint: Boolean;
+    procedure SetShowHint(Value: Boolean);
+    function  GetShowMainForm: Boolean;
+    procedure SetShowMainForm(Value: Boolean);
+    procedure SetShowTaskIcon(Value: Boolean);    
+    function  GetUpdateFormatSettings: Boolean;
+    procedure SetUpdateFormatSettings(Value: Boolean);
+  {$IFDEF D3}
+    function  GetUpdateMetricSettings: Boolean;
+    procedure SetUpdateMetricSettings(Value: Boolean);
+  {$ENDIF}
+  {$IFDEF D4}
+    function  GetBiDiMode: TBiDiMode;
+    procedure SetBiDiMode(Value: TBiDiMode);
+    function  GetHintShortCuts: Boolean;
+    procedure SetHintShortCuts(Value: Boolean);
+    function  GetMouseDragImmediate: Boolean;
+    procedure SetMouseDragImmediate(Value: Boolean);
+    function  GetMouseDragThreshold: Integer;
+    procedure SetMouseDragThreshold(Value: Integer);
+  {$ENDIF}
+  {$IFDEF D5}
+    function  GetBiDiKeyboard: String;
+    procedure SetBiDiKeyboard(const Value: String);
+    function  GetNonBiDiKeyboard: String;
+    procedure SetNonBiDiKeyboard(const Value: String);
+ {$ENDIF}
+
+    function  ApplicationMinimize: Boolean;
+    function  ApplicationRestore: Boolean;
+    procedure OverFontChanged(Sender: TObject);
+    procedure SetupHintFont;
+
+    procedure UpdateTimer;
+  protected
+    procedure Notification(aComponent: TComponent; aOperation: TOperation); override;  
+    procedure Loaded; override;
+    procedure UpdateProperties; virtual;
+    procedure UpdateTaskIcon; virtual;
+    procedure UpdateIcon; virtual;
+    procedure SettingsChanged; dynamic;
+
+    procedure WndProc(var Message: TMessage); override;    
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure AppMessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    function  HookMainWndProc(var Message: TMessage): Boolean; virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About: String read FAbout write FAbout stored False;
+    property AnimateIcon: Boolean read FAnimateIcon write SetAnimateIcon;
+    property AnimateInterval: Word read FAnimateInterval write SetAnimateInterval;
+  {$IFNDEF D5}
+    property FixedMinimizeRestoreAnimation: Boolean read FFixedMinimizeRestoreAnimation write FFixedMinimizeRestoreAnimation default True;
+  {$ENDIF}
+    property HintColor: TColor read GetHintColor write SetHintColor default clInfoBk;
+    property HintFont: TFont read FHintFont write SetHintFont;
+    property HintPause: Integer read GetHintPause write SetHintPause default 500;
+    property Icon: TIcon read GetIcon write SetIcon;
+    property ImageList: TImageList read FImageList write SetImageList;
+    property ImageIndex: Integer read FImageIndex write SetImageIndex;
+    property ShowHint: Boolean read GetShowHint write SetShowHint default True;
+    property UpdateFormatSettings: Boolean read GetUpdateFormatSettings write SetUpdateFormatSettings default True;
+    property HintShortPause: Integer read GetHintShortPause write SetHintShortPause default 50;
+    property HintHidePause: Integer read GetHintHidePause write SetHintHidePause default 2500;
+    property ShowMainForm: Boolean read GetShowMainForm write SetShowMainForm default True;
+    property ShowTaskIcon: Boolean read FShowTaskIcon write SetShowTaskIcon default True;    
+ {$IFDEF D3}
+    property UpdateMetricSettings: Boolean read GetUpdateMetricSettings write SetUpdateMetricSettings default True;
+ {$ENDIF}
+ {$IFDEF D4}
+    property HintShortCuts: Boolean read GetHintShortCuts write SetHintShortCuts default True;
+    property BiDiMode: TBiDiMode read GetBiDiMode write SetBiDiMode default bdLeftToRight;
+    property MouseDragImmediate: Boolean read GetMouseDragImmediate write SetMouseDragImmediate default True;
+    property MouseDragThreshold: Integer read GetMouseDragThreshold write SetMouseDragThreshold default 5;
+ {$ENDIF}
+ {$IFDEF D5}
+    property BiDiKeyboard: String read GetBiDiKeyboard write SetBiDiKeyboard;
+    property NonBiDiKeyboard: String read GetNonBiDiKeyboard write SetNonBiDiKeyboard;
+ {$ENDIF}
+
+    property OnSettingsChanged: TNotifyEvent read FOnSettingsChanged write FOnSettingsChanged;
+    property OnActiveControlChange: TNotifyEvent read FOnActiveControlChange write FOnActiveControlChange;
+    property OnActiveFormChange: TNotifyEvent read FOnActiveFormChange write FOnActiveFormChange;
+    property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
+    property OnDeactivate: TNotifyEvent read FOnDeactivate write FOnDeactivate;
+    property OnException: TExceptionEvent read FOnException write FOnException;
+    property OnIdle: TIdleEvent read FOnIdle write FOnIdle;
+    property OnHelp: THelpEvent read FOnHelp write FOnHelp;
+    property OnHint: TNotifyEvent read FOnHint write FOnHint;
+    property OnMessage: TMessageEvent read FOnMessage write FOnMessage;
+    property OnMinimize: TNotifyEvent read FOnMinimize write FOnMinimize;
+    property OnRestore: TNotifyEvent read FOnRestore write FOnRestore;
+    property OnShowHint: TShowHintEvent read FOnShowHint write FOnShowHint;
+
+    { windows hooks }
+    property OnAppKeyDown: TacAppKeyEvent read FOnAppKeyDown write FOnAppKeyDown;
+    property OnAppKeyUp: TacAppKeyEvent read FOnAppKeyUp write FOnAppKeyUp;
+    property OnAppMouseMove: TacAppMouseMoveEvent read FOnAppMouseMove write FOnAppMouseMove;
+    property OnAppMouseDown: TacAppMouseEvent read FOnAppMouseDown write FOnAppMouseDown;
+    property OnAppMouseUp: TacAppMouseEvent read FOnAppMouseUp write FOnAppMouseUp;
+
+  {$IFDEF D4}
+    property OnActionExecute: TActionEvent read FOnActionExecute write FOnActionExecute;
+    property OnActionUpdate: TActionEvent read FOnActionUpdate write FOnActionUpdate;
+    property OnShortCut: TShortCutEvent read FOnShortCut write FOnShortCut;
+  {$ENDIF}
+  end;
+
+function MouseCallbackProc(nCode: Integer; wParam, lParam: LongInt): LongInt; stdcall;
+function KeyboardCallbackProc(nCode: Integer; wParam, lParam: LongInt): LongInt; stdcall;  
+
+implementation

@@ -1,0 +1,86 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acWin2kEffects.pas - Win2kEffects component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acWin2kEffects;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Forms, Graphics,
+  acClasses, acGraphics;
+
+type
+  TacWin2kTranslucentRate = 0..100;
+
+  TacWin2kAnimation = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FFlags: TacWin2kAnimationFlags;
+    FTime: Word;
+  protected
+  public
+  published
+    property Enabled: Boolean read FEnabled write FEnabled;
+    property Flags: TacWin2kAnimationFlags read FFlags write FFlags;
+    property Time: Word read FTime write FTime default 200;
+  end;
+
+  TacWin2kEffects = class(TacFormHookComponent)
+  private
+    FAnimateOnShow: TacWin2kAnimation;
+    FAnimateOnHide: TacWin2kAnimation;
+    FFlashCount: Word;
+    FFlashTaskIcon: Boolean;
+    FTranslucentRate: TacWin2kTranslucentRate;
+    FTranslucent: Boolean;
+
+    { for internal use }
+    procedure DoTranslucent(Value: Boolean);
+
+    procedure SetTranslucent(Value: Boolean);
+    procedure SetTranslucentRate(Value: TacWin2kTranslucentRate);
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure FormRecreate; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure Flash;
+  published
+    property About;
+    property AnimateOnShow: TacWin2kAnimation read FAnimateOnShow write FAnimateOnShow;
+    property AnimateOnHide: TacWin2kAnimation read FAnimateOnHide write FAnimateOnHide;
+    property FlashCount: Word read FFlashCount write FFlashCount default 4;
+    property FlashTaskIcon: Boolean read FFlashTaskIcon write FFlashTaskIcon default True;
+    property TranslucentRate: TacWin2kTranslucentRate read FTranslucentRate write SetTranslucentRate default 50;
+    property Translucent: Boolean read FTranslucent write SetTranslucent;
+  end;
+
+implementation

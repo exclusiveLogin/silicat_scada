@@ -1,0 +1,211 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acGraphics.pas - introduces additional colors, cursors and some
+           GDI functions of Windows 2000. See also "acIDEEditors.pas" or
+           "acIDEEditorsD6.pas".
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acGraphics;
+
+interface
+
+uses
+  Windows, Controls, Graphics, Classes, Forms, SysUtils;
+
+const
+  IDC_LINKSELECT  = MakeIntResource(32649);
+  IDC_HANDWRITING = MakeIntResource(32631);
+
+  crLinkSelect          = -151;
+  crHandwriting         = -152;
+  cr3dAppStart          = -153;
+  cr3dArrow             = -154;
+  cr3dArrowNE           = -155;
+  cr3dArrowScrollHorz   = -156;
+  cr3dArrowScrollVert   = -157;
+  cr3dArrowSize         = -158;
+  cr3dArrowResize       = -159;
+  cr3dArrowWarning      = -160;
+  cr3dCross             = -161;
+  cr3dDragSelection     = -162;
+  cr3dDragSelectionPlus = -163;
+  cr3dHandwriting       = -164;
+  cr3dHelp              = -165;
+  cr3dHourGlass         = -166;
+  cr3dIBeam             = -167;
+  cr3dNo                = -168;
+  cr3dSize              = -169;
+  cr3dSizeNESW          = -170;
+  cr3dSizeNS            = -171;
+  cr3dSizeNWSE          = -172;
+  cr3dSizeWE            = -173;
+  cr3dTool              = -174;
+  cr3dUpArrow           = -175;
+  crArrowNE             = -176;
+  crArrowNW             = -177;
+  crArrowScrollHorz     = -178;
+  crArrowScrollVert     = -179;
+  crArrowSE             = -180;
+  crArrowSize           = -181;
+  crArrowResize         = -182;
+  crArrowSW             = -183;
+  crDragFile            = -184;
+  crDragFiles           = -185;
+  crDragSelection       = -186;
+  crDragSelectionPlus   = -187;
+  crHand                = -188;
+  crItBeam              = -189;
+  crPen                 = -190;
+  crTool                = -191;
+  crZoomIn              = -192;
+  crZoomOut             = -193;
+
+{$IFNDEF D4}
+  COLOR_HOTLIGHT = 26;
+  COLOR_GRADIENTACTIVECAPTION = 27;
+  COLOR_GRADIENTINACTIVECAPTION = 28;
+{$ENDIF}
+
+{ New System colors }
+  clHotLight = TColor(COLOR_HOTLIGHT or $80000000);
+{$IFNDEF D6}
+  clGradientActiveCaption   = TColor(COLOR_GRADIENTACTIVECAPTION or $80000000);
+  clGradientInactiveCaption = TColor(COLOR_GRADIENTINACTIVECAPTION or $80000000);
+{$ENDIF}  
+
+{ New custom colors }
+  clContextHelp = TColor($EEFFFF);
+  clBrown = TColor($003090);
+  clOliveGreen = TColor($003030);
+  clDarkGreen = TColor($003000);
+  clDarkTeal = TColor($603000);
+  clIndigo = TColor($903030);
+  clNight = TColor($303030);
+  clOrange = TColor($0068FF);
+  clBlueGray = TColor($906060);
+  clLightOrange = TColor($0098FF);
+  clSeaGreen = TColor($609830);
+  clLightBlue = TColor($FF6830);
+  clMetal = TColor($909090);
+  clGold = TColor($00C8FF);
+  clSkyBlue = TColor($FFC800);
+  clPlum = TColor($603090);
+  clRose = TColor($D098FF);
+  clTan = TColor($A0C8FF);
+  clLightYellow = TColor($90FFFF);
+  clLightGreen = TColor($D0FFD0);
+  clLightTurquoise = TColor($FFFFC0);
+  clPaleBlue = TColor($FFC890);
+  clLavender = TColor($FF98C0);
+  clCream = TColor($A6CAF0);
+  clMoneyGreen = TColor($C0DCC0);
+
+{$IFNDEF D3}
+type
+  TIdentMapEntry = record
+    Value: Integer;
+    Name: String;
+  end;
+{$ENDIF}
+
+{$IFDEF D5}
+type
+  TacColorQuad = record
+    Red, Green, Blue, Alpha: Byte;
+  end;
+{$ENDIF}
+
+{ Internal AppControls routines }
+function acIdentToCursor(const Ident: String; var Cursor: LongInt): Boolean;
+function acCursorToString(Cursor: TCursor): String;
+function acStringToCursor(const S: String): TCursor;
+procedure acGetCursorValues(Proc: TGetStrProc);
+
+function acColorToString(Color: TColor): String;
+function acStringToColor(const S: String): TColor;
+procedure acGetColorValues(Proc: TGetStrProc);
+
+
+{ GDI routines for Win98/2000 }
+const
+  { SetLayeredWindowAttributes constants }
+  aLWA_COLORKEY      = $1;
+  aLWA_ALPHA         = $2;
+  aWS_EX_LAYERED     = $80000;
+  aWS_EX_TRANSPARENT = $20;
+
+  { FlashWindow contstants }
+  aFLASHW_STOP = $0;
+  aFLASHW_CAPTION = $1;
+  aFLASHW_TRAY = $2;
+  aFLASHW_ALL = aFLASHW_CAPTION or aFLASHW_TRAY;
+  aFLASHW_TIMER = $4;
+  aFLASHW_TIMERNOFG = $C;
+
+  { AnimateWindow contants }
+  aAW_HOR_POSITIVE = $1;
+  aAW_HOR_NEGATIVE = $2;
+  aAW_VER_POSITIVE = $4;
+  aAW_VER_NEGATIVE = $8;
+  aAW_CENTER       = $10;
+  aAW_HIDE         = $10000;
+  aAW_ACTIVATE     = $20000;
+  aAW_SLIDE        = $40000;
+  aAW_BLEND        = $80000;
+
+type
+  FLASHWINFO = record
+    cbSize: UINT;
+    hwnd: HWND;
+    dwFlags: DWORD;
+    uCount: UINT;
+    dwTimeout: DWORD;
+   end;
+  TFlashWInfo = FLASHWINFO;
+
+function AnimateWindow(hWnd: HWND; dwTime: DWORD; dwFlags: DWORD): BOOL;
+function FlashWindowEx(var pfwi: FLASHWINFO): BOOL;
+function SetLayeredWindowAttributes(hWnd: THandle; crKey: COLORREF; bAlpha: Byte; dwFlags: LongInt): LongInt;
+
+
+{ ADVANCED GDI ROUTINES }
+type
+  TacWin2kAnimationFlags = set of (afHorPositive, afHorNegative, afVerPositive, afVerNegative, afCenter, afSlide, afBlend);
+
+{ function sets transparency rate of a layered window. Works in Win2000 and higher }
+procedure acMakeTranslucentWindow(Wnd: THandle; TransparencyRate: Byte);
+{ returns the form to its normal (non-translucent) state }
+procedure acMakeOpaqueWindow(Wnd: THandle);
+
+{ Draws the animation effect on windows opening / hiding. Works in Win98 and higher }
+procedure acAnimateWindow(Form: TForm; Time: Word; AnimationType: TacWin2kAnimationFlags; Open: Boolean);
+{ Flashes the form caption and taskbar icon with rate equal to default cursor blink rate }
+procedure acFlashWindow(Wnd: THandle; Count: Integer; FlashTaskIcon: Boolean);
+
+procedure InitACGraphics;
+
+implementation

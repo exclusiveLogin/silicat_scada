@@ -1,0 +1,296 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAppBar.pas - AppBar component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acAppBar;
+
+interface
+
+uses
+  Windows, Messages, Classes, acClasses;
+
+const
+  DEFAULT_SLIDE_TIME     = 200; // milliseconds
+  DEFAULT_DOCK_MAXWIDTH  = 400; // half 800x600 screen
+  DEFAULT_DOCK_MAXHEIGHT = 300; // --//--
+  DEFAULT_DOCK_WIDTH     = 32;
+  DEFAULT_DOCK_HEIGHT    = 32;
+
+type
+  TacAppBar = class;
+
+  TacAppBarPersistent = class(TPersistent)
+  private
+    FEnabled: Boolean;
+  public
+    constructor Create;
+  published
+    property Enabled: Boolean read FEnabled write FEnabled default True;
+  end;
+
+  TacAppBarDocking = class(TacAppBarPersistent)
+  private
+    FHeight: Word;
+    FWidth: Word;
+    FMaxHeight: Word;
+    FMaxWidth: Word;
+    FMinHeight: Word;
+    FMinWidth: Word;
+
+    { for internal use }
+    AppBar: TacAppBar;
+
+    procedure SetHeight(Value: Word);
+    procedure SetWidth(Value: Word);
+  public
+    constructor Create(aAppBar: TacAppBar);
+  published
+    property Height: Word read FHeight write SetHeight default DEFAULT_DOCK_HEIGHT;
+    property Width: Word read FWidth write SetWidth default DEFAULT_DOCK_WIDTH;
+    property MaxHeight: Word read FMaxHeight write FMaxHeight default DEFAULT_DOCK_MAXHEIGHT;
+    property MaxWidth: Word read FMaxWidth write FMaxWidth default DEFAULT_DOCK_MAXWIDTH;
+    property MinHeight: Word read FMinHeight write FMinHeight default 0;
+    property MinWidth: Word read FMinWidth write FMinWidth default 0;
+  end;
+
+  TacAppBarFloatRestrictions = class(TacAppBarPersistent)
+  private
+    AppBar: TacAppBar;
+    FMaxWidth,
+    FMaxHeight,
+    FMinWidth,
+    FMinHeight: Word;
+
+    procedure SetMaxWidth(Value: Word);
+    procedure SetMaxHeight(Value: Word);
+    procedure SetMinWidth(Value: Word);
+    procedure SetMinHeight(Value: Word);
+
+    procedure UpdateFloatRestrictions;
+  public
+    constructor Create(aAppBar: TacAppBar);
+  published
+    property Enabled default False;  
+    property MaxWidth: Word read FMaxWidth write SetMaxWidth default 0;
+    property MaxHeight: Word read FMaxHeight write SetMaxHeight default 0;
+    property MinWidth: Word read FMinWidth write SetMinWidth default 0;
+    property MinHeight: Word read FMinHeight write SetMinHeight default 0;
+  end;
+
+  TacAppBarSizing = class(TacAppBarPersistent)
+  private
+    FHorizontalIncrement: Word;
+    FVerticalIncrement: Word;
+  public
+    constructor Create;
+  published
+    property HorizontalIncrement: Word read FHorizontalIncrement write FHorizontalIncrement default 1;
+    property VerticalIncrement: Word read FVerticalIncrement write FVerticalIncrement default 1;
+  end;
+
+  TacAppBarSliding = class(TacAppBarPersistent)
+  private
+    FSlideTime: Word;
+  public
+    constructor Create;
+  published
+    property SlideTime: Word read FSlideTime write FSlideTime default DEFAULT_SLIDE_TIME;
+  end;
+
+  {$IFDEF USEINIFILES}
+  TacAppBarStorageType = (useRegistry, useIniFile);
+  {$ENDIF}
+  TacAppBarRegOptions = set of (saveOnClose, saveOnMoveResize);
+  TacAppBarRestoreProperty = (rpAllowedEdges, rpFormSize, rpDocking, rpFloatRestrictions, rpSizing, rpSliding);
+  TacAppBarRestoreProperties = set of TacAppBarRestoreProperty;
+  TacAppBarRegistrySaver = class(TacAppBarPersistent)
+  private
+    AppBar: TacAppBar;
+
+    {$IFDEF USEINIFILES}
+    FIniFileName, FIniSection: String;
+    {$ENDIF}
+    FRegLocation: TacRegLocation;
+    FRegKey: String;
+    FRestoreProperties: TacAppBarRestoreProperties;
+    FOptions: TacAppBarRegOptions;
+    {$IFDEF USEINIFILES}
+    FStorage: TacAppBarStorageType;
+    {$ENDIF}
+
+    procedure SetRegLocation(Value: TacRegLocation);
+    procedure SetRegKey(Value: String);
+  public
+    constructor Create(aAppBar: TacAppBar);
+
+    { public methods }
+    procedure Load;
+    procedure Save;
+  published
+    property Enabled default False;
+    {$IFDEF USEINIFILES}
+    property IniFileName: String read FIniFileName write FIniFileName;
+    property IniSection: String read FIniSection write FIniSection;
+    {$ENDIF}
+    property RegLocation: TacRegLocation read FRegLocation write SetRegLocation default rlCurrentUser;
+    property RegKey: String read FRegKey write SetRegKey;
+    property RestoreProperties: TacAppBarRestoreProperties read FRestoreProperties write FRestoreProperties default [rpFormSize, rpDocking, rpSizing, rpSliding];
+    property Options: TacAppBarRegOptions read FOptions write FOptions default [saveOnClose];
+    {$IFDEF USEINIFILES}
+    property Storage: TacAppBarStorageType read FStorage write FStorage default useRegistry;
+    {$ENDIF}
+  end;
+
+  TacAppBarPlacement = (bpLeft, bpTop, bpRight, bpBottom, bpFloat);
+  TacAppBarShowBehavior = (sbOnFloat, sbShowAlways, sbHideAlways);
+  TacAppBarEdges = set of TacAppBarPlacement;
+
+  TacAppBarDockedEvent = procedure(Sender: TObject; NewPlacement: TacAppBarPlacement) of object;
+  TacAppBarDockingEvent = procedure(Sender: TObject; var NewPlacement: TacAppBarPlacement) of object;
+  TacAppBarFullScreenAppEvent = procedure(Sender: TObject; Open: Boolean) of object;
+  TacAppBarWindowArrangeEvent = procedure(Sender: TObject; Beginning: Boolean) of object;
+  TacAppBarHidingEvent = procedure(Sender: TObject; var AllowOperation: Boolean) of object;
+
+  TacAppBar = class(TacAppHookComponent)
+  private
+    FAllowedEdges: TacAppBarEdges;
+    FAutoHide: Boolean;
+    FDocking: TacAppBarDocking;
+    FFloatRestrictions: TacAppBarFloatRestrictions;
+    FLastDockingPlace: TacAppBarPlacement;
+    FPlacement: TacAppBarPlacement;
+    FRegistrySaver: TacAppBarRegistrySaver;
+    FSizing: TacAppBarSizing;
+    FSliding: TacAppBarSliding;
+    FTaskIcon, FTitleBar: TacAppBarShowBehavior;
+
+    { AppBar events }
+    FOnActivate, FOnDeactivate: TNotifyEvent;
+    FOnClick: TNotifyEvent;
+    FOnDblClick: TNotifyEvent;
+    FOnDocked: TacAppBarDockedEvent;
+    FOnDocking: TacAppBarDockingEvent;
+    FOnDockMove: TacAppBarDockedEvent;
+    FOnExitSizeMove: TNotifyEvent;
+    FOnHiding, FOnUnhiding: TacAppBarHidingEvent;
+    { system events }
+    FOnFullScreenApp: TacAppBarFullScreenAppEvent;
+    FOnOtherAppBarPosChanged: TNotifyEvent;
+    FOnUnableToAutoHide: TNotifyEvent;
+    FOnWindowArrange: TacAppBarWindowArrangeEvent;
+
+    { variables for internal use only }
+    FAutoHideVisible: Boolean;
+    FRegistered, FMoved, FLostFocus: Boolean;
+    FProposedPlacement: TacAppBarPlacement;
+    FFloatRect, FMovingRect: TRect;
+    FFullScreenAppOpen: Boolean;
+
+    function  GetAlwaysOnTop: Boolean;
+    procedure SetAlwaysOnTop(Value: Boolean);
+    procedure SetAutoHide(Value: Boolean);
+    function  GetPlacement: TacAppBarPlacement;
+    procedure SetPlacement(Value: TacAppBarPlacement);
+    procedure SetTaskIcon(Value: TacAppBarShowBehavior);
+    procedure SetTitleBar(Value: TacAppBarShowBehavior);
+
+    { private/internal routines }
+    procedure GetProposedRect(ProposedPlacement: TacAppBarPlacement; var rcProposed: TRect);
+    function  AdjustLocationForAutoHide(Show: Boolean; var rc: TRect): Boolean;
+    procedure SlideWindow(var rcEnd: TRect);
+    procedure SetWindowRect(Rect: TRect);
+    function  GetMessagePosition: TSmallPoint;
+    procedure ChangeWindowStyle(Moving: Boolean; ProposedPlacement: TacAppBarPlacement);
+    function  CanHideUnhide: Boolean;  
+    procedure DoShowHiddenAppBar(Show: Boolean);    
+
+    procedure RegisterAppBar;
+    procedure UnregisterAppBar;
+
+    procedure UpdateTimer;
+    procedure UpdateTaskIcon;
+
+    { These functions encapsulate the shell's SHAppBarMessage function }
+    function AppBarMessage(abMessage: Integer; abPlacement: TacAppBarPlacement; lParam: LPARAM; bRect: Boolean; var rc: TRect): UINT;
+    function AppBarMessage1(abMessage: Integer): UINT;
+    function AppBarMessage2(abMessage: Integer; abPlacement: TacAppBarPlacement): UINT;
+    function AppBarMessage3(abMessage: Integer; abPlacement: TacAppBarPlacement; lParam: LPARAM): UINT;
+    function AppBarMessage4(abMessage: Integer; abPlacement: TacAppBarPlacement; lParam: LPARAM; var rc: TRect): UINT;
+  protected
+    procedure WndProc(var Message: TMessage); override;  
+    procedure AppMessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure MessageAfter(var Message: TMessage); override;
+    procedure Loaded; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure UpdateBar; virtual;
+    procedure ShowHiddenAppBar(Show: Boolean);
+    function  IsMouseOverAppBar: Boolean;
+
+    property AutoHideVisible: Boolean read FAutoHideVisible;    
+  published
+    property About;
+
+    property AllowedEdges: TacAppBarEdges read FAllowedEdges write FAllowedEdges default [bpLeft..bpFloat];
+    property AlwaysOnTop: Boolean read GetAlwaysOnTop write SetAlwaysOnTop default True;
+    property AutoHide: Boolean read FAutoHide write SetAutoHide default False;
+    property Docking: TacAppBarDocking read FDocking write FDocking;
+    property FloatRestrictions: TacAppBarFloatRestrictions read FFloatRestrictions write FFloatRestrictions;
+    property LastDockingPlace: TacAppBarPlacement read FLastDockingPlace write FLastDockingPlace default bpTop;
+    property Placement: TacAppBarPlacement read GetPlacement write SetPlacement default bpFloat;
+    property RegistrySaver: TacAppBarRegistrySaver read FRegistrySaver write FRegistrySaver;
+    property Sizing: TacAppBarSizing read FSizing write FSizing;
+    property Sliding: TacAppBarSliding read FSliding write FSliding;
+    property TaskIcon: TacAppBarShowBehavior read FTaskIcon write SetTaskIcon default sbOnFloat;
+    property TitleBar: TacAppBarShowBehavior read FTitleBar write SetTitleBar default sbOnFloat;
+
+    { appbar events }
+    property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
+    property OnClick: TNotifyEvent read FOnClick write FOnClick;
+    property OnDblClick: TNotifyEvent read FOnDblClick write FOnDblClick;
+    property OnDeactivate: TNotifyEvent read FOnDeactivate write FOnDeactivate;
+    property OnDocked: TacAppBarDockedEvent read FOnDocked write FOnDocked;
+    property OnDocking: TacAppBarDockingEvent read FOnDocking write FOnDocking;
+    property OnDockMove: TacAppBarDockedEvent read FOnDockMove write FOnDockMove;
+    property OnExitSizeMove: TNotifyEvent read FOnExitSizeMove write FOnExitSizeMove;
+
+    { system events }
+    property OnFullScreenApp: TacAppBarFullScreenAppEvent read FOnFullScreenApp write FOnFullScreenApp;
+    property OnOtherAppBarPosChanged: TNotifyEvent read FOnOtherAppBarPosChanged write FOnOtherAppBarPosChanged;
+    property OnUnableToAutoHide: TNotifyEvent read FOnUnableToAutoHide write FOnUnableToAutoHide;
+    property OnWindowArrange: TacAppBarWindowArrangeEvent read FOnWindowArrange write FOnWindowArrange;
+
+    // v1.2
+    property OnHiding: TacAppBarHidingEvent read FOnHiding write FOnHiding;
+    property OnUnhiding: TacAppBarHidingEvent read FOnUnhiding write FOnUnhiding;
+  end;
+
+implementation

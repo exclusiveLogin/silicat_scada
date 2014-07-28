@@ -1,0 +1,113 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acDragPanel.pas - acDragPanel component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acDragPanel;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Forms,
+  ExtCtrls;
+
+type
+  TacDragPanelDragObject = (doForm, doPanel, doNone);
+  TacDragPanel = class(TCustomPanel)
+  private
+    FAbout: String;
+    FDragObject: TacDragPanelDragObject;
+
+    { for internal use }
+    ParentHandle: THandle;
+  protected
+    procedure WndProc(var Message: TMessage); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  published
+    property About: String read FAbout write FAbout stored False;
+
+    property DragCursor default crDefault;
+    property DragObject: TacDragPanelDragObject read FDragObject write FDragObject default doForm;
+
+    { derived properties }
+    property Align;
+    property Alignment;
+{$IFDEF D4}
+    property Anchors;
+    property AutoSize;
+{$ENDIF}
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
+{$IFDEF D4}
+    property BiDiMode;
+{$ENDIF}    
+    property BorderWidth;
+    property BorderStyle;
+    property Caption;
+    property Color;
+{$IFDEF D4}
+    property Constraints;
+{$ENDIF}    
+    property Ctl3D;
+    property Enabled;
+    property FullRepaint;
+    property Font;
+    property Locked;
+{$IFDEF D4}
+    property ParentBiDiMode;
+{$ENDIF}    
+    property ParentColor;
+    property ParentCtl3D;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property TabOrder;
+    property TabStop;
+    property Visible;
+{$IFDEF D4}
+    property OnCanResize;
+{$ENDIF}    
+    property OnClick;
+{$IFDEF D4}
+    property OnConstrainedResize;
+{$ENDIF}
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}    
+    property OnDblClick;
+    property OnEnter;
+    property OnExit;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+    property OnResize;
+  end;
+
+implementation

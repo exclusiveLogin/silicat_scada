@@ -1,0 +1,329 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acEdit.pas - acEdit, acNumberEdit and acIPEdit components.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acEdit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, StdCtrls, Classes, Controls,
+  Buttons, Graphics, Forms;
+
+type
+  TacCustomEdit = class;
+
+  { TacEditButton }
+  TacEditButton = class(TPersistent)
+  private
+    { for internal use }
+    Edit: TacCustomEdit;
+    Btn: TSpeedButton;
+
+    function  GetCursor: TCursor;
+    procedure SetCursor(Value: TCursor);
+    {$IFDEF D3}
+    function  GetFlat: Boolean;
+    procedure SetFlat(Value: Boolean);
+    {$ENDIF}
+    function  GetGlyph: TBitmap;
+    procedure SetGlyph(Value: TBitmap);
+    function  GetNumGlyphs: TNumGlyphs;
+    procedure SetNumGlyphs(Value: TNumGlyphs);
+    function  GetHint: String;
+    procedure SetHint(Value: String);
+    function  GetWidth: Word;
+    procedure SetWidth(Value: Word);
+    function  GetVisible: Boolean;
+    procedure SetVisible(Value: Boolean);
+  public
+    constructor Create(AEdit: TacCustomEdit; ABtn: TSpeedButton);
+  published
+    property Cursor: TCursor read GetCursor write SetCursor;
+    {$IFDEF D3}
+    property Flat: Boolean read GetFlat write SetFlat;
+    {$ENDIF}
+    property Glyph: TBitmap read GetGlyph write SetGlyph;
+    property NumGlyphs: TNumGlyphs read GetNumGlyphs write SetNumGlyphs;
+    property Hint: String read GetHint write SetHint;
+    property Width: Word read GetWidth write SetWidth default 20;
+    property Visible: Boolean read GetVisible write SetVisible default False;
+  end;
+
+  TacCustomEdit = class(TEdit)
+  private
+    FAbout: String;
+
+    FAlignment: TAlignment;
+    FAutoSelect: Boolean;
+    FButton: TacEditButton;
+    FColor, FColorDisabled: TColor;
+    FCursorBorder: TCursor;
+
+    FOnButtonClick: TNotifyEvent;
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;
+
+    { for internal use }
+    FBtn: TSpeedButton;
+    FBtnControl: TWinControl;
+    FNameEdit: Boolean;    
+    FValidChars: String;
+    FValidateChars: Boolean;
+
+    procedure UpdateBtnBounds;
+    procedure UpdateEditRect;
+    procedure UpdateBkColor;
+
+    procedure SetAlignment(Value: TAlignment);
+    procedure SetColor(Value: TColor);
+    procedure SetColorDisabled(Value: TColor);
+    function  GetPasswordChar: Char;
+    procedure SetPasswordChar(Value: Char);
+
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+    procedure WMSize(var Message: TWMSize); message WM_SIZE;
+    procedure CMEnter(var Message: TCMEnter); message CM_ENTER;
+    procedure CMExit(var Message: TCMExit); message CM_EXIT;
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_Ctl3DChanged;
+    procedure CMEnableChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure EditButtonClick(Sender: TObject);
+  protected
+    procedure WndProc(var Message: TMessage); override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+    procedure KeyPress(var Key: Char); override;
+
+    procedure ButtonClick; virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    property About: String read FAbout write FAbout stored False;
+    property Alignment: TAlignment read FAlignment write SetAlignment default taLeftJustify;
+    property AutoSelect: Boolean read FAutoSelect write FAutoSelect default True;
+    property Button: TacEditButton read FButton write FButton;
+    property Color: TColor read FColor write SetColor;
+    property ColorDisabled: TColor read FColorDisabled write SetColorDisabled default clBtnFace;
+    property CursorBorder: TCursor read FCursorBorder write FCursorBorder;
+//    property NameEdit: Boolean read FNameEdit write FNameEdit;
+    property PasswordChar: Char read GetPasswordChar write SetPasswordChar;
+    property ValidChars: String read FValidChars write FValidChars;
+    property ValidateChars: Boolean read FValidateChars write FValidateChars default False;
+
+    { not for publishing }
+    property EditButton: TSpeedButton read FBtn; 
+
+    property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+  end;
+
+  TacEdit = class(TacCustomEdit)
+  published
+    property About;
+    property Align;
+    property Alignment;
+    property AutoSelect;
+    property Button;
+    property Color;
+    property ColorDisabled;
+    property CursorBorder;
+    property PasswordChar;
+    property ValidChars;
+    property ValidateChars;
+    property OnButtonClick;
+    property OnMouseEnter;
+    property OnMouseLeave;    
+  end;
+
+  TacNumberEditKind = (neDec, neHex, neBin);
+  TacNumberEdit = class(TacCustomEdit)
+  private
+    FKind: TacNumberEditKind;
+    FValue: LongInt;
+    FMaxValue: LongInt;
+
+    FOnChange: TNotifyEvent;
+
+    { for internal use }
+    PrevText: String;
+    PrevValue: LongInt;
+    PrevPos: Integer;
+    LastChar: Word;
+    DontChange: Boolean; // avoiding recursive changing
+
+    procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;    
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+  protected
+    procedure Change; override;
+    procedure SetValue(aValue: LongInt); virtual;
+    procedure SetMaxValue(aValue: LongInt); virtual;
+    procedure SetKind(aValue: TacNumberEditKind); virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+  published
+    property About;
+    property Align;
+    property Alignment;
+    property AutoSelect;
+    property Button;
+    property Color;
+    property ColorDisabled;
+    property CursorBorder;
+    property OnButtonClick;
+    property OnMouseEnter;
+    property OnMouseLeave;
+
+    property Kind: TacNumberEditKind read fKind write SetKind default neDec;
+    property MaxValue: LongInt read fMaxValue write SetMaxValue;
+    property Value: LongInt read FValue write SetValue;
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+  end;
+
+  TacIPMaskEdit = class(TacNumberEdit)
+  private
+    IPID: Integer;
+
+    procedure ClickHook(Sender: TObject);
+    procedure DblClickHook(Sender: TObject);
+    procedure KeyDownHook(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure KeyPressHook(Sender: TObject; var Key: Char);
+    procedure KeyUpHook(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;    
+    procedure WMGetDlgCode(var Message: TMessage); message WM_GETDLGCODE;    
+  protected
+    procedure Change; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  end;
+
+  TacIPEdit = class(TCustomControl)
+  private
+    FAbout: String;
+    FAlignment: TAlignment;
+    FAutoSelect: Boolean;
+    FAutoSize: Boolean;
+    FColor: TColor;
+    FColorDisabled: TColor;
+    FCtl3D: Boolean;
+    FBorderStyle: TBorderStyle;
+    FText: String;
+    FIP1, FIP2, FIP3, FIP4: Byte;
+    FIPLong: LongInt;
+    FIPSection: Array[1..4] of TacIPMaskEdit;
+
+    FOnChange: TNotifyEvent;
+    FOnKeyDown, FOnKeyUp: TKeyEvent;
+    FOnKeyPress: TKeyPressEvent;
+
+    { for internal use }
+    AllowChange, AllowSetValue: Boolean;
+
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+
+    procedure SetAlignment(Value: TAlignment);
+    procedure SetAutoSize(Value: Boolean);
+    procedure SetBorderStyle(Value: TBorderStyle);
+    procedure SetColor(Value: TColor);
+    procedure SetColorDisabled(Value: TColor);
+    procedure SetCtl3D(Value: Boolean);
+    procedure SetText(Value: String);
+    procedure RefreshText;
+    procedure SetIP1(Value: Byte);
+    procedure SetIP2(Value: Byte);
+    procedure SetIP3(Value: Byte);
+    procedure SetIP4(Value: Byte);
+    procedure SetIPLong(Value: LongInt);
+
+    procedure ValueChanged;
+
+    procedure WMSetFocus(var Msg: TWMSetFocus); message WM_SETFOCUS;
+    procedure WMPaint(var Msg: TWMPaint); message WM_PAINT;
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;  
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property Align;
+
+    property About: String read FAbout write FAbout stored False;
+    property Alignment: TAlignment read FAlignment write SetAlignment;
+    property AutoSelect: Boolean read FAutoSelect write FAutoSelect;
+    property AutoSize: Boolean read FAutoSize write SetAutoSize;
+    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle;
+    property Color: TColor read FColor write SetColor default clWindow;
+    property ColorDisabled: TColor read FColorDisabled write SetColorDisabled;
+    property Ctl3D: Boolean read FCtl3D write SetCtl3D;
+    property IP1: Byte read FIP1 write SetIP1;
+    property IP2: Byte read FIP2 write SetIP2;
+    property IP3: Byte read FIP3 write SetIP3;
+    property IP4: Byte read FIP4 write SetIP4;
+    property IPLong: LongInt read FIPLong write SetIPLong;
+    property Text: String read FText write SetText;    
+
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property OnKeyDown: TKeyEvent read FOnKeyDown write FOnKeyDown;
+    property OnKeyPress: TKeyPressEvent read FOnKeyPress write FOnKeyPress;
+    property OnKeyUp: TKeyEvent read FOnKeyUp write FOnKeyUp;
+
+    // inherited properties
+{$IFDEF D4}
+    property Anchors;
+    property Constraints;
+    property DragKind;
+{$ENDIF}
+    property Cursor;
+    property Font;
+    property Hint;
+    property ShowHint;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property TabOrder;
+    property TabStop;
+    property Visible;
+
+    property OnClick;
+    property OnDblClick;
+    property OnEnter;
+    property OnExit;
+{$IFDEF D4}
+    property OnStartDock;
+    property OnStartDrag;
+    property OnEndDock;
+    property OnEndDrag;
+{$ENDIF}
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}
+  end;
+
+implementation

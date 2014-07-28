@@ -1,0 +1,96 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acExtAssociation.pas - ExtAssociation component.
+        (Code taken from dcShellExtension component of DiskControls pack)
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acExtAssociation;
+
+interface
+
+uses
+  Windows, Classes, Controls, Graphics, 
+  acClasses;
+
+type
+  TacShellExtAccessMode = (amReadOnly, amReadWrite);
+  TacExtAssociation = class(TacComponent)
+  private
+    FAccessMode: TacShellExtAccessMode;
+    FDefCommandName: String;    
+    FExtension: String;
+    FExecutableFile: String;
+    FExtDescription: String;
+    FFileDescription: String;
+    FParamString: String;
+    FMIMEType: String;
+
+    FIconFile: String;
+    FIconIndex: Integer;
+    FLargeIcon: TIcon;
+    FSmallIcon: TIcon;
+
+    procedure SetDefCommandName(Value: String);    
+    procedure SetExtension(Value: String);
+    procedure SetExecutableFile(Value: String);
+    procedure SetExtDescription(Value: String);
+    procedure SetFileDescription(Value: String);
+    procedure SetParamString(Value: String);
+    procedure SetMIMEType(Value: String);
+    procedure SetIconFile(Value: String);
+    procedure SetIconIndex(Value: Integer);
+    procedure SetIcon(Value: TIcon);
+
+    function  CheckAccessMode: Boolean;
+    procedure GetExtensionInfo;
+    procedure DoInstallExtension;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function InstallExtension(Extension, ExecutableFile, ParamString, MIMEType,
+                              ExtDescription, FileDescription,
+                              IconFile: String; IconIndex: Integer): Boolean;
+    function UninstallExtension(Ext: String): Boolean;
+  published
+    property About;
+
+    property AccessMode: TacShellExtAccessMode read FAccessMode write FAccessMode;
+    property DefCommandName: String read FDefCommandName write SetDefCommandName;
+    property ExecutableFile: String read FExecutableFile write SetExecutableFile;
+    property ExtDescription: String read FExtDescription write SetExtDescription;            
+    property EXTENSION: String read FExtension write SetExtension;
+    property FileDescription: String read FFileDescription write SetFileDescription;
+    property ParamString: String read FParamString write SetParamString;
+    property MIMEType: String read FMIMEType write SetMIMEType;
+
+    property IconFile: String read FIconFile write SetIconFile;
+    property IconIndex: Integer read FIconIndex write SetIconIndex;
+    property LargeIcon: TIcon read FLargeIcon write SetIcon;
+    property SmallIcon: TIcon read FSmallIcon write SetIcon;
+  end;
+
+implementation

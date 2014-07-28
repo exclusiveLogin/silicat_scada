@@ -1,0 +1,90 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormHook.pas - FormHook component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acFormHook;
+
+interface
+
+uses
+  Windows, Messages, Classes, Forms,
+  acClasses;
+
+type
+  TacCloseButtonState = (cbEnabled, cbDisabled);
+  TacDropFilesEvent = procedure(Files: TStrings; const Pos: TPoint) of object;  
+  TacWndProcMessageBeforeEvent = procedure(Sender: TObject; var Message: TMessage;
+                                           var Handled: Boolean) of object;
+  TacWndProcMessageAfterEvent = procedure(Sender: TObject; var Message: TMessage) of object;
+  TacFormHook = class(TacHFormHookComponent)
+  private
+    FAcceptFiles: Boolean;
+    FActivateFormOnAcceptFiles: Boolean;
+    FCloseButton: TacCloseButtonState;
+    FDragByCaption: Boolean;
+    FDragByClient: Boolean;
+    FNoCaption: Boolean;
+    FNoPaintBackground: Boolean;
+
+    FOnCaptionChanged: TNotifyEvent;
+    FOnFormRecreate: TNotifyEvent;
+    FOnDropFiles: TacDropFilesEvent;
+    FOnMessageBefore: TacWndProcMessageBeforeEvent;
+    FOnMessageAfter: TacWndProcMessageAfterEvent;
+
+    procedure SetAcceptFiles(Value: Boolean);
+    procedure SetCloseButton(Value: TacCloseButtonState);
+    function  GetNoCaption: Boolean;
+    procedure SetNoCaption(Value: Boolean);
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure MessageAfter(var Message: TMessage); override;
+    procedure FormRecreate; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    procedure Loaded; override;
+    procedure WndProc(var Message: TMessage); override;
+  published
+    property About;
+    property Topmost;
+    property AcceptFiles: Boolean read FAcceptFiles write SetAcceptFiles default False;
+    property ActivateFormOnAcceptFiles: Boolean read FActivateFormOnAcceptFiles write FActivateFormOnAcceptFiles default False;
+    property CloseButton: TacCloseButtonState read FCloseButton write SetCloseButton default cbEnabled;
+    property DragByCaption: Boolean read FDragByCaption write FDragByCaption default True;
+    property DragByClient: Boolean read FDragByClient write FDragByClient default False;
+    property NoCaption: Boolean read GetNoCaption write SetNoCaption default False;
+    property NoPaintBackground: Boolean read FNoPaintBackground write FNoPaintBackground default False;
+
+    property OnCaptionChanged: TNotifyEvent read FOnCaptionChanged write FOnCaptionChanged;
+    property OnFormRecreate: TNotifyEvent read FOnFormRecreate write FOnFormRecreate;
+    property OnDropFiles: TacDropFilesEvent read FOnDropFiles write FOnDropFiles;
+    property OnMessageBefore: TacWndProcMessageBeforeEvent read FOnMessageBefore write FOnMessageBefore;
+    property OnMessageAfter: TacWndProcMessageAfterEvent read FOnMessageAfter write FOnMessageAfter;
+  end;
+
+implementation

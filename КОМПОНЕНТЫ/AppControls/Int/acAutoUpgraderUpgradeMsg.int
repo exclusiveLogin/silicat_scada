@@ -1,0 +1,57 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAutoUpgraderUpgradeMsg.pas - Upgrade Request form
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+unit acAutoUpgraderUpgradeMsg;
+
+interface
+
+uses
+  Windows, Classes, Controls, Forms, ExtCtrls, StdCtrls,
+  acLabels, acRichLabel, acAutoUpgrader;
+
+type
+  TacAutoUpgraderUpgradeMessageForm = class(TForm)
+    BottomPanel: TPanel;
+    YesBtn: TButton;
+    LaterBtn: TButton;
+    acRichLabel1: TacRichLabel;
+    Icon: TImage;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+  private
+    AutoUpgrader: TacAutoUpgrader;
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+  public
+  end;
+
+var
+  UpgradeMessageForm: TacAutoUpgraderUpgradeMessageForm = nil;
+
+function ShowUpgradeBox(aAutoUpgrader: TacAutoUpgrader; Msg: String; TestMode: Boolean): Boolean;
+
+implementation

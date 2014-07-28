@@ -1,0 +1,52 @@
+:Base OParBCB.hlp
+:Title OfficePartner
+1 TurboPower OfficePartner
+2 Welcome to OfficePartner=Welcome_to_OfficePartner>Main
+2 Word Components and Classes
+3 TOpWord Component=TOpWord_Component>Main
+3 TOpDocumentBookmark Class=TOpDocumentBookmark_Class>Main
+3 TOpDocumentHyperLink Class=TOpDocumentHyperLink_Class>Main
+3 TOpDocumentShape Class=TOpDocumentShape_Class>Main
+3 TOpDocumentTable Class=TOpDocumentTable_Class>Main
+3 TOpMailMerge Class=TOpMailMerge_Class>Main
+3 TOpWordDocument Class=TOpWordDocument_Class>Main
+2 Excel Components and Classes
+3 TOpExcel Component=TOpExcel_Component>Main
+3 TOpExcelChart Class=TOpExcelChart_Class>Main
+3 TOpExcelHyperlink Class=TOpExcelHyperlink_Class>Main
+3 TOpExcelRange Class=TOpExcelRange_Class>Main
+3 TOpExcelWorkbook Class=TOpExcelWorkbook_Class>Main
+3 TOpExcelWorksheet Class=TOpExcelWorksheet_Class>Main
+2 Outlook Components and Classes
+3 TOpOutlook Component=TOpOutlook_Component>Main
+3 TOpAppointmentItem Class=TOpAppointmentItem_Class>Main
+3 TOpAttachment Class=TOpAttachment_Class>Main
+3 TOpBusinessData Class=TOpBusinessData_Class>Main
+3 TOpContactItem Class=TOpContactItem_Class>Main
+3 TOpContactsDataSet Component=TOpContactsDataSet_Component>Main
+3 TOpDefaultData Class=TOpDefaultData_Class>Main
+3 TOpJournalItem Class=TOpJournalItem_Class>Main
+3 TOpMailItem Class=TOpMailItem_Class>Main
+3 TOpMiscData Class=TOpMiscData_Class>Main
+3 TOpNetworkData Class=TOpNetworkData_Class>Main
+3 TOpNoteItem Class=TOpNoteItem_Class>Main
+3 TOpPersonalData Class=TOpPersonalData_Class>Main
+3 TOpPostItem Class=TOpPostItem_Class>Main
+3 TOpRecipient Class=TOpRecipient_Class>Main
+3 TOpTaskItem Class=TOpTaskItem_Class>Main
+2 PowerPoint Components and Classes
+3 TOpPowerPoint Component=TOpPowerPoint_Component>Main
+3 TOpPresentation Class=TOpPresentation_Class>Main
+3 TOpSlide Class=TOpSlide_Class>Main
+3 TOpSlideTransition Class=TOpSlideTransition_Class>Main
+2 Office Assistant Components and Classes
+3 TOpAssistant Class=TOpAssistant_Class>Main
+3 TOpBalloon Class=TOpBalloon_Class>Main
+2 Data Access Components and Classes
+3 TOpContactsDataSet Component=TOpContactsDataSet_Component>Main
+3 TOpDatasetModel Component=TOpDatasetModel_Component>Main
+3 TOpEventModel Component=TOpEventModel_Component>Main
+2 Low-Level Classes
+3 TOpNestedCollection Class=TOpNestedCollection_Class>Main
+3 TOpNestedCollectionItem Class=TOpNestedCollectionItem_Class>Main
+3 TOpOfficeComponent Class=TOpOfficeComponent_Class>Main

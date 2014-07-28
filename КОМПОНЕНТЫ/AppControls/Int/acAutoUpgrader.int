@@ -1,0 +1,278 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAutoUpgrader.pas - AutoUpgrader component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acAutoUpgrader;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, Forms, SysUtils,
+  acClasses, acHTTP;
+
+const
+  LanguageResEntryPoint = 51000;
+
+  auWizardTitle      = 0;
+  auDownloadingFiles = 1;
+  auUpdateCompleted  = 2;
+  auCurrentFile      = 3;
+  auAllFiles         = 4;
+  auDownloadingFrom  = 5;
+  auFileSize         = 6;
+  auTransferRate     = 7;
+  auEstimatedTime    = 8;
+  auDownloadingOf    = 9;
+  auSuccessUpdate    = 10;
+  auPressOKToFinish  = 11;
+  auEnterPassword    = 12;
+  auUsername         = 13;
+  auPassword         = 14;
+
+  auYes              = 15;
+  auNo               = 16;
+  auOK               = 17;
+  auCancel           = 18;
+  auNext             = 19;
+  auLater            = 20;
+
+  auWarning          = 21;
+  auError            = 22;
+  auPreparing        = 23;  
+  auWelcome          = 24;
+  auNoUpdate         = 25;
+  auNoInfoFile       = 26;
+  auHostUnreachable  = 27;
+  auInterrupt        = 28;
+  auLostFile         = 29;
+  auPasswordRequired = 30;
+  auCantStoreFile    = 31;
+  auConnectionLost   = 32;
+
+  auAutoUpgraderStr  = LanguageResEntryPoint - 1;
+  auDelphiStr        = LanguageResEntryPoint - 2;
+  auAppTitle         = LanguageResEntryPoint - 3;  
+
+type
+  TacAutoUpgrader = class;
+  TacAutoUpgraderLanguage = (wlAuto, wlEnglish, wlRussian,
+                             wlGerman, wlDutch, wlItalian);
+  TacAutoUpgraderVersionControl = (byDate, byNumber);
+  TacUpgradeMethod = (umSelfUpgrade, umUseExternalSetup, umRedirectToURL);
+
+  { InfoFile structure }
+  TacAutoUpgraderInfo = class(TPersistent)
+  private
+    FFiles: TStrings;
+    FUpgradeMethod: TacUpgradeMethod;
+    FUpgradeMsg: String;
+
+    procedure SetFiles(Value: TStrings);
+  public
+    constructor Create;
+    destructor Destroy; override;
+  published
+    property Files: TStrings read FFiles write SetFiles;
+    property UpgradeMethod: TacUpgradeMethod read FUpgradeMethod write FUpgradeMethod default umSelfUpgrade;
+    property UpgradeMsg: String read FUpgradeMsg write FUpgradeMsg;
+  end;
+
+  TacAutoUpgraderShowMessages = set of (mAskUpgrade, mConnLost, mHostUnreachable, mLostFile, mNoInfoFile, mNoUpdateAvailable, mPasswordRequest);
+  TacAutoUpgraderWizard = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FPicture: TBitmap;
+    FLanguage: TacAutoUpgraderLanguage;
+
+    FOwner: TacAutoUpgrader;
+
+    procedure SetPicture(Value: TBitmap);
+    procedure SetLanguage(Value: TacAutoUpgraderLanguage);
+  public
+    constructor Create(aOwner: TacAutoUpgrader);
+    destructor Destroy; override;
+  published
+    property Enabled: Boolean read FEnabled write FEnabled default True;
+    property Pic118x218: TBitmap read FPicture write SetPicture;
+    property Language: TacAutoUpgraderLanguage read FLanguage write SetLanguage default wlAuto;
+  end;                                 
+
+  { TacAutoUpgrader }
+  TacAUBeginUpgradeEvent = procedure(Sender: TObject;
+                                     UpgradeMsg: String;
+                                     UpgradeMethod: TacUpgradeMethod;
+                                     Files: TStringList;
+                                     var CanUpgrade: Boolean) of object;
+  TacAUFileDoneEvent = procedure(Sender: TObject; FileURL: String) of object;
+  TacAUHostUnreachableEvent = procedure(Sender: TObject; URL, Hostname: String) of object;
+  TacAULostFileEvent = procedure(Sender: TObject;
+                                 FileURL: String;
+                                 ErrorCode: Integer;
+                                 var ContinueUpgrade: Boolean) of object;
+  TacAUProgressEvent = procedure(Sender: TObject;
+                                 FileURL: String;
+                                 FileSize, BytesRead,
+                                 ElapsedTime, EstimatedTimeLeft: Integer;
+                                 PercentsDone, TotalPercentsDone: Byte;
+                                 TransferRate: Single) of object;
+
+  TacAutoUpgrader = class(TacComponent)
+  private
+    FAutoCheck: Boolean;
+    FHTTP: TacCustomHTTP;
+
+    FInfoFile: TacAutoUpgraderInfo;
+    FInfoFileURL: String;
+
+    FVersionControl: TacAutoUpgraderVersionControl;
+    FVersionDate: String;
+    FVersionDateAutoSet: Boolean;
+    FVersionNumber: String;
+
+    FRestartParams: String;    
+    FShowMessages: TacAutoUpgraderShowMessages;    
+    FWizard: TacAutoUpgraderWizard;
+
+    { events }
+    FOnBeginUpgrade: TacAUBeginUpgradeEvent;
+    FOnEndUpgrade: TNotifyEvent;
+    FOnLaterUpgrade: TNotifyEvent;
+    FOnProgress: TacAUProgressEvent;
+    FOnFileDone: TacAUFileDoneEvent;
+    FOnAfterRestart: TNotifyEvent;
+
+    { error events }
+    FOnAborted: TNotifyEvent;
+    FOnConnLost: TNotifyEvent;
+    FOnHostUnreachable: TacAUHostUnreachableEvent;
+    FOnNoUpdateAvailable: TNotifyEvent;
+    FOnNoInfoFile: TNotifyEvent;
+    FOnLostFile: TacAULostFileEvent;
+    FOnPasswordRequest: TacHTTPPasswordRequestEvent;
+
+    { internal variables }
+    FHandle: THandle;
+    FAutoCheckDone: Boolean;
+    FQueryInfoStage: Boolean;
+    UpdateMethod: TacUpgradeMethod; { assigned after parsing of info-file }
+    DownloadQueue: TStringList;
+    HiddenAttributesSet: Boolean;
+    CurrentFileName: String;
+    CurrentFileIndex: Integer;
+    LanguageID: Integer;
+
+    procedure SetAutoCheck(Value: Boolean);
+    function  GetHTTPUsername: String;
+    procedure SetHTTPUsername(Value: String);
+    function  GetHTTPPassword: String;
+    procedure SetHTTPPassword(Value: String);
+    function  GetUpgrading: Boolean;
+    procedure SetQueryInfoStage(Value: Boolean);
+    {$IFDEF AUTOUPGRADERPROXY}
+    function  GetProxy: TacHTTPProxy;
+    procedure SetProxy(Value: TacHTTPProxy);
+    {$ENDIF}
+    procedure SetRestartParams(Value: String);
+    function  GetThreadPriority: TThreadPriority;
+    procedure SetThreadPriority(Value: TThreadPriority);
+    procedure SetVersionDateAutoSet(Value: Boolean);
+
+    { acHTTP events }
+    procedure HTTPDone(Sender: TObject; ContentType: String; FileSize: Integer; Stream: TStream);
+    procedure HTTPProgress(Sender: TObject; ContentType: String;
+                           FileSize, BytesRead, ElapsedTime, EstimatedTimeLeft: Integer;
+                           PercentsDone: Byte; TransferRate: Single; Stream: TStream);
+    procedure HTTPConnLost(Sender: TObject; ContentType: String; FileSize, BytesRead: Integer; Stream: TStream);
+    procedure HTTPError(Sender: TObject; ErrorCode: Integer; Stream: TStream);
+    procedure HTTPHostUnreachable(Sender: TObject);
+    procedure HTTPPasswordRequest(Sender: TObject; var TryAgain: Boolean);    
+
+    { internal subroutines }
+    procedure UpdateTimer;
+  protected
+    procedure WndProc(var Message: TMessage); virtual;
+      
+    procedure ParseInfoFile(Stream: TStream);
+    procedure DoUpgrade(FirstFile: Boolean);
+    procedure SafeTerminate;
+    procedure Relaunch(ParamStr: String);
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure Loaded; override;
+
+    procedure CheckUpdate; // Check InfoURL for update
+    procedure Abort;
+    procedure RestartApplication(const Params: String);
+
+    { public but for internal use }
+    function LangStr(Ident: Integer): String;
+    function FmtLangStr(Ident: Integer; const Args: Array of const): String;
+
+    property QInfoStage: Boolean read FQueryInfoStage write SetQueryInfoStage;
+    property Upgrading: Boolean read GetUpgrading; { True if upgrade currenly in progress }
+  published
+    property About;
+
+    property AutoCheck: Boolean read FAutoCheck write SetAutoCheck default False;
+    property HTTPUsername: String read GetHTTPUsername write SetHTTPUsername;
+    property HTTPPassword: String read GetHTTPPassword write SetHTTPPassword;
+    property InfoFile: TacAutoUpgraderInfo read FInfoFile write FInfoFile;
+    property InfoFileURL: String read FInfoFileURL write FInfoFileURL;
+    {$IFDEF AUTOUPGRADERPROXY}
+    property Proxy: TacHTTPProxy read GetProxy write SetProxy;
+    {$ENDIF}
+    property RestartParams: String read FRestartParams write SetRestartParams;    
+    property ThreadPriority: TThreadPriority read GetThreadPriority write SetThreadPriority default tpNormal;
+
+    property VersionControl: TacAutoUpgraderVersionControl read FVersionControl write FVersionControl default byDate;
+    property VersionDate: String read FVersionDate write FVersionDate;
+    property VersionDateAutoSet: Boolean read FVersionDateAutoSet write SetVersionDateAutoSet;
+    property VersionNumber: String read FVersionNumber write FVersionNumber;
+    property ShowMessages: TacAutoUpgraderShowMessages read FShowMessages write FShowMessages default [mAskUpgrade, mConnLost, mLostFile, mPasswordRequest];    
+    property Wizard: TacAutoUpgraderWizard read FWizard write FWizard;
+
+    { events }
+    property OnBeginUpgrade: TacAUBeginUpgradeEvent read FOnBeginUpgrade write FOnBeginUpgrade;
+    property OnEndUpgrade: TNotifyEvent read FOnEndUpgrade write FOnEndUpgrade;
+    property OnLaterUpgrade: TNotifyEvent read FOnLaterUpgrade write FOnLaterUpgrade;
+    property OnProgress: TacAUProgressEvent read FOnProgress write FOnProgress;
+    property OnFileDone: TacAUFileDoneEvent read FOnFileDone write FOnFileDone;
+    property OnAfterRestart: TNotifyEvent read FOnAfterRestart write FOnAfterRestart;
+
+    { error events }
+    property OnAborted: TNotifyEvent read FOnAborted write FOnAborted;
+    property OnConnLost: TNotifyEvent read FOnConnLost write FOnConnLost;
+    property OnHostUnreachable: TacAUHostUnreachableEvent read FOnHostUnreachable write FOnHostUnreachable;
+    property OnNoUpdateAvailable: TNotifyEvent read FOnNoUpdateAvailable write FOnNoUpdateAvailable;
+    property OnNoInfoFile: TNotifyEvent read FOnNoInfoFile write FOnNoInfoFile;
+    property OnLostFile: TacAULostFileEvent read FOnLostFile write FOnLostFile;
+    property OnPasswordRequest: TacHTTPPasswordRequestEvent read FOnPasswordRequest write FOnPasswordRequest;
+  end;
+
+implementation

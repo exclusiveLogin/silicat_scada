@@ -1,0 +1,110 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAnimationEffect.pas - AnimationFormEffect component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acAnimationEffect;
+
+interface
+
+uses
+  Windows, Messages, Classes, Forms,
+  acClasses;
+
+type
+  TMathPoint = record
+    X, Y: Single;
+  end;
+
+  TMatrix = record
+    M11, M12, M13: Single;
+    M21, M22, M23: Single;
+    M31, M32, M33: Single;
+  end;
+
+  TSpikeData = record
+    TriangleEnd: Array[0..2, 0..15] of TMathPoint;
+    EndCenter: Array[0..15] of TMathPoint;
+    TriangleCenter: Array[0..15] of TMathPoint;
+    MatrixCircle: Array[0..15] of TMatrix;
+  end;
+
+  TacAnimationType = (atInit, atDraw, atErase);
+  TacAnimationEffectType = (etRandom, etSpin, etVortex, etScatterGather, etSpike, etFireworks);
+  TacAnimationEffect = class(TacFormHookComponent)
+  private
+    FAnimateOnShow: Boolean;
+    FAnimateOnHide: Boolean;
+    FDelay: Word;
+    FFrames: Byte;
+    FFireworkBlasts: Byte;
+    FEffectType: TacAnimationEffectType;
+    FSteps: Byte;
+
+    FOnOpenEffect, FOnCloseEffect: TNotifyEvent;
+
+    // for private use
+    FormVisible: Boolean;
+    DrawDC: hDC;
+    EffectParam: Single;
+    GlobalMatrix: TMatrix;
+    FireworksData: Array[0..$FF] of TMathPoint;
+    AfterImages, TotalSteps, Step: Integer;
+    RightTop, Center: TMathPoint;
+    SpikeData: TSpikeData;
+    CurrentEffect: TacAnimationEffectType;
+
+    procedure Animate(Open: Boolean);
+    procedure AnimationSelect(AnimationType: TacAnimationType);
+
+    procedure efSpinFrame(AnimationType: TacAnimationType);
+    procedure efVortexFrames(AnimationType: TacAnimationType);
+    procedure efScatterGatherFrames(AnimationType: TacAnimationType);
+    procedure efSpikeFrames(AnimationType: TacAnimationType);
+    procedure efFireworxFrames(AnimationType: TacAnimationType);
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+
+    // Public Methods
+    procedure Open;
+    procedure Close;
+  published
+    property About;
+    property AnimateOnShow: Boolean read FAnimateOnShow write FAnimateOnShow;
+    property AnimateOnHide: Boolean read FAnimateOnHide write FAnimateOnHide;
+    property Delay: Word read FDelay write FDelay;
+    property FireworkBlasts: Byte read FFireworkBlasts write FFireworkBlasts;
+    property Frames: Byte read FFrames write FFrames;
+    property EffectType: TacAnimationEffectType read FEffectType write FEffectType;
+    property Steps: Byte read FSteps write FSteps;
+
+    property OnShowEffect: TNotifyEvent read FOnOpenEffect write FOnOpenEffect;
+    property OnCloseEffect: TNotifyEvent read FOnCloseEffect write FOnCloseEffect;
+  end;
+
+implementation

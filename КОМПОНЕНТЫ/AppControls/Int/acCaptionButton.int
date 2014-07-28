@@ -1,0 +1,262 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acCaptionButton.pas - CaptionButton base class and acCaptionButton
+        component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acCaptionButton;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, Forms, Menus,
+  CommCtrl, SysUtils, {$IFNDEF D5} DsgnIntf, {$ENDIF}
+  acClasses;
+
+type
+  TacCustomCaptionButton  = class;
+
+  TacBtnOrder = -1..32767;
+
+  { TacSystemMenu }
+  TacMenuSeparators = set of (seBefore, seAfter);
+  TacSystemMenu = class(TPersistent)
+  private
+    FApplyToMenu: Boolean;
+    FCaption: String;
+    FPosition: Word;
+    FSeparators: TacMenuSeparators;
+
+    { for inernal use }
+    CaptionButton: TacCustomCaptionButton;
+    Used: Boolean;
+
+    procedure SetApplyToMenu(const Value: Boolean);
+    procedure SetCaption(const Value: String);
+    procedure SetPosition(const Value: Word);
+    procedure SetSeparators(const Value: TacMenuSeparators);
+
+    procedure ApplyMenuItem;
+    procedure RemoveMenuItem;
+    procedure UpdateMenuItem;
+  protected
+  public
+    constructor Create(aCaptionButton: TacCustomCaptionButton);
+    destructor Destroy; override;
+
+    { conditionally public routine }
+    procedure CheckMenuItem(const Checked: Boolean);
+  published
+    property ApplyToMenu: Boolean read FApplyToMenu write SetApplyToMenu;
+    property Caption: String read FCaption write SetCaption;
+    property Position: Word read FPosition write SetPosition;
+    property Separators: TacMenuSeparators read FSeparators write SetSeparators;
+  end;
+
+  { TacACaptionButton - Ready to use persistent object for
+    other custom components, such like: TacFormHelp, TacFormTopmost,
+    TacFormRoller, TacTrayIcon }
+  TacACaptionButton = class(TPersistent)
+  private
+    CaptionButton: TacCustomCaptionButton;
+
+    function  GetBtnOrder: TacBtnOrder;
+    procedure SetBtnOrder(const Value: TacBtnOrder);
+    function  GetCursor: TCursor;
+    procedure SetCursor(const Value: TCursor);
+    function  GetCursorDown: TCursor;
+    procedure SetCursorDown(const Value: TCursor);
+    function  GetEnabled: Boolean;
+    procedure SetEnabled(const Value: Boolean);
+    function  GetHint: String;
+    procedure SetHint(const Value: String);
+    function  GetSeparatorWidth: Integer;
+    procedure SetSeparatorWidth(const Value: Integer);
+    function  GetShowHint: Boolean;
+    procedure SetShowHint(const Value: Boolean);
+    function  GetVisible: Boolean;
+    procedure SetVisible(const Value: Boolean);
+  public
+    constructor Create(aCaptionButton: TacCustomCaptionButton);
+  published
+    property BtnOrder: TacBtnOrder read GetBtnOrder write SetBtnOrder;
+    property Cursor: TCursor read GetCursor write SetCursor default crDefault;
+    property CursorDown: TCursor read GetCursorDown write SetCursorDown;
+    property Enabled: Boolean read GetEnabled write SetEnabled default True;
+    property Hint: String read GetHint write SetHint;
+    property SeparatorWidth: Integer read GetSeparatorWidth write SetSeparatorWidth default 0;
+    property ShowHint: Boolean read GetShowHint write SetShowHint default True;
+    property Visible: Boolean read GetVisible write SetVisible;
+  end;
+
+  { TacCustomCaptionButton }
+  TacCustomCaptionButton = class(TacHFormHookComponent)
+  private
+    FAllowPress: Boolean;
+    FBtnOrder: TacBtnOrder;
+    FCaptionButton: TacACaptionButton;    
+    FCursor: TCursor;
+    FCursorDown: TCursor;
+    FDown: Boolean;
+    FEnabled: Boolean;
+    FGlyph: TBitmap;
+    FGlyphDown: TBitmap;
+    FGlyphTransparent: Boolean;
+    FHint: String;
+    FPopupMenu: TPopupMenu;
+    FSeparatorWidth: Byte;
+    FShowHint: Boolean;
+    FSign: Char;
+    FSignFont: TFont;
+    FSignLeft: Integer;
+    FSignTop: Integer;
+    FSystemMenu: TacSystemMenu;
+    FVisible: Boolean;
+
+    FOnButtonClick: TNotifyEvent;
+    FOnMenuClick: TNotifyEvent;
+    FOnClick: TNotifyEvent;
+    FOnPressed: TNotifyEvent;
+    FOnReleased: TNotifyEvent;
+
+    { for private use only }
+    TooltipReady: Boolean;
+    uID: Integer;
+    PLACEMENT: Integer;
+    MenuActive, ButtonCaptured, ButtonDown: Boolean;
+    ButtonRect: TRect;
+    ti: TToolInfo;
+
+    procedure SetAllowPress(const Value: Boolean);
+    function  GetBtnOrder: TacBtnOrder;
+    procedure SetBtnOrder(const Value: TacBtnOrder);
+    procedure SetDown(Value: Boolean);
+    procedure SetEnabled(const Value: Boolean);
+    procedure SetGlyph(const Value: TBitmap);
+    procedure SetGlyphDown(const Value: TBitmap);
+    procedure SetGlyphTransparent(const Value: Boolean);
+    procedure SetHint(const Value: String);
+    procedure SetPopupMenu(const Value: TPopupMenu);
+    procedure SetSeparatorWidth(const Value: Byte);
+    procedure SetShowHint(const Value: Boolean);
+    procedure SetSign(const Value: Char);
+    procedure SetSignFont(const Value: TFont);
+    procedure SetSignLeft(const Value: Integer);
+    procedure SetSignTop(const Value: Integer);
+    procedure SetVisible(const Value: Boolean);
+
+    procedure FontChanged(Sender: TObject);
+
+    procedure CreateTooltip;
+    procedure DestroyTooltip;
+    procedure SetToolTipInfo;
+
+    procedure RecalculatePlacements(Refresh: Boolean);
+    procedure UpdateBtnOrder(Value: TacBtnOrder);
+    procedure RefreshButtonState(DrawDown: Boolean);
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;  
+    procedure MessageAfter(var Message: TMessage); override;
+    procedure FormRecreate; override;
+    procedure WndProc(var Message: TMessage); override;    
+
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure BeforeButtonClick; virtual;
+    procedure ButtonClick; virtual;
+    procedure BeforeMenuClick; virtual;
+    procedure MenuClick; virtual;
+    procedure Click; virtual;
+    procedure Pressed; virtual;
+    procedure Released; virtual;
+    procedure Loaded; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    // public methods
+    procedure RefreshButton;
+
+    // public properties
+    property AllowPress: Boolean read FAllowPress write SetAllowPress default False;
+    property BtnOrder: TacBtnOrder read GetBtnOrder write SetBtnOrder default -1;
+    property CaptionButton: TacACaptionButton read FCaptionButton write FCaptionButton; // for successors
+    property Cursor: TCursor read FCursor write FCursor;
+    property CursorDown: TCursor read FCursorDown write FCursorDown;
+    property Down: Boolean read FDown write SetDown;
+    property Enabled: Boolean read FEnabled write SetEnabled default True;
+    property Glyph: TBitmap read FGlyph write SetGlyph;
+    property GlyphDown: TBitmap read FGlyphDown write SetGlyphDown;
+    property GlyphTransparent: Boolean read FGlyphTransparent write SetGlyphTransparent default True;
+    property Hint: String read FHint write SetHint;
+    property PopupMenu: TPopupMenu read FPopupMenu write SetPopupMenu;
+    property SeparatorWidth: Byte read FSeparatorWidth write SetSeparatorWidth;
+    property ShowHint: Boolean read FShowHint write SetShowHint;
+    property SignFont: TFont read FSignFont write SetSignFont;
+    property SignLeft: Integer read FSignLeft write SetSignLeft;
+    property SignTop: Integer read FSignTop write SetSignTop;
+    property Sign: Char read FSign write SetSign;
+    property SystemMenu: TacSystemMenu read FSystemMenu write FSystemMenu;
+    property Visible: Boolean read FVisible write SetVisible default True;
+
+    // public events
+    property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
+    property OnMenuClick: TNotifyEvent read FOnMenuClick write FOnMenuClick;
+    property OnClick: TNotifyEvent read FOnClick write FOnClick;
+    property OnPressed: TNotifyEvent read FOnPressed write FOnPressed;
+    property OnReleased: TNotifyEvent read FOnReleased write FOnReleased;
+  end;
+
+  TacCaptionButton = class(TacCustomCaptionButton)
+  published
+    property About;
+    property AllowPress;
+    property BtnOrder;
+    property Cursor;
+    property CursorDown;
+    property Down;
+    property Enabled;
+    property Glyph;
+    property GlyphDown;
+    property GlyphTransparent;
+    property Hint;
+    property PopupMenu;
+    property SeparatorWidth;
+    property ShowHint;
+    property SignFont;
+    property SignLeft;
+    property SignTop;
+    property Sign;
+    property SystemMenu;
+    property Visible;
+    property OnButtonClick;
+    property OnMenuClick;
+    property OnClick;
+    property OnPressed;
+    property OnReleased;
+  end;
+
+implementation

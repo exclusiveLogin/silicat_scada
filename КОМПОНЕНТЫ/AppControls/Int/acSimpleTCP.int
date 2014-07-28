@@ -1,0 +1,184 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acSimpleTCP.pas - acSimpleTCPServer and acSimpleTCPClient components.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acSimpleTCP;
+
+interface
+
+uses
+  Windows, Messages, Classes, WinSock, acClasses;
+
+const
+  UM_TCPASYNCSELECT = WM_USER + $0001;
+
+type
+  TacSimpleTCPClient = class;
+
+  TacSimpleTCPAcceptEvent = procedure(Sender: TObject; Client: TacSimpleTCPClient; var Accept: Boolean) of object;
+  TacSimpleTCPServerEvent = procedure(Sender: TObject; Client: TacSimpleTCPClient) of object;
+  TacSimpleTCPServerIOEvent = procedure(Sender: TObject; Client: TacSimpleTCPClient; Stream: TStream) of object;
+  TacSimpleTCPClientIOEvent = procedure(Sender: TObject; Stream: TStream) of object;
+  TacSimpleTCPErrorEvent = procedure(Sender: TObject; Socket: TSocket; ErrorCode: Integer; ErrorMsg: String) of object;
+
+  TacCustomSimpleSocket = class(TacComponent)
+  private
+    FAllowChangeHostAndPortOnConnection: Boolean;
+    FConnected: Boolean;
+    FData: Pointer;
+    FHost: String;
+    FPort: Word;
+    FSocket: TSocket;
+
+    FOnError: TacSimpleTCPErrorEvent;
+
+    // For internal use
+    FConnections: TList;
+        
+    SockAddrIn: TSockAddrIn;
+    HostEnt: PHostEnt;
+    PProtoEnt: PProtoEnt;
+    WSAData: TWSAData;
+    WindowHandle: hWnd;
+
+    procedure WndProc(var Msg: TMessage);
+    procedure UMTCPSelect(var Msg: TMessage); message UM_TCPASYNCSELECT;
+
+    function  SendBufferTo(Socket: TSocket; Buffer: PChar; BufLength: Integer): Integer; // returns N of bytes sent
+    function  SendStreamTo(Socket: TSocket; Stream: TStream): Integer; // returns N of bytes sent
+  protected
+    procedure SocketError(Socket: TSocket; ErrorCode: Integer); virtual;
+    
+    procedure SetHost(Value: String); virtual; abstract;
+    procedure SetPort(Value: Word); virtual; abstract;
+
+    procedure DoAccept; virtual; abstract;
+    procedure DoConnect; virtual; abstract;
+    procedure DoClose(Socket: TSocket); virtual; abstract;
+    procedure DoRead(Client: TacSimpleTCPClient; Stream: TStream); virtual; abstract;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    property AllowChangeHostAndPortOnConnection: Boolean read FAllowChangeHostAndPortOnConnection write FAllowChangeHostAndPortOnConnection;
+    property Data: Pointer read FData write FData;
+    property Host: String read FHost write SetHost;
+    property Port: Word read FPort write SetPort;
+    property Socket: TSocket read FSocket write FSocket;
+
+    property OnError: TacSimpleTCPErrorEvent read FOnError write FOnError;
+  end;
+
+  { TacSimpleTCPServer }
+  TacSimpleTCPServer = class(TacCustomSimpleSocket)
+  private
+    FListen: Boolean;
+
+    FOnAccept: TacSimpleTCPAcceptEvent;
+    FOnClientConnected: TacSimpleTCPServerEvent;
+    FOnClientDisconnected: TacSimpleTCPServerEvent;
+    FOnClientRead: TacSimpleTCPServerIOEvent;
+
+    function GetLocalHostName: String;
+    function GetLocalIP: String;
+    procedure SetNoneStr(Value: String);
+  protected
+    procedure SocketError(Socket: TSocket; ErrorCode: Integer); override;
+
+    procedure SetListen(Value: Boolean); virtual;    
+    procedure SetPort(Value: Word); override;
+
+    procedure DoAccept; override;
+    procedure DoClose(Socket: TSocket); override;
+    procedure DoRead(Client: TacSimpleTCPClient; Stream: TStream); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function  Send(Client: TacSimpleTCPClient; Buffer: PChar; BufLength: Integer): Integer; // returns N of bytes sent
+    function  SendStream(Client: TacSimpleTCPClient; Stream: TStream): Integer; // returns N of bytes sent
+    procedure Broadcast(Buffer: PChar; BufLength: Integer);
+    procedure BroadcastStream(Stream: TStream);    
+
+    property Connections: TList read FConnections;
+  published
+    property Listen: Boolean read FListen write SetListen;
+    property LocalHostName: String read GetLocalHostName write SetNoneStr;
+    property LocalIP: String read GetLocalIP write SetNoneStr;    
+
+    property OnAccept: TacSimpleTCPAcceptEvent read FOnAccept write FOnAccept;
+    property OnClientConnected: TacSimpleTCPServerEvent read FOnClientConnected write FOnClientConnected;
+    property OnClientDisconnected: TacSimpleTCPServerEvent read FOnClientDisconnected write FOnClientDisconnected;
+    property OnClientRead: TacSimpleTCPServerIOEvent read FOnClientRead write FOnClientRead;
+
+    property About;
+    property AllowChangeHostAndPortOnConnection;
+    property Port;
+    property OnError;
+  end;
+
+  TacSimpleTCPClient = class(TacCustomSimpleSocket)
+  private
+    FOnConnected: TNotifyEvent;
+    FOnDisconnected: TNotifyEvent;
+    FOnRead: TacSimpleTCPClientIOEvent;
+
+    function  GetIP: LongInt;
+    procedure SetIP(Value: LongInt);
+  protected
+    procedure SocketError(Socket: TSocket; ErrorCode: Integer); override;
+
+    procedure SetConnected(Value: Boolean); virtual;    
+    procedure SetHost(Value: String); override;
+    procedure SetPort(Value: Word); override;
+
+    procedure DoConnect; override;
+    procedure DoClose(Socket: TSocket); override;
+    procedure DoRead(Client: TacSimpleTCPClient; Stream: TStream); override;
+  public
+    destructor Destroy; override;
+
+    function Send(Buffer: PChar; BufLength: Integer): Integer; // returns N of bytes sent
+    function SendStream(Stream: TStream): Integer; // returns N of bytes sent
+
+    property IP: LongInt read GetIP write SetIP;
+  published
+    property Connected: Boolean read FConnected write SetConnected;
+
+    property OnConnected: TNotifyEvent read FOnConnected write FOnConnected;
+    property OnDisconnected: TNotifyEvent read FOnDisconnected write FOnDisconnected;
+    property OnRead: TacSimpleTCPClientIOEvent read FOnRead write FOnRead;
+
+    property About;    
+    property AllowChangeHostAndPortOnConnection;
+    property Host;
+    property Port;
+    property OnError;
+  end;
+
+implementation

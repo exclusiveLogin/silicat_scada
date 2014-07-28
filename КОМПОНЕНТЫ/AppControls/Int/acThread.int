@@ -1,0 +1,131 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acThread.pas - acThread component. The acThread used in thread of
+              the acHTTP component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acThread;
+
+interface
+
+uses
+  Windows, Classes, acClasses;
+
+type
+  TacCustomThread = class;
+
+  { TacEventThread }
+  TacEventThread = class(TThread)
+  private
+    Owner: TacCustomThread;
+
+    FRunning: Boolean;
+    FOnExecute,
+    FOnException: TNotifyEvent;
+
+    procedure SynchronizedException;
+  protected
+    procedure Execute; override;
+    function RecreateThread: TacEventThread; virtual;
+  public
+    constructor Create(aOwner: TacCustomThread);
+
+    property OnExecute: TNotifyEvent read FOnExecute write FOnExecute;
+    property OnException: TNotifyEvent read FOnException write FOnException;
+    property Running: Boolean read FRunning;
+  end;
+
+  { TacCustomThread }
+  TacCustomThread = class(TacComponent)
+  private
+    FOnTerminate: TNotifyEvent;
+
+    FThread: TacEventThread;
+    FTrueStart: Boolean;         { kludge for Delphi6 threads}
+    FHardBusy: Boolean;          { kludge for low priority threads }
+    FWaitThread: Boolean;
+
+    function  GetPriority: TThreadPriority;
+    procedure SetPriority(Value: TThreadPriority);
+    function  GetSuspended: Boolean;
+    procedure SetSuspended(Value: Boolean);
+    function  GetRunning: Boolean;
+    function  GetTerminated: Boolean;
+    function  GetThreadID: THandle;
+
+    function  GetOnException: TNotifyEvent;
+    procedure SetOnException(Value: TNotifyEvent);
+    function  GetOnExecute: TNotifyEvent;
+    procedure SetOnExecute(Value: TNotifyEvent);
+
+    function  GetHandle: THandle;
+    function  GetReturnValue: Integer;
+    procedure SetReturnValue(Value: Integer);
+  protected
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    { public methods and properties }
+    procedure Execute; virtual;
+    procedure Synchronize(Method: TThreadMethod); virtual;
+    procedure Suspend;
+    procedure Resume;
+    procedure Terminate(Forced: Boolean);
+    function  WaitFor: Integer;
+
+    property Handle: THandle read GetHandle;
+    property Running: Boolean read GetRunning;    
+    property Terminated: Boolean read GetTerminated;
+    property ThreadID: THandle read GetThreadID;
+    property ReturnValue: Integer read GetReturnValue write SetReturnValue;
+    property WaitThread: Boolean read FWaitThread write FWaitThread default False;
+
+    { properties }
+    property Priority: TThreadPriority read GetPriority write SetPriority default tpNormal;
+    property Suspended: Boolean read GetSuspended write SetSuspended default True;
+
+    { events }
+    property OnException: TNotifyEvent read GetOnException write SetOnException;
+    property OnExecute: TNotifyEvent read GetOnExecute write SetOnExecute;
+    property OnTerminate: TNotifyEvent read FOnTerminate write FOnTerminate;
+  end;
+
+  { TacThread }
+  TacThread = class(TacCustomThread)
+  published
+    property About;
+    property Priority;
+    property Suspended;
+    property WaitThread;
+
+    property OnException;
+    property OnExecute;
+    property OnTerminate;
+  end;
+
+implementation

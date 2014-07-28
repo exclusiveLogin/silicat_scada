@@ -1,0 +1,181 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormHelp.pas - FormHelp component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acFormHelp;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, SysUtils, Forms, Menus,
+  acClasses, acCaptionButton, acGraphics;
+  
+const
+  DEFAULT_TAG_OPEN     = '[';
+  DEFAULT_TAG_CLOSE    = ']';
+  DEFAULT_POPUP_WIDTH  = 300;
+  DEFAULT_POPUP_COLOR  = TColor($EEFFFF);
+  DEFAULT_SHADOW_COLOR = clBlack;
+  DEFAULT_MARGIN_HORZ = 10;
+  DEFAULT_MARGIN_VERT = 4;
+
+type
+  TacFormHelp = class;
+
+  TacFormHelpPopupWidth = 40..1000;
+  TacFormHelpOnShowEvent = procedure(Sender: TObject; HelpControl: TControl; var HelpMessage: String) of object;
+  TacFormHelpOnHideEvent = procedure(Sender: TObject; HelpControl: TControl) of object;
+  TacWhatsThisEvent = procedure(Sender: TObject; HelpControl: TControl; MousePos: TPoint; var ShowPopup, ShowHelp: Boolean) of object;
+
+  TacWhatsThis = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FCaption: String;
+    FMenuItem: TComponent;
+    FToolbarButton: TComponent;
+
+    { for internal use }
+    FormHelp: TacFormHelp;
+
+    procedure SetEnabled(Value: Boolean);
+    procedure SetMenuItem(Value: TComponent);
+    procedure SetToolbarButton(Value: TComponent);
+  public
+    constructor Create(aFormHelp: TacFormHelp);
+  published
+    property Enabled: Boolean read FEnabled write SetEnabled default True;
+    property Caption: String read FCaption write FCaption;
+    property MenuItem: TComponent read FMenuItem write SetMenuItem;
+    property ToolbarButton: TComponent read FToolbarButton write SetToolbarButton;
+  end;
+
+  TacFormHelpMargins = class(TPersistent)
+  private
+    FHorizontal,
+    FVertical: Byte;
+  public
+    constructor Create;
+  published
+    property Horizontal: Byte read FHorizontal write FHorizontal default DEFAULT_MARGIN_HORZ;
+    property Vertical: Byte read FVertical write FVertical default DEFAULT_MARGIN_VERT;
+  end;
+
+  TacFormHelp = class(TacCustomCaptionButton)
+  private
+    FActive: Boolean;
+    FAdjustPopupWidth: Boolean;
+    FDelayInterval: Word;
+    FColor, FShadowColor: TColor;
+    FCursor: TCursor;
+    FFont: TFont;
+    FMargins: TacFormHelpMargins;
+    FParentFont: Boolean;
+    FPlainText: Boolean;
+    FPopupWidth: TacFormHelpPopupWidth;
+    FShowShadow: Boolean;
+    FTagOpen: Char;
+    FTagClose: Char;
+    FUseF1: Boolean;
+    FWhatsThis: TacWhatsThis;
+
+    FOnButtonClick: TNotifyEvent;
+    FOnShow: TacFormHelpOnShowEvent;
+    FOnHide: TacFormHelpOnHideEvent;
+    FOnWhatsThis: TacWhatsThisEvent;
+
+    { for internal use }
+    ToolButton: TObject;
+    AwaitingForHelp, RefreshAfterClick: Boolean;
+    WhatsThisMenu: hMenu;       { popup menu }
+    WhatsThisControl: TControl; { control under mouse to invoke help}
+    MenuEntered, SystemMenuClicked: Boolean;
+
+    { private routines}
+    function GetHelpControl(var Control: TControl): Boolean;
+    function GetControlFromPoint(Point: TPoint): TControl;
+    procedure CheckToolbarButton(Button: TObject; Down: Boolean);
+    procedure OnWhatsThisMenuClick(Sender: TObject);
+    procedure OnWhatsThisControlClick(Sender: TObject);
+    procedure CorrectFont;
+    procedure FontChanged(Sender: TObject);
+
+    function  GetCursorHelp: TCursor;
+    procedure SetCursorHelp(Value: TCursor);
+    procedure SetFont(Value: TFont);
+    procedure SetParentFont(Value: Boolean);
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure MessageAfter(var Message: TMessage); override;
+    procedure BeforeMenuClick; override;
+    procedure Pressed; override;
+
+    procedure DoShowHelp(HelpControl: TControl; ShowPoint: TPoint; Help: String); virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    { public methods }
+    procedure InvokeHelpPointer;
+    procedure ShowHelp(const Help: String);
+    procedure ShowHelpFromPoint(ShowPoint: TPoint; const Help: String);
+    procedure ShowHelpFromControl(Control: TControl);
+  published
+    property About;
+    property CaptionButton;
+    property SystemMenu;
+
+    { properties }
+    property Active: Boolean read FActive write FActive default True;
+    property AdjustPopupWidth: Boolean read FAdjustPopupWidth write FAdjustPopupWidth default True;
+    property DelayInterval: Word read FDelayInterval write FDelayInterval;
+    property Color: TColor read FColor write FColor default DEFAULT_POPUP_COLOR;
+    property Cursor: TCursor read FCursor write FCursor;
+    property CursorHelp: TCursor read GetCursorHelp write SetCursorHelp;
+    property Font: TFont read FFont write SetFont;
+    property Margins: TacFormHelpMargins read FMargins write FMargins;
+    property ParentFont: Boolean read FParentFont write SetParentFont;
+    property PlainText: Boolean read FPlainText write FPlainText default False;
+    property PopupWidth: TacFormHelpPopupWidth read FPopupWidth write FPopupWidth default DEFAULT_POPUP_WIDTH;
+    property ShadowColor: TColor read FShadowColor write FShadowColor default DEFAULT_SHADOW_COLOR;
+    property ShowShadow: Boolean read FShowShadow write FShowShadow default True;
+    property TagOpen: Char read FTagOpen write FTagOpen default DEFAULT_TAG_OPEN;
+    property TagClose: Char read FTagClose write FTagClose default DEFAULT_TAG_CLOSE;
+    property UseF1: Boolean read FUseF1 write FUseF1 default True;
+    property WhatsThis: TacWhatsThis read FWhatsThis write FWhatsThis;
+
+    { events}
+    property OnButtonClick: TNotifyEvent read FOnButtonClick write FOnButtonClick;
+    property OnShow: TacFormHelpOnShowEvent read FOnShow write FOnShow;
+    property OnHide: TacFormHelpOnHideEvent read FOnHide write FOnHide;
+    property OnWhatsThis: TacWhatsThisEvent read FOnWhatsThis write FOnWhatsThis;
+  end;
+
+function MouseCallbackProc(nCode: Integer; wParam, lParam: LongInt): LongInt; stdcall;
+
+implementation

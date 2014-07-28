@@ -1,0 +1,148 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acClasses.pas - base classes that hooks the windows and application
+        messages (WM_xxx).
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acClasses;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Forms;
+
+const
+  UM_RECREATENOTIFY         = WM_USER + 301;
+  WM_FORMCAPTIONCHANGED     = WM_USER + $3659;
+  WM_SYSTEMMENUCHANGED      = WM_USER + $3660;
+  WM_WHATSTHIS              = WM_USER + $3661;
+  WM_TOPMOSTCHANGEDNOTIFY   = WM_USER + $3662;
+  WM_APPBARNOTIFY           = WM_USER + $3663;
+  WM_TRAYICONNOTIFY         = WM_USER + $3664;
+  WM_RECREATENOTIFY         = WM_USER + $3665;
+  
+  MouseKeys: Array[Boolean] of Integer = (VK_RBUTTON, VK_LBUTTON);
+
+
+type
+  TacRegLocation = (rlCurrentUser, rlLocalMachine);
+  TCharSet = set of Char;
+
+  { TacComponent }
+  TacComponent = class(TComponent)
+  private
+    FAbout: String;
+    FParent: TWinControl;
+
+    procedure SetParent(Value: TWinControl); virtual;
+    function  GetParentForm: TForm; virtual;
+    procedure SetParentForm(Value: TForm); virtual;
+  protected
+  public
+    property About: String read FAbout write FAbout stored False;
+    property Parent: TWinControl read FParent write SetParent;
+    property ParentForm: TForm read GetParentForm write SetParentForm;
+
+    constructor Create(aOwner: TComponent); override;
+  end;
+
+  { TacFormHookComponent }
+  TacFormHookComponent = class(TacComponent)
+  private
+    Hooked: Boolean;
+    FTopmost: Boolean;
+    FParentHandle: THandle;
+    FOldWndProc, FNewWndProc: Pointer;
+
+    procedure HookWndProc(var Message: TMessage);
+    procedure SetParent(Value: TWinControl); override;
+    function  GetWindowStyle: LongInt;
+    procedure SetWindowStyle(Value: LongInt);
+    function  GetWindowExStyle: LongInt;
+    procedure SetWindowExStyle(Value: LongInt);
+    function  GetTopmost: Boolean;
+    procedure SetTopmost(Value: Boolean);
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); virtual;
+    procedure MessageAfter(var Message: TMessage); virtual;
+    procedure FormRecreate; virtual;
+
+    function  GetParentHandle: THandle; virtual;
+    function  GetSystemMenuHandle: hMenu; virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    constructor KreateHook(aOwner: TComponent; aHookedObject: TWinControl);
+    destructor Destroy; override;
+    
+    procedure RefreshNCArea;
+
+    property ParentHandle: THandle read FParentHandle;
+    property SystemMenuHandle: hMenu read GetSystemMenuHandle;
+    property OldWndProc: Pointer read FOldWndProc;
+    property WindowStyle: LongInt read GetWindowStyle write SetWindowStyle;
+    property WindowExStyle: LongInt read GetWindowExStyle write SetWindowExStyle;
+
+    property Topmost: Boolean read GetTopmost write SetTopmost;
+    property TopmostDesign: Boolean read FTopmost;
+  end;
+
+  { TacHFormHookComponent }
+  { same as FormHook but contains own window handle and WndProc }
+  TacHFormHookComponent = class(TacFormHookComponent)
+  private
+    FHandle: THandle;
+  protected
+    procedure WndProc(var Message: TMessage); virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+    
+    property Handle: THandle read FHandle;
+  end;
+
+  { TacAppHookComponent }
+  TacAppHookComponent = class(TacHFormHookComponent)
+  private
+    AppHooked: Boolean;
+    OldAppWndProc: Pointer;
+    NewAppWndProc: Pointer;
+
+    procedure HookAppMessages;
+    procedure UnhookAppMessages;
+    procedure HookAppProc(var Message: TMessage);
+  protected
+    procedure AppMessageBefore(var Message: TMessage; var Handled: Boolean); virtual;
+    procedure AppMessageAfter(var Message: TMessage); virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  end;
+
+const
+  SOwnerMustBeForm = 'Owner must be a Form!';
+
+implementation

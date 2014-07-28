@@ -1,0 +1,144 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acQuickAboutBox.pas - QuickAboutBox component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acQuickAboutBox;
+
+interface
+
+uses
+  Windows, Classes, Controls, Graphics, Forms,
+  acClasses, acFormBackground;
+
+type
+  TacQuickAboutBoxGradientBackground = class(TPersistent)
+  private
+    FColor1: TColor;
+    FColor2: TColor;
+    FDirection: TacGradientDirection;
+    FEnabled: Boolean;
+  public
+  published
+    property Color1: TColor read FColor1 write FColor1 default clBtnFace; 
+    property Color2: TColor read FColor2 write FColor2 default cl3DLight;
+    property Direction: TacGradientDirection read FDirection write FDirection default gdHorizontal;
+    property Enabled: Boolean read FEnabled write FEnabled default True;
+  end;
+
+  TacQuickAboutBoxFormCursors = class(TPersistent)
+  private
+    FCaption,
+    FClient,
+    FBorder,
+    FBtnClose,
+    FButtons,
+    FLinks: TCursor;
+  public
+  published
+    property Caption: TCursor read FCaption write FCaption;
+    property Client: TCursor read FClient write FClient;
+    property Border: TCursor read FBorder write FBorder;
+    property BtnClose: TCursor read FBtnClose write FBtnClose;
+    property Buttons: TCursor read FButtons write FButtons;
+    property Links: TCursor read FLinks write FLinks;
+  end;
+
+  TacQuickAboutBoxLocalization = class(TPersistent)
+  private
+    FstAbout: String;
+    FstOK: String;
+    FstRegister: String;
+    FstRegisteredTo: String;
+    FstUnregistered: String;
+  public
+  published
+    property stAbout: String read FstAbout write FstAbout;
+    property stOK: String read FstOK write FstOK;
+    property stRegister: String read FstRegister write FstRegister;
+    property stRegisteredTo: String read FstRegisteredTo write FstRegisteredTo;
+    property stUnregistered: String read FstUnregistered write FstUnregistered;
+  end;
+
+  TacQuickAboutBox = class(TacComponent)
+  private
+    FAnimationOnShow: Boolean;
+    FAnimationOnHide: Boolean;    
+    FAnimationDelay: Word;
+    FCaption: String;
+    FCopyright: String;
+    FCursors: TacQuickAboutBoxFormCursors;
+    FGradientBackground: TacQuickAboutBoxGradientBackground;
+    FDescription: String;
+    FDescriptionColor: TColor;
+    FIcon: TIcon;
+    FLocalization: TacQuickAboutBoxLocalization;
+    FRegistered: Boolean;
+    FRegisteredTo: String;
+    FRegistrationURL: String;
+    FShareware: Boolean;
+    FShowBevels: Boolean;
+    FShowFrames: Boolean;
+    FShowHints: Boolean;
+    FEmail: String;
+    FWebSite: String;
+    FWidth: Integer;
+
+    procedure SetIcon(Value: TIcon);
+  public
+    AddInfo: String;
+
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure Execute;
+  published
+    property About;
+
+    property AnimationOnShow: Boolean read FAnimationOnShow write FAnimationOnShow default True;
+    property AnimationOnHide: Boolean read FAnimationOnHide write FAnimationOnHide default True;
+    property AnimationDelay: Word read FAnimationDelay write FAnimationDelay default 80;
+    property Caption: String read FCaption write FCaption;
+    property Copyright: String read FCopyright write FCopyright;
+    property Cursors: TacQuickAboutBoxFormCursors read FCursors write FCursors;
+    property GradientBackground: TacQuickAboutBoxGradientBackground read FGradientBackground write FGradientBackground;
+    property Description: String read FDescription write FDescription;
+    property DescriptionColor: TColor read FDescriptionColor write FDescriptionColor default clHighlightText;
+    property Icon: TIcon read FIcon write SetIcon;
+    property Localization: TacQuickAboutBoxLocalization read FLocalization write FLocalization;
+    property Registered: Boolean read FRegistered write FRegistered default False;
+    property RegisteredTo: String read FRegisteredTo write FRegisteredTo;
+    property RegistrationURL: String read FRegistrationURL write FRegistrationURL;
+    property Shareware: Boolean read FShareware write FShareware default False;
+    property ShowBevels: Boolean read FShowBevels write FShowBevels default True;
+    property ShowFrames: Boolean read FShowFrames write FShowFrames;
+    property ShowHints: Boolean read FShowHints write FShowHints default True;
+    property Email: String read FEmail write FEmail;
+    property WebSite: String read FWebSite write FWebSite;
+    property Width: Integer read FWidth write FWidth default 260;
+  end;
+
+implementation

@@ -1,0 +1,235 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acSystemInfo.pas - SystemInfo component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acSystemInfo;
+
+interface
+
+uses
+  Windows, Messages, Classes, Graphics, SysUtils, Forms,
+  WinSock, IniFiles, Registry,
+  acClasses, acUtils;
+
+type
+  TacInternetStatus = (iOffline, iOnline);
+  TacCPUArchitecture = (paINTEL, paMIPS, paALPHA, paPPC, paUNKNOWN);
+  TacCPUType = (ptIntel386, ptIntel486, ptPentium, ptMIPS_R4000, ptALPHA_21064, ptUNKNOWN);
+  TacScreenColorMode = (sm4bit, sm8bit, sm16bit, sm24bit, sm32bit);  
+  TacScreenResolution = (sr640x480, sr800x600, sr1024x768, sr1152x864, sr1280x960, sr1280x1024);
+  TacSystemInfo = class(TacComponent)
+  private
+    FALLOW_EDIT: Boolean;
+
+    function  GetComputerDescription: String;
+    procedure SetComputerDescription(const Value: String);
+    function  GetComputerName: String;
+    procedure SetComputerName(const Value: String);
+    function  GetComputerWorkgroup: String;
+    procedure SetComputerWorkgroup(const Value: String);
+    function  GetCurrentUserName: String;
+    procedure SetCurrentUserName(const Value: String);
+    function  GetWinDirectXVersion: String;
+    function  GetDefaultBrowser: String;
+    function  GetDirAppData: String;
+    procedure SetDirAppData(const Value: String);
+    function  GetDirAppDataAll: String;
+    procedure SetDirAppDataAll(const Value: String);
+    function  GetDirCache: String;
+    procedure SetDirCache(const Value: String);
+    function  GetDirCookies: String;
+    procedure SetDirCookies(const Value: String);
+    function  GetDirDesktop: String;
+    procedure SetDirDesktop(const Value: String);
+    function  GetDirFavorites: String;
+    procedure SetDirFavorites(const Value: String);
+    function  GetDirFavoritesAll: String;
+    procedure SetDirFavoritesAll(const Value: String);
+    function  GetDirFonts: String;
+    procedure SetDirFonts(const Value: String);
+    function  GetDirHistory: String;
+    procedure SetDirHistory(const Value: String);
+    function  GetDirMyPictures: String;
+    procedure SetDirMyPictures(const Value: String);
+    function  GetDirNetHood: String;
+    procedure SetDirNetHood(const Value: String);
+    function  GetDirPersonal: String;
+    procedure SetDirPersonal(const Value: String);
+    function  GetDirPrintHood: String;
+    procedure SetDirPrintHood(const Value: String);
+    function  GetDirPrograms: String;
+    procedure SetDirPrograms(const Value: String);
+    function  GetDirProgramsAll: String;
+    procedure SetDirProgramsAll(const Value: String);
+    function  GetDirRecent: String;
+    procedure SetDirRecent(const Value: String);
+    function  GetDirSendTo: String;
+    procedure SetDirSendTo(const Value: String);
+    function  GetDirStartMenu: String;
+    procedure SetDirStartMenu(const Value: String);
+    function  GetDirStartMenuAll: String;
+    procedure SetDirStartMenuAll(const Value: String);
+    function  GetDirStartup: String;
+    procedure SetDirStartup(const Value: String);
+    function  GetDirStartupAll: String;
+    procedure SetDirStartupAll(const Value: String);
+    function  GetDirTemplates: String;
+    procedure SetDirTemplates(const Value: String);
+    function  GetDirTemplatesAll: String;
+    procedure SetDirTemplatesAll(const Value: String);
+    function  GetDirCommonFiles: String;
+    procedure SetDirCommonFiles(const Value: String);
+    function  GetDirMedia: String;
+    procedure SetDirMedia(const Value: String);
+    function  GetDirProgramFiles: String;
+    procedure SetDirProgramFiles(const Value: String);
+    function  GetDirSystem: String;
+    function  GetDirTemp: String;
+    function  GetDirWindows: String;
+    function  GetDiskCSerialNumber: Integer;
+    function  GetDiskCSerialNumberStr: String;
+    function  GetInternetStatus: TacInternetStatus;
+    procedure SetInternetStatus(Value: TacInternetStatus);
+    function  GetMemAvailPhisical: Integer;
+    function  GetMemAvailVirtual: Integer;
+    function  GetMemTotalPhisical: Integer;
+    function  GetMemTotalVirtual: Integer;
+    function  GetMemLoad: Integer;
+    function  GetOSVersion: TacOSVersion;
+    function  GetOwnerCompany: String;
+    procedure SetOwnerCompany(const Value: String);
+    function  GetOwnerName: String;
+    procedure SetOwnerName(const Value: String);
+    function  GetCPUIdentifier: String;
+    function  GetCPUVendor: String;
+    function  GetCPUArchitecture: TacCPUArchitecture;
+    procedure SetCPUArchitecture(const Value: TacCPUArchitecture);
+    function  GetCPUsNumber: Integer;
+    function  GetCPUType: TacCPUType;
+    procedure SetCPUType(const Value: TacCPUType);
+    function  GetCPUFrequency: Integer;
+    function  GetScreenColorMode: TacScreenColorMode;
+    procedure SetScreenColorMode(const Value: TacScreenColorMode);
+    function  GetScreenResolution: TacScreenResolution;
+    procedure SetScreenResolution(const Value: TacScreenResolution);
+    function  GetScreenSaver: String;
+    procedure SetScreenSaver(const Value: String);
+    function  GetSystemUpTime: Integer;
+    function  GetSystemPathes: String;
+    function  GetWinNT: Boolean;
+    function  GetWinProductID: String;
+    function  GetWinProductName: String;
+    function  GetWinVersion: String;
+    function  GetWinVersionBuild: Integer;
+    function  GetWinVersionMajor: Integer;
+    function  GetWinVersionMinor: Integer;
+    function  GetWinVersionNumber: String;
+    function  GetWinVersionSubNumber: String;
+
+    procedure SetNothingBool(const Value: Boolean);
+    procedure SetNothingInteger(const Value: Integer);
+    procedure SetNothingString(const Value: String);
+    procedure SetNothingOSVersion(const Value: TacOSVersion);
+
+    function  ReadRegString(const Key, Name: String): String;
+    procedure WriteRegString(const Key, Name, Value: String);
+    function  ReadUserRegString(const Key, Name: String): String;
+    procedure WriteUserRegString(const Key, Name, Value: String);
+    procedure CouldNotChangeValue;
+  published
+    property About;
+    property ALLOW_EDIT: Boolean read FALLOW_EDIT write FALLOW_EDIT;
+    property ComputerDescription: String read GetComputerDescription write SetComputerDescription stored False;
+    property ComputerName: String read GetComputerName write SetComputerName stored False;
+    property ComputerWorkgroup: String read GetComputerWorkgroup write SetComputerWorkgroup stored False;
+    property CurrentUserName: String read GetCurrentUserName write SetCurrentUserName stored False;
+    property WinDirectXVersion: String read GetWinDirectXVersion write SetNothingString stored False;
+    property DefaultBrowser: String read GetDefaultBrowser write SetNothingString stored False;
+    property DirAppData: String read GetDirAppData write SetDirAppData stored False;
+    property DirAppDataAll: String read GetDirAppDataAll write SetDirAppDataAll stored False;    
+    property DirCache: String read GetDirCache write SetDirCache stored False;
+    property DirCookies: String read GetDirCookies write SetDirCookies stored False;
+    property DirCommonFiles: String read GetDirCommonFiles write SetDirCommonFiles stored False;
+    property DirDesktop: String read GetDirDesktop write SetDirDesktop stored False;
+    property DirFavorites: String read GetDirFavorites write SetDirFavorites stored False;
+    property DirFavoritesAll: String read GetDirFavoritesAll write SetDirFavoritesAll stored False;    
+    property DirFonts: String read GetDirFonts write SetDirFonts stored False;
+    property DirHistory: String read GetDirHistory write SetDirHistory stored False;
+    property DirMedia: String read GetDirMedia write SetDirMedia stored False;
+    property DirMyPictures: String read GetDirMyPictures write SetDirMyPictures stored False;
+    property DirNetHood: String read GetDirNetHood write SetDirNetHood stored False;
+    property DirPersonal: String read GetDirPersonal write SetDirPersonal stored False;
+    property DirPrintHood: String read GetDirPrintHood write SetDirPrintHood stored False;
+    property DirProgramFiles: String read GetDirProgramFiles write SetDirProgramFiles stored False;
+    property DirPrograms: String read GetDirPrograms write SetDirPrograms stored False;
+    property DirProgramsAll: String read GetDirProgramsAll write SetDirProgramsAll stored False;    
+    property DirRecent: String read GetDirRecent write SetDirRecent stored False;
+    property DirSendTo: String read GetDirSendTo write SetDirSendTo stored False;
+    property DirStartMenu: String read GetDirStartMenu write SetDirStartMenu stored False;
+    property DirStartMenuAll: String read GetDirStartMenuAll write SetDirStartMenuAll stored False;
+    property DirStartup: String read GetDirStartup write SetDirStartup stored False;
+    property DirStartupAll: String read GetDirStartupAll write SetDirStartupAll stored False;
+    property DirSystem: String read GetDirSystem write SetNothingString stored False;
+    property DirTemp: String read GetDirTemp write SetNothingString stored False;
+    property DirTemplates: String read GetDirTemplates write SetDirTemplates stored False;
+    property DirTemplatesAll: String read GetDirTemplatesAll write SetDirTemplatesAll stored False;    
+    property DirWindows: String read GetDirWindows write SetNothingString stored False;
+    property DiskCSerialNumber: Integer read GetDiskCSerialNumber write SetNothingInteger stored False;
+    property DiskCSerialNumberStr: String read GetDiskCSerialNumberStr write SetNothingString stored False;
+    property InternetStatus: TacInternetStatus read GetInternetStatus write SetInternetStatus stored False;
+    property MemAvailPhisical: Integer read GetMemAvailPhisical write SetNothingInteger stored False;
+    property MemTotalPhisical: Integer read GetMemTotalPhisical write SetNothingInteger stored False;
+    property MemAvailVirtual: Integer read GetMemAvailVirtual write SetNothingInteger stored False;
+    property MemTotalVirtual: Integer read GetMemTotalVIrtual write SetNothingInteger stored False;
+    property MemLoad: Integer read GetMemLoad write SetNothingInteger stored False;
+    property OSVersion: TacOSVersion read GetOSVersion write SetNothingOSVersion stored False;
+    property OwnerName: String read GetOwnerName write SetOwnerName stored False;
+    property OwnerCompany: String read GetOwnerCompany write SetOwnerCompany stored False;
+    property CPUIdentifier: String read GetCPUIdentifier write SetNothingString stored False;
+    property CPUVendor: String read GetCPUVendor write SetNothingString stored False;
+    property CPUArchitecture: TacCPUArchitecture read GetCPUArchitecture write SetCPUArchitecture stored False;
+    property CPUsNumber: Integer read GetCPUsNumber write SetNothingInteger stored False;
+    property CPUType: TacCPUType read GetCPUType write SetCPUType stored False;
+    property CPUFrequency: Integer read GetCPUFrequency write SetNothingInteger stored False;
+    property ScreenColorMode: TacScreenColorMode read GetScreenColorMode write SetScreenColorMode stored False;
+    property ScreenResolution: TacScreenResolution read GetScreenResolution write SetScreenResolution stored False;
+    property ScreenSaver: String read GetScreenSaver write SetScreenSaver stored False;
+    property SystemUpTime: Integer read GetSystemUpTime write SetNothingInteger stored False;
+    property SystemPathes: String read GetSystemPathes write SetNothingString;
+    property WinNT: Boolean read GetWinNT write SetNothingBool;
+    property WinProductID: String read GetWinProductID write SetNothingString stored False;
+    property WinProductName: String read GetWinProductName write SetNothingString stored False;
+    property WinVersion: String read GetWinVersion write SetNothingString stored False;
+    property WinVersionBuild: Integer read GetWinVersionBuild write SetNothingInteger stored False;
+    property WinVersionMajor: Integer read GetWinVersionMajor write SetNothingInteger stored False;
+    property WinVersionMinor: Integer read GetWinVersionMinor write SetNothingInteger stored False;
+    property WinVersionNumber: String read GetWinVersionNumber write SetNothingString stored False;
+    property WinVersionSubNumber: String read GetWinVersionSubNumber write SetNothingString stored False;
+  end;
+
+implementation

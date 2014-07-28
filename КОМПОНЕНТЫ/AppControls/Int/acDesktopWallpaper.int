@@ -1,0 +1,65 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acDesktopWallpaper.pas - DesktopWallpaper component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acDesktopWallpaper;
+
+interface
+
+uses
+  Windows, Messages, Classes, Forms, SysUtils, Registry,
+  acClasses;
+
+type
+  TacDesktopWallpaper = class(TacComponent)
+  private
+    FAutoFormat: Boolean;
+
+    procedure SetAppearance(aStretch, aTile: Boolean);
+    procedure SetAutoAppearance;
+    procedure RefreshWallpaper;
+
+    procedure SetAutoFormat(Value: Boolean);
+    function  GetTile: Boolean;
+    procedure SetTile(Value: Boolean);
+    function  GetStretch: Boolean;
+    procedure SetStretch(Value: Boolean);
+    function  GetWallpaper: String;
+    procedure SetWallpaper(Value: String);
+  public
+    procedure SetDesktopWallpaper(WallpaperFile: String; aStretch, aTile: Boolean);
+    procedure RemoveWallpaper;
+  published
+    property About;
+
+    property AutoFormat: Boolean read FAutoFormat write SetAutoFormat;
+    property Tile: Boolean read GetTile write SetTile;
+    property Stretch: Boolean read GetStretch write SetStretch;
+    property Wallpaper: String read GetWallpaper write SetWallpaper;    
+  end;
+
+implementation

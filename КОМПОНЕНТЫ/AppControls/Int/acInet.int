@@ -1,0 +1,65 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acInet.pas - Internet utilities
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acInet;
+
+interface
+
+{ SOCKETS }
+{ Iitialize socket and connects to remote host
+  Returns False and automatically close socket if host unreachable }
+function SockConnect(var SOCK: Integer; const Host: String; const Port: Integer): Boolean;
+{ Close socket }
+procedure SockDisconnect(var SOCK: Integer);
+
+{ UTILS }
+function IsOnline: Boolean;
+function IPToStr(IP: Integer): String;
+function StrToIP(Host: String): LongInt;
+
+{ some optional structures unavailable in WinSock for Delphi 2/3 }
+{$IFNDEF D4}
+type
+  SunB = packed record
+    s_b1, s_b2, s_b3, s_b4: Char;
+  end;
+
+  SunW = packed record
+    s_w1, s_w2: Word;
+  end;
+
+  in_addr = record
+    case Integer of
+      0: (S_un_b: SunB);
+      1: (S_un_w: SunW);
+      2: (S_addr: LongInt);
+  end;
+{$ENDIF}
+
+implementation

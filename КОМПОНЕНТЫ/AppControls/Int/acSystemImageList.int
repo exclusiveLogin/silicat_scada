@@ -1,0 +1,82 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acSystemImageList.pas - acSystemImageList component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@appcontrols.com, info@utilmind.com
+  WWW: http://www.appcontrols.com, http://www.utilmind.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acSystemImageList;
+
+interface
+
+uses
+  Classes, Controls, Graphics
+  {$IFDEF D4}, ImgList {$ENDIF};
+
+type
+  TacSystemImageSize = (is16x16, is32x32);
+  TacSystemImageList = class(TImageList)
+  private
+    FAbout: String;
+    FImageSize: TacSystemImageSize;
+    FImageSizeInt: Integer;
+
+    { design-time properties of the TComponent }
+    procedure ReadLeft(Reader: TReader);
+    procedure ReadTop(Reader: TReader);
+    procedure WriteLeft(Writer: TWriter);
+    procedure WriteTop(Writer: TWriter);
+
+    function  GetAllocBy: Integer;
+    function  GetBkColor: TColor;
+    function  GetBlendColor: TColor;
+    function  GetDrawingStyle: TDrawingStyle;
+    function  GetImageType: TImageType;
+    function  GetMasked: Boolean;
+    function  GetShareImages: Boolean;
+    procedure SetImageSize(Value: TacSystemImageSize);
+  protected
+    procedure DefineProperties(Filer: TFiler); override;  
+    procedure SysInitialize; virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    constructor CreateSize(aWidth, aHeight: Integer);
+  published
+    property About: String read FAbout write FAbout stored False;
+    property ImageSize: TacSystemImageSize read FImageSize write SetImageSize default is16x16;    
+
+    { getting rid of some properties from the Object Inspector }
+    property AllocBy: Integer read GetAllocBy stored False;
+    property BkColor: TColor read GetBkColor stored False;
+    property BlendColor: TColor read GetBlendColor stored False;
+    property DrawingStyle: TDrawingStyle read GetDrawingStyle stored False;
+    property ImageType: TImageType read GetImageType stored False;
+    property Masked: Boolean read GetMasked stored False;
+    property ShareImages: Boolean read GetShareImages default True;
+    property Width: Integer read FImageSizeInt stored False;
+    property Height: Integer read FImageSizeInt stored False;
+  end;
+
+implementation

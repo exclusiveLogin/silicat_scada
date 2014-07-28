@@ -65,6 +65,9 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket);
         void __fastcall ClientSocket1Connecting(TObject *Sender,
           TCustomWinSocket *Socket);
+    void __fastcall ClientSocket1Error(TObject *Sender,
+          TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
+          int &ErrorCode);
 private:	// User declarations
         void WriteData();
         void SendCommand(int num_zap,float value);
@@ -101,7 +104,7 @@ public:		// User declarations
         __fastcall TPACQuery(TComponent* Owner);
         BEGIN_MESSAGE_MAP
          MESSAGE_HANDLER(WM_USER+1,TMessage, OnWriteValue)      // запись значения в контроллер
-        END_MESSAGE_MAP(TComponent)
+        END_MESSAGE_MAP(TComponent) 
     __fastcall ~TPACQuery(void);
 };
 //---------------------------------------------------------------------------

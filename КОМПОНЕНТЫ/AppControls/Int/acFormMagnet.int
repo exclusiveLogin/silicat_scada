@@ -1,0 +1,128 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormMagnet.pas - FormMagnet component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acFormMagnet;
+
+interface
+
+uses
+  Windows, Messages, Classes, Forms,
+  acClasses;
+
+const
+  DEFAULT_POWER        = 20;
+  DEFAULT_SCREEN_POWER = 16;
+
+type
+  TacFormMagnet = class;
+
+  TacScreenArea = (saWorkArea, saFullScreen);
+  TacScreenEdges = set of (seLeft, seTop, seRight, seBottom);
+  TacScreenMagnet = class(TPersistent)
+  private
+    FArea: TacScreenArea;
+    FEdges: TacScreenEdges;
+    FScreenPower: Byte;
+  public
+    constructor Create;
+  published
+    property Area: TacScreenArea read FArea write FArea;
+    property Edges: TacScreenEdges read FEdges write FEdges default [seLeft, seTop, seRight, seBottom];
+    property ScreenPower: Byte read FScreenPower write FScreenPower default DEFAULT_SCREEN_POWER;
+  end;
+
+  TacGluedObject = class(TObject)
+  private
+    Magnet: TacFormMagnet;
+    Position: TPoint;
+  public
+    constructor Create(aMagnet: TacFormMagnet; aLeft, aTop: Integer);
+  end;
+
+  TacGlueList = class(TList)
+  public
+    function IsGluedTo(Magnet: TacFormMagnet): Boolean;
+    function GetFormPositionByMagnet(Magnet: TacFormMagnet): TPoint;
+  end;
+
+  TOnGlue = procedure(Sender: TObject; AnotherForm: TForm; var AllowGlue: Boolean) of object;
+  TOnMagnet = procedure(Sender: TObject; AnotherForm: TForm; var AllowMagnet: Boolean) of object;
+  TacMagnetOption = (moDockOnMoving, moDockToInnerBorders, moDockChains, moGlueChains);
+  TacMagnetOptions = set of TacMagnetOption;
+  TacFormMagnet = class(TacFormHookComponent)
+  private
+    FActive: Boolean;
+    FGlue: Boolean;
+    FFormDragable: Boolean;
+    FOptions: TacMagnetOptions;
+    FPower: Byte;
+    FScreenMagnet: TacScreenMagnet;
+
+    FOnGlue: TOnGlue;
+    FOnMagnet: TOnMagnet;
+    FOnDragMove: TNotifyEvent;
+
+    { internal variables }
+    Suspended: Boolean;
+    GluedTo: TacGlueList;
+    Moving: Boolean;
+    BeginMovingPos: TPoint;
+
+    procedure SetActive(Value: Boolean);
+    function  GetFormTopmost: Boolean;
+    procedure SetFormTopmost(Value: Boolean);
+
+    function AllowGlueTo(AnotherMagnet: TacFormMagnet): Boolean;
+    function AllowMagnetTo(AnotherMagnet: TacFormMagnet): Boolean;
+
+    procedure RecalculateGluing;
+    procedure MagnetByDraggingRect(var DraggingRect: TRect; CalculateRelativePlacement, GlueOnly: Boolean);
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure MessageAfter(var Message: TMessage); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure DoMagnet;
+  published
+    property About;
+    property Active: Boolean read FActive write SetActive default True;
+    property Glue: Boolean read FGlue write FGlue;
+    property FormDragable: Boolean read FFormDragable write FFormDragable;
+    property FormTopmost: Boolean read GetFormTopmost write SetFormTopmost;
+    property Options: TacMagnetOptions read FOptions write FOptions default [moDockOnMoving, moDockToInnerBorders, moDockChains, moGlueChains];
+    property Power: Byte read FPower write FPower default DEFAULT_POWER;
+    property ScreenMagnet: TacScreenMagnet read FScreenMagnet write FScreenMagnet;
+
+    property OnGlue: TOnGlue read FOnGlue write FOnGlue;
+    property OnMagnet: TOnMagnet read FOnMagnet write FOnMagnet;
+    property OnDragMove: TNotifyEvent read FOnDragMove write FOnDragMove;
+  end;
+
+implementation

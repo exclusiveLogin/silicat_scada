@@ -1,0 +1,105 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAppAutoRun.pas - AppAutoRun component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions.
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acAppAutoRun;
+
+interface
+
+uses
+  Windows, Classes, Graphics, Forms, Registry, acCaptionButton;
+
+const
+  AutoRunIdentifier = '/autorun';
+
+type
+  TacAutoRunLogonNotice = class(TPersistent)
+  private
+    FCaption: String;
+    FEnabled: Boolean;
+    FText: String;
+
+    procedure SetCaption(Value: String);
+    procedure SetEnabled(Value: Boolean);
+    procedure SetText(Value: String);
+
+    procedure SetLogonNotice;
+  public
+  published
+    property Caption: String read FCaption write SetCaption;
+    property Enabled: Boolean read FEnabled write SetEnabled;
+    property Text: String read FText write SetText;
+  end;
+
+  TacAutoRunFor = (rfCurrentUser, rfLocalMachine, rfService);
+  TacAppAutoRunButtonClickEvent = procedure(Sender: TObject; AutoRun: Boolean) of object;  
+  TacAppAutoRun = class(TacCustomCaptionButton)
+  private
+    FAutoRun: Boolean;
+    FLogonNotice: TacAutoRunLogonNotice;
+    FRunFor: TacAutoRunFor;
+    FRunOnce: Boolean;
+
+    FOnAutoRun: TNotifyEvent;
+    FOnButtonClick: TacAppAutoRunButtonClickEvent;
+
+    { variables for internal use }
+    FGlyphEnabled: TBitmap;
+    FGlyphDisabled: TBitmap;
+
+    procedure SetAutoRun(Value: Boolean);
+    procedure SetRunFor(Value: TacAutoRunFor);
+    procedure SetRunOnce(Value: Boolean);
+
+    { private routines }
+    procedure OpenRegKey(Reg: TRegistry; RunFor: TacAutoRunFor; RunOnce: Boolean);
+    procedure ModifyRegValue(NewAutoRun: Boolean; NewRunFor: TacAutoRunFor; NewRunOnce: Boolean);
+
+    function  AutoRunAppTitle: String;
+    function  AutoRunExeName: String;
+  protected
+    procedure Loaded; override;
+    procedure Click; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About;
+    property CaptionButton;
+    property SystemMenu;
+
+    property AutoRun: Boolean read FAutoRun write SetAutoRun;
+    property LogonNotice: TacAutoRunLogonNotice read FLogonNotice write FLogonNotice;
+    property RunFor: TacAutoRunFor read FRunFor write SetRunFor;
+    property RunOnce: Boolean read FRunOnce write SetRunOnce;
+
+    property OnAutoRun: TNotifyEvent read FOnAutoRun write FOnAutoRun;
+    property OnButtonClick: TacAppAutoRunButtonClickEvent read FOnButtonClick write FOnButtonClick;
+  end;
+
+implementation

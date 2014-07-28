@@ -1,0 +1,167 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acSendMail.pas - acSendMail component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acSendMail;
+
+interface
+
+uses
+  Windows, SysUtils, Classes,
+  acClasses, acThread;
+
+type
+  { SMTP types }
+  TacSMTPPriority = (mpHighest, mpHigh, mpNormal, mpLow, mpLowest);
+  TacSMTPAttachType = (atNormal, atEmbedded);
+  TacSMTPContentType = (ctPlainText, ctHTML);
+
+  { event handlers }
+  TacSMTPCantAttachEvent = procedure(Sender: TObject; FileName: String) of object;
+  TacSMTPProgressEvent = procedure(Sender: TObject; MessageSize, BytesSent: Integer; PercentsDone: Byte) of object;
+  TacSMTPResponseEvent = procedure(Sender: TObject; Code: Integer; Response: String) of object;
+
+  TacSendMail = class(TacComponent)
+  private
+    FSMTPHost: String;
+    FSMTPPort: Integer;
+
+    FMsgContentType: TacSMTPContentType;
+    FMsgContentCharset,
+    FMsgSubject, FMsgBody: String;
+    FMsgPriority: TacSMTPPriority;    
+
+    FAgent,
+    FFromAddress, FFromName,
+    FFromOrganization,
+    FTo,
+    FToCC, FToBCC,
+    FReplyTo: String;
+
+    FAddHeaders: TStrings;
+    FAttach: TStrings;
+    FAttachType: TacSMTPAttachType;
+
+    { events }
+    FOnProgress: TacSMTPProgressEvent;
+    FOnResponse: TacSMTPResponseEvent;
+    FOnSuccess: TNotifyEvent;
+    { error events}
+    FOnAborted: TNotifyEvent;
+    FOnAnyError: TNotifyEvent;
+    FOnCantAttach: TacSMTPCantAttachEvent;
+    FOnConnLost: TNotifyEvent;
+    FOnHostUnreachable: TNotifyEvent;
+    FOnSMTPError: TacSMTPResponseEvent;
+
+    { for internal use }
+    FThread: TacCustomThread;  { work thread (See also acThread and acHTTP) }
+    SOCK: Integer;             { work socket }
+    SMTPStream: TMemoryStream; { steam with message }
+    SMTPHostUnreachable: Boolean; { used in SMTPDone to fire OnHostUnreachable }
+    SMTPDeliveryCode,
+    SMTPResponseCode,
+    SMTPErrorCode: Integer;    { used in OnResponse and OnError }
+    SMTPResponseStr,
+    SMTPErrorStr: String;      { -- // -- }
+    SMTPSuccess: Boolean;      { used in SMTPDone to fire proper event }
+    SMTPAttachFile: String;    { used if file couldn't be attached}
+
+    procedure SetAddHeaders(Value: TStrings);
+    procedure SetAttach(Value: TStrings);
+    function  GetSuspended: Boolean;
+    procedure SetSuspended(Value: Boolean);
+    function  GetThreadPriority: TThreadPriority;
+    procedure SetThreadPriority(Value: TThreadPriority);
+    function  GetWaitThread: Boolean;
+    procedure SetWaitThread(Value: Boolean);
+    function  GetBusy: Boolean;    
+  protected
+    procedure ProduceMessage(const Stream: TStream; ToFile, Unsent: Boolean); // virtual;
+
+    procedure SMTPExecute(Sender: TObject); virtual;
+    procedure SMTPException(Sender: TObject); virtual;
+    procedure SMTPDone(Sender: TObject); virtual;
+
+    { synchronized events }
+    procedure DoCantAttach;    
+    procedure DoProgress;
+    procedure DoResponse;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    function  Send: Boolean;
+    function  SaveToFile(const FileName: String; Unsent: Boolean): Boolean;
+    procedure Abort;
+
+    { optional properties }
+    property Busy: Boolean read GetBusy;
+    property Suspended: Boolean read GetSuspended write SetSuspended;
+    property Thread: TacCustomThread read FThread;
+    property ThreadPriority: TThreadPriority read GetThreadPriority write SetThreadPriority default tpNormal;
+  published
+    property About;
+
+    property SMTPHost: String read FSMTPHost write FSMTPHost;
+    property SMTPPort: Integer read FSMTPPort write FSMTPPort default 25; // IPPORT_SMTP
+
+    property MsgContentCharset: String read FMsgContentCharset write FMsgContentCharset;
+    property MsgContentType: TacSMTPContentType read FMsgContentType write FMsgContentType default ctPlainText;    
+    property MsgSubject: String read FMsgSubject write FMsgSubject;
+    property MsgBody: String read FMsgBody write FMsgBody;
+    property MsgPriority: TacSMTPPriority read FMsgPriority write FMsgPriority default mpNormal;    
+
+    property Agent: String read FAgent write FAgent;
+    property AddHeaders: TStrings read FAddHeaders write SetAddHeaders;
+    property Attach: TStrings read FAttach write SetAttach;
+    property AttachType: TacSMTPAttachType read FAttachType write FAttachType default atNormal;
+
+    property FromAddress: String read FFromAddress write FFromAddress;
+    property FromName: String read FFromName write FFromName;
+    property FromOrganization: String read FFromOrganization write FFromOrganization;
+    property ToAddr: String read FTo write FTo;
+    property ToCC: String read FToCC write FToCC;
+    property ToBCC: String read FToBCC write FToBCC;
+    property ReplyTo: String read FReplyTo write FReplyTo;
+    property WaitThread: Boolean read GetWaitThread write SetWaitThread;
+
+    { events }
+    property OnProgress: TacSMTPProgressEvent read FOnProgress write FOnProgress;
+    property OnResponse: TacSMTPResponseEvent read FOnResponse write FOnResponse;
+    property OnSuccess: TNotifyEvent read FOnSuccess write FOnSuccess;
+    { error events }
+    property OnAborted: TNotifyEvent read FOnAborted write FOnAborted;
+    property OnAnyError: TNotifyEvent read FOnAnyError write FOnAnyError;
+    property OnCantAttach: TacSMTPCantAttachEvent read FOnCantAttach write FOnCantAttach;
+    property OnConnLost: TNotifyEvent read FOnConnLost write FOnConnLost;
+    property OnHostUnreachable: TNotifyEvent read FOnHostUnreachable write FOnHostUnreachable;
+    property OnSMTPError: TacSMTPResponseEvent read FOnSMTPError write FOnSMTPError;
+  end;
+
+implementation

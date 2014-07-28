@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 415
-  Top = 2
+  Left = 412
+  Top = 28
   BorderStyle = bsSingle
   Caption = 'DOZATOR_SCADA'
   ClientHeight = 1070
@@ -13882,6 +13882,7 @@ object Form1: TForm1
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E}
+        Transparent = True
       end
       object work_doz2_S1: TImage
         Left = 840
@@ -14055,6 +14056,7 @@ object Form1: TForm1
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E}
+        Transparent = True
       end
       object stop_doz1_S1: TImage
         Left = 520
@@ -14238,6 +14240,7 @@ object Form1: TForm1
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E000000}
+        Transparent = True
         Visible = False
       end
       object stop_doz2_S1: TImage
@@ -14422,6 +14425,7 @@ object Form1: TForm1
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E
           3E3E3E3E3E3E3E3E3E3E3E3E3E3E3E000000}
+        Transparent = True
         Visible = False
       end
       object btn_setIzvestActivity1_S1: TImage
@@ -17302,8 +17306,8 @@ object Form1: TForm1
       object PanelTrend: TPanel
         Left = 0
         Top = 0
-        Width = 1392
-        Height = 912
+        Width = 1391
+        Height = 892
         Align = alClient
         BorderStyle = bsSingle
         Font.Charset = DEFAULT_CHARSET
@@ -17316,16 +17320,16 @@ object Form1: TForm1
         TabOrder = 0
         object Splitter4: TSplitter
           Left = 1
-          Top = 744
-          Width = 1386
+          Top = 724
+          Width = 1385
           Height = 3
           Cursor = crVSplit
           Align = alBottom
         end
         object PView: TPanel
           Left = 1
-          Top = 747
-          Width = 1386
+          Top = 727
+          Width = 1385
           Height = 160
           Align = alBottom
           BorderStyle = bsSingle
@@ -17334,7 +17338,7 @@ object Form1: TForm1
           object DBGridEh6: TDBGridEh
             Left = 1
             Top = 1
-            Width = 1380
+            Width = 1379
             Height = 154
             Align = alClient
             DataSource = DSViewData
@@ -17398,7 +17402,7 @@ object Form1: TForm1
           Left = 1
           Top = 21
           Width = 26
-          Height = 691
+          Height = 671
           Align = alLeft
           Max = 25
           Orientation = trVertical
@@ -17416,8 +17420,8 @@ object Form1: TForm1
         object Trends: TChart
           Left = 27
           Top = 21
-          Width = 1360
-          Height = 691
+          Width = 1359
+          Height = 671
           AllowPanning = pmNone
           AllowZoom = False
           AnimatedZoomSteps = 4
@@ -17533,7 +17537,7 @@ object Form1: TForm1
         object STTimeTrend: TStaticText
           Left = 1
           Top = 1
-          Width = 1386
+          Width = 1385
           Height = 20
           Align = alTop
           Alignment = taCenter
@@ -17543,8 +17547,8 @@ object Form1: TForm1
         end
         object Panel71: TPanel
           Left = 1
-          Top = 712
-          Width = 1386
+          Top = 692
+          Width = 1385
           Height = 32
           Align = alBottom
           BevelInner = bvLowered
@@ -17873,7 +17877,7 @@ object Form1: TForm1
           Left = 2
           Top = 59
           Width = 457
-          Height = 847
+          Height = 827
           Align = alClient
           DataSource = DSActiveSob
           Font.Charset = DEFAULT_CHARSET

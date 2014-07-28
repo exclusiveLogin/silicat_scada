@@ -8,20 +8,25 @@ File_5=SourceModule,'C:\PROGRAM FILES\BORLAND\CBUILDER5\INCLUDE\VCL\sysvari.h',0
 File_6=SourceModule,'E:\BUILDER\FOK\CPP\MainForm.cpp',0,1,1220,59,1224,1,1
 File_7=SourceModule,'E:\BUILDER\FOK\CPP\ModalFormCheckRez.cpp',0,1,1,22,10,0,1
 File_8=SourceModule,'C:\PROGRAM FILES\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp',0,1,924,1,940,0,0
-File_9=SourceModule,'E:\BUILDER\DEL\DJV.cpp',0,1,1,3,37,0,1
 
 [Modules]
-Module0=C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\code\opros.cpp
-Module1=C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS\ClassArhiv.cpp
-Count=2
+Module0=C:\SCADA\code\FormOpros.cpp
+Module1=C:\SCADA\project\opros.bpr
+Module2=C:\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp
+Count=3
 EditWindowCount=1
 
-[C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\code\opros.cpp]
+[C:\SCADA\code\FormOpros.cpp]
 ModuleType=SourceModule
 FormState=1
-FormOnTop=1
+FormOnTop=0
 
-[C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS\ClassArhiv.cpp]
+[C:\SCADA\project\opros.bpr]
+ModuleType=SourceModule
+FormState=0
+FormOnTop=0
+
+[C:\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
@@ -30,66 +35,77 @@ FormOnTop=0
 FormState=0
 FormOnTop=0
 
-[C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\project\opros.bpr]
-FormState=0
-FormOnTop=0
-
 [EditWindow0]
-ViewCount=3
+ViewCount=4
 CurrentView=0
 View0=0
 View1=1
 View2=2
+View3=3
 CodeExplorer=CodeExplorer@EditWindow0
 MessageView=MessageView@EditWindow0
 ClassHierarchy=ClassHierarchy@EditWindow0
 Create=1
 Visible=1
-State=2
-Left=243
-Top=128
+State=0
+Left=110
+Top=114
 Width=1123
 Height=570
 MaxLeft=-8
 MaxTop=106
-MaxWidth=1382
-MaxHeight=630
-ClientWidth=1366
-ClientHeight=592
-LeftPanelSize=208
-LeftPanelClients=ProjectManager,CodeExplorer@EditWindow0
-LeftPanelData=0000040000000000070200000000000001D0000000000000000100000000030100001200000050726F6A6563744D616E61676572466F726D0100000000070200000C000000436F64654578706C6F726572FFFFFFFF
+ClientWidth=1107
+ClientHeight=532
+LeftPanelSize=513
+LeftPanelClients=ProjectManager,WatchWindow,CodeExplorer@EditWindow0
+LeftPanelData=0000040000000000CB010000000000000101020000000000000100000000BF0000001200000050726F6A6563744D616E61676572466F726D01000000007E0100000B000000576174636857696E646F770100000000CB0100000C000000436F64654578706C6F726572FFFFFFFF
 RightPanelSize=0
 BottomPanelSize=52
 BottomPanelClients=MessageView@EditWindow0
 BottomPanelData=000004000000000000000000000000000000000000000000000100000000000000000B0000004D65737361676556696577FFFFFFFF
 
 [View0]
-Module=C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\code\opros.cpp
-CursorX=1
-CursorY=22
-TopLine=1
+Module=C:\SCADA\code\FormOpros.cpp
+CursorX=28
+CursorY=96
+TopLine=98
 LeftCol=1
 
 [View1]
-Module=C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS\ClassArhiv.cpp
-CursorX=29
-CursorY=137
-TopLine=124
+Module=C:\SCADA\code\FormOpros.h
+CursorX=46
+CursorY=76
+TopLine=100
 LeftCol=1
 
 [View2]
-Module=C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\code\opros.h
-CursorX=2
-CursorY=93
-TopLine=72
+Module=C:\SCADA\project\opros.cpp
+CursorX=27
+CursorY=13
+TopLine=1
+LeftCol=1
+
+[View3]
+Module=C:\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp
+CursorX=1
+CursorY=933
+TopLine=1139
 LeftCol=1
 
 [Watches]
-Count=0
+Count=7
+Watch0='FInitArhiv',256,0,18,1,0
+Watch1='FValTags',256,0,18,1,0
+Watch2='FStatTags',256,0,18,1,0
+Watch3='FIDTags',256,0,18,1,0
+Watch4='FArhivValTags',256,0,18,1,0
+Watch5='FArhivStatTags',256,0,18,1,0
+Watch6='FArhivIDTags',256,0,18,1,0
 
 [Breakpoints]
-Count=0
+Count=2
+Breakpoint0='C:\SCADA\code\FormOpros.cpp',114,'',0,1,'',1,0,0,'',1,'','',''
+Breakpoint1='C:\SCADA\code\FormOpros.cpp',110,'',0,1,'',1,0,0,'',1,'','',''
 
 [AddressBreakpoints]
 Count=0
@@ -98,9 +114,9 @@ Count=0
 Create=1
 Visible=1
 State=2
-Left=1
-Top=4
-Width=1365
+Left=51
+Top=19
+Width=1315
 Height=122
 MaxLeft=-8
 MaxTop=-8
@@ -115,14 +131,14 @@ Visible=1
 State=0
 Left=0
 Top=12
-Width=208
-Height=243
+Width=513
+Height=175
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=208
-ClientHeight=243
+ClientWidth=513
+ClientHeight=175
 TBDockHeight=303
-LRDockWidth=208
+LRDockWidth=513
 Dockable=1
 
 [CPUWindow]
@@ -199,18 +215,18 @@ FlagPane=59
 
 [WatchWindow]
 Create=1
-Visible=0
+Visible=1
 State=0
-Left=369
-Top=268
-Width=178
-Height=188
+Left=0
+Top=203
+Width=513
+Height=175
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=162
-ClientHeight=154
+ClientWidth=513
+ClientHeight=175
 TBDockHeight=149
-LRDockWidth=170
+LRDockWidth=513
 Dockable=1
 
 [CallStackWindow]
@@ -259,7 +275,7 @@ LRDockWidth=190
 Dockable=1
 SplitPos=85
 ArrangeBy=Name
-SelectedItem=Caption
+SelectedItem=Name
 ExpandedItems=Anchors,Font.Style,Title,Value
 HiddenCategories=
 ShowStatusBar=1
@@ -326,15 +342,15 @@ Create=1
 Visible=1
 State=0
 Left=0
-Top=271
-Width=208
-Height=248
+Top=394
+Width=513
+Height=65
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=208
-ClientHeight=248
+ClientWidth=513
+ClientHeight=65
 TBDockHeight=388
-LRDockWidth=208
+LRDockWidth=513
 Dockable=1
 ClassViewDisplayMode=0
 
@@ -344,11 +360,11 @@ Visible=1
 State=0
 Left=12
 Top=0
-Width=1354
+Width=1095
 Height=52
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1354
+ClientWidth=1095
 ClientHeight=52
 TBDockHeight=52
 LRDockWidth=443

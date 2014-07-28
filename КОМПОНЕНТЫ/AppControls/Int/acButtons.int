@@ -1,0 +1,130 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acButtons.pas - acButton and acBitBtn components.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acButtons;
+
+interface
+
+uses Windows, Messages, Classes, Controls, Forms, Graphics, StdCtrls, CommCtrl,
+     acGraphics;
+
+type
+  TacButton = class(TButton)
+  private
+    FAbout: String;
+    FWordWrap: Boolean;
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;
+
+    procedure SetWordWrap(Value: Boolean);
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+  public
+    constructor Create(aOwner: TComponent); override;
+  published
+    property Align;
+
+    property About: String read FAbout write FAbout stored False;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap;
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+  end;
+
+  TacButtonLayout = (blGlyphLeft, blGlyphRight, blGlyphTop, blGlyphBottom);
+  TacButtonState = (bsUp, bsDisabled, bsDown, bsExclusive);
+  TacButtonStyle = (bsAutoDetect, bsWin31, bsNew);
+  TNumGlyphs = 1..4;
+
+  TacBitBtnKind = (bkCustom, bkOK, bkCancel, bkHelp, bkYes, bkNo, bkClose,
+    bkAbort, bkRetry, bkIgnore, bkAll);
+
+  TacBitBtn = class(TacButton)
+  private
+    FCanvas: TCanvas;
+    FGlyph: Pointer;
+    FStyle: TacButtonStyle;
+    FKind: TacBitBtnKind;
+    FLayout: TacButtonLayout;
+    FSpacing: Integer;
+    FMargin: Integer;
+    IsFocused: Boolean;
+    FModifiedGlyph: Boolean;
+
+    procedure CNMeasureItem(var Message: TWMMeasureItem); message CN_MEASUREITEM;
+    procedure CNDrawItem(var Message: TWMDrawItem); message CN_DRAWITEM;
+    procedure CMColorChanged(var Message: TMessage); message CM_COLORCHANGED;
+    procedure CMParentColorChanged(var Message: TMessage); message CM_PARENTCOLORCHANGED;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
+
+    procedure DrawItem(const DrawItemStruct: TDrawItemStruct);
+    procedure SetGlyph(Value: TBitmap);
+    function  GetGlyph: TBitmap;
+    function  GetNumGlyphs: TNumGlyphs;
+    procedure SetNumGlyphs(Value: TNumGlyphs);
+
+    procedure GlyphChanged(Sender: TObject);
+    function IsCustom: Boolean;
+    function IsCustomCaption: Boolean;
+    procedure SetStyle(Value: TacButtonStyle);
+    procedure SetKind(Value: TacBitBtnKind);
+    function GetKind: TacBitBtnKind;
+    procedure SetLayout(Value: TacButtonLayout);
+    procedure SetSpacing(Value: Integer);
+    procedure SetMargin(Value: Integer);
+  protected
+    procedure CreateHandle; override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    function GetPalette: HPALETTE; override;
+    procedure SetButtonStyle(ADefault: Boolean); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure Click; override;
+  published
+    property Color;
+    property ParentColor;
+
+    property Cancel stored IsCustom;
+    property Caption stored IsCustomCaption;
+    property Default stored IsCustom;
+    property Glyph: TBitmap read GetGlyph write SetGlyph stored IsCustom;
+    property Kind: TacBitBtnKind read GetKind write SetKind default bkCustom;
+    property Layout: TacButtonLayout read FLayout write SetLayout default blGlyphLeft;
+    property Margin: Integer read FMargin write SetMargin default -1;
+    property ModalResult stored IsCustom;
+    property NumGlyphs: TNumGlyphs read GetNumGlyphs write SetNumGlyphs stored IsCustom default 1;
+    property Style: TacButtonStyle read FStyle write SetStyle default bsAutoDetect;
+    property Spacing: Integer read FSpacing write SetSpacing default 4;
+  end;
+
+implementation

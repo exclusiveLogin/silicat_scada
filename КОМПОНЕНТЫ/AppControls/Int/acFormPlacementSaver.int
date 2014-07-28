@@ -1,0 +1,77 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormPlacementSaver.pas - FormPlacementSaver component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acFormPlacementSaver;
+
+interface
+
+uses
+  Windows, Messages, Classes, Forms, Registry,
+  acClasses;
+
+type
+  TacFormPlacementOptions = set of (saveOnClose, saveOnMoveResize);
+  TacFormPlacementSaverEvent = procedure(Sender: TObject; Reg: TRegistry) of object;
+  TacFormPlacementSaver = class(TacAppHookComponent)
+  private
+    FEnabled: Boolean;
+    FRegLocation: TacRegLocation;
+    FRegKey: String;
+    FRestoreFormSize: Boolean;
+    FOptions: TacFormPlacementOptions;
+
+    FOnLoadSettings, FOnSaveSettings: TacFormPlacementSaverEvent;
+
+    procedure SetRegLocation(Value: TacRegLocation);
+    procedure SetRegKey(Value: String);
+
+    procedure DoSave(Reg: TRegistry);
+  protected
+    procedure AppMessageBefore(var Message: TMessage; var Handled: Boolean); override;  
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure Loaded; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+
+    { public methods }
+    procedure Save;
+  published
+    property About;
+
+    { properties }
+    property Enabled: Boolean read FEnabled write FEnabled default True;
+    property RegLocation: TacRegLocation read FRegLocation write SetRegLocation;
+    property RegKey: String read FRegKey write SetRegKey;
+    property RestoreFormSize: Boolean read FRestoreFormSize write FRestoreFormSize default True;
+    property Options: TacFormPlacementOptions read FOptions write FOptions;
+
+    property OnLoadSettings: TacFormPlacementSaverEvent read FOnLoadSettings write FOnLoadSettings;
+    property OnSaveSettings: TacFormPlacementSaverEvent read FOnSaveSettings write FOnSaveSettings;
+  end;
+
+implementation

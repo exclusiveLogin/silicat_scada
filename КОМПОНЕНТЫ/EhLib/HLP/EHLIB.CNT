@@ -1,0 +1,28 @@
+
+:BASE EhLib.hlp
+:TITLE EhLib library
+:Include delphi4.cfg
+:Include DELPHI5.OHL
+1 EhLib 1.53 Help
+2 EhLib main page=EhLib
+2 License agreement=License_agreement
+2 Installation=Installation
+2 About author=About_author
+2 EhLib components
+3 TDBGridEh=TDBGridEh
+3 TDBSumList=TDBSumList
+3 TPrintDBGridEh=TPrintDBGridEh
+3 TPreviewBox=TPreviewBox
+2 EhLib classes
+3 TDBGridEhSumList=TDBGridEhSumList
+3 TDBSumListProducer=TDBSumListProducer
+3 TDBGridEhSelection=TDBGridEhSelection
+3 TDBGridEhSelectionCols=TDBGridEhSelectionCols
+3 TDBGridEhSelectionRect=TDBGridEhSelectionRect
+3 TColumnEh=TColumnEh
+3 TColumnTitleEh=TColumnTitleEh
+3 TColumnFooterEh=TColumnFooterEh
+3 TDBSumCollection=TDBSumCollection
+3 TDBSum=TDBSum
+3 TPrinterPreview=TPrinterPreview
+3 TVirtualPrinter=TVirtualPrinter

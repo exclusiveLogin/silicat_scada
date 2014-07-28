@@ -1,0 +1,264 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acLabels.pas - acLabels and acURLLabel components + acBaseLabel class
+                       for acRichLabel component (see acRichLabel.pas).
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acLabels;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, StdCtrls,
+  acControls, acGraphics;
+
+const
+  DEFAULT_BLINKING_VISIBLE = 700;
+  DEFAULT_BLINKING_INVISIBLE = 400;
+
+type
+  { TacBaseLabel }
+  TacBaseLabel = class(TCustomLabel)
+  private
+    FAbout: String;
+    FWordWrap: Boolean;
+    
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;    
+
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+
+    procedure SetWordWrap(Value: Boolean);
+  protected
+    procedure DoMouseEnter; virtual;
+    procedure DoMouseLeave; virtual;
+  public
+    WorkBitmap: TBitmap;
+
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About: String read FAbout write FAbout stored False;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap;
+    
+    property Align;
+    property Alignment;
+{$IFDEF D4}
+    property Anchors;
+    property BiDiMode;
+{$ENDIF}
+    property Caption;
+    property Color;
+{$IFDEF D4}
+    property Constraints;
+{$ENDIF}    
+    property DragCursor;
+{$IFDEF D4}
+    property DragKind;
+{$ENDIF}
+    property DragMode;
+    property Enabled;
+    property FocusControl;
+    property Font;
+{$IFDEF D4}
+    property ParentBiDiMode;
+{$ENDIF}
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowAccelChar;
+    property ShowHint;
+    property Transparent;    
+    property Visible;
+    property OnClick;
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+{$IFDEF D4}
+    property OnEndDock;
+{$ENDIF}    
+    property OnEndDrag;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF D4}
+    property OnStartDock;
+{$ENDIF}    
+    property OnStartDrag;
+  end;
+
+  { TacLabel }
+  TacLabel = class;
+
+  TacLabelEffectDirection = (edUp, edDown, edLeft, edRight,
+                             edUpLeft, edUpRight,
+                             edDownLeft, edDownRight);
+  TacLabelEffect = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FColor: TColor;
+    FColorHover: TColor;
+    FColorClick: TColor;
+    FDepth: Byte;
+    FDirection: TacLabelEffectDirection;
+
+    { for internal use }
+    acLabel: TacLabel;
+
+    procedure SetEnabled(Value: Boolean);
+    procedure SetColor(Value: TColor);
+    procedure SetColorHover(Value: TColor);
+    procedure SetColorClick(Value: TColor);
+    procedure SetDepth(Value: Byte);
+    procedure SetDirection(Value: TacLabelEffectDirection);
+  public
+    constructor Create(AacLabel: TacLabel);
+  published
+    property Enabled: Boolean read FEnabled write SetEnabled;
+    property Color: TColor read FColor write SetColor;
+    property ColorHover: TColor read FColorHover write SetColorHover;
+    property ColorClick: TColor read FColorClick write SetColorClick;
+    property Depth: Byte read FDepth write SetDepth;
+    property Direction: TacLabelEffectDirection read FDirection write SetDirection;
+  end;
+
+  TacLabelBlinking = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FDelayVisible,
+    FDelayInvisible: Integer;
+
+    { for internal use }
+    acLabel: TacLabel;
+    FTimerHandle: hWnd;
+
+    procedure SetEnabled(Value: Boolean);
+    procedure SetDelayVisible(Value: Integer);
+    procedure SetDelayInvisible(Value: Integer);    
+
+    procedure UpdateTimer;
+    procedure WndProc(var Message: TMessage);
+  public
+    constructor Create(aLabel: TacLabel);
+    destructor Destroy; override;
+  published
+    property Enabled: Boolean read FEnabled write SetEnabled;
+    property DelayVisible: Integer read FDelayVisible write SetDelayVisible default DEFAULT_BLINKING_VISIBLE;
+    property DelayInvisible: Integer read FDelayInvisible write SetDelayInvisible default DEFAULT_BLINKING_INVISIBLE;
+  end;
+
+  TacLabelOptions = set of (loPathEllipsis, loEndEllipsis, loEditControl);
+  TacLabel = class(TacBaseLabel)
+  private
+    FBlinking: TacLabelBlinking;
+    FCursorClick: TCursor;
+    FFontClick,
+    FFontHover: TStyleFont;
+    FHighlight, FShadow: TacLabelEffect;
+    FOptions: TacLabelOptions;
+
+    { for internal use }
+    BlinkVisible: Boolean;
+    FLabelHover, FLabelClick: Boolean;
+
+    procedure WMLButtonDown(var Message: TMessage); message WM_LBUTTONDOWN;
+    procedure WMLButtonDblClk(var Message: TMessage); message WM_LBUTTONDBLCLK;
+    procedure WMLButtonUp(var Message: TMessage); message WM_LBUTTONUP;
+
+    procedure SetOptions(Value: TacLabelOptions);
+    procedure SetLabelHover(Value: Boolean);
+    procedure SetLabelClick(Value: Boolean);
+
+    { private properties }
+    property LabelHover: Boolean read FLabelHover write SetLabelHover;
+    property LabelClick: Boolean read FLabelClick write SetLabelClick;
+  protected
+    procedure Paint; override;
+    procedure DoMouseEnter; override;
+    procedure DoMouseLeave; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property AutoSize;
+    
+    property Blinking: TacLabelBlinking read FBlinking write FBlinking;
+    property CursorClick: TCursor read FCursorClick write FCursorClick;
+    property FontHover: TStyleFont read FFontHover write FFontHover;
+    property FontClick: TStyleFont read FFontClick write FFontClick;
+    property Highlight: TacLabelEffect read FHighlight write FHighlight;
+    property Shadow: TacLabelEffect read FShadow write FShadow;
+    property Options: TacLabelOptions read FOptions write SetOptions;
+
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+  end;
+
+  { TacURLLabel }
+  TacEmailParams = class(TPersistent)
+  private
+    FAddress,
+    FName,
+    FCarbonCopy,
+    FBlindCarbonCopy,
+    FSubject,
+    FMessage: String;
+  published
+    property Address: String read FAddress write FAddress;
+    property Name: String read FName write FName;
+    property CarbonCopy: String read FCarbonCopy write FCarbonCopy;
+    property BlindCarbonCopy: String read FBlindCarbonCopy write FBlindCarbonCopy;
+    property Subject: String read FSubject write FSubject;
+    property Message: String read FMessage write FMessage;
+  end;
+
+  TacURLLabelKind = (ukWWW, ukEmail);
+  TacURLLabel = class(TacLabel)
+  private
+    FEmail: TacEmailParams;
+    FKind: TacURLLabelKind;
+    FURL: String;
+    FURLInNewWindow: Boolean;
+  protected
+    procedure Click; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure Execute;
+  published
+    property Email: TacEmailParams read FEmail write FEmail;
+    property Kind: TacURLLabelKind read FKind write FKind;
+    property URL: String read FURL write FURL;
+    property URLInNewWindow: Boolean read FURLInNewWindow write FURLInNewWindow default True;
+  end;
+
+implementation

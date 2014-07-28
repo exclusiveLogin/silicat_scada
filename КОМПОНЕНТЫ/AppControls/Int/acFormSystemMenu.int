@@ -1,0 +1,115 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormSystemMenu.pas - acFormSystemMenu component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acFormSystemMenu;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Forms, Menus,
+  acClasses;
+
+type
+  TacFormSystemMenu = class;
+
+  TacSystemMenuItemState = (isActive, isHidden, isDisabled);
+  TacSystemMenuStdItems = (smiRestore, smiMove, smiSize,
+                           smiMinimize, smiMaximize, smiClose,
+                           smiMDINext, smiSeparator);
+
+  { TacFormSystemMenuItems }
+  TacFormSystemMenuItems = class(TPersistent)
+  private
+    FStdItem: Array[TacSystemMenuStdItems] of TacSystemMenuItemState;
+    SysMenu: TacFormSystemMenu;
+
+    procedure SetRestore(Value: TacSystemMenuItemState);
+    procedure SetMove(Value: TacSystemMenuItemState);
+    procedure SetSize(Value: TacSystemMenuItemState);
+    procedure SetMinimize(Value: TacSystemMenuItemState);
+    procedure SetMaximize(Value: TacSystemMenuItemState);
+    procedure SetSeparator(Value: TacSystemMenuItemState);
+    procedure SetClose(Value: TacSystemMenuItemState);
+    procedure SetMDINext(Value: TacSystemMenuItemState);
+  public
+    constructor Create(aSystemMenu: TacFormSystemMenu);
+  published
+    property Restore: TacSystemMenuItemState read FStdItem[smiRestore] write SetRestore;
+    property Move: TacSystemMenuItemState read FStdItem[smiMove] write SetMove;
+    property Size: TacSystemMenuItemState read FStdItem[smiSize] write SetSize;
+    property Minimize: TacSystemMenuItemState read FStdItem[smiMinimize] write SetMinimize;
+    property Maximize: TacSystemMenuItemState read FStdItem[smiMaximize] write SetMaximize;
+    property Separator: TacSystemMenuItemState read FStdItem[smiSeparator] write SetSeparator;
+    property Close: TacSystemMenuItemState read FStdItem[smiClose] write SetClose;
+    property MDINext: TacSystemMenuItemState read FStdItem[smiMDINext] write SetMDINext;
+  end;
+
+  { TacFormSystemMenuHook }
+  TacFormSystemMenuHook = class(TacFormHookComponent)
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+  end;
+
+  { TacFormSystemMenu }
+  TacFormSystemMenu = class(TPopupMenu)
+  private
+    FAbout: String;
+    FActive: Boolean;
+    FInsertPosition: Word;
+    FSysItems: TacFormSystemMenuItems;
+
+    { for internal use }
+    ParentForm: TForm;
+    FFormHook: TacFormSystemMenuHook;
+
+    procedure SetActive(Value: Boolean);
+    function  GetSystemMenuHandle: hMenu;
+    function  GetWindowStyle: LongInt;
+    procedure SetWindowStyle(Value: LongInt);
+  protected
+    procedure Loaded; override;
+    procedure InsertMenu; virtual;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure RefreshNCArea; virtual;
+    procedure RestoreDefaultMenu; virtual;
+    procedure UpdateSystemMenu; virtual;
+
+    property SystemMenuHandle: hMenu read GetSystemMenuHandle;
+    property WindowStyle: LongInt read GetWindowStyle write SetWindowStyle;
+  published
+    property About: String read FAbout write FAbout stored False;
+    property Active: Boolean read FActive write SetActive default True;
+    property InsertPosition: Word read FInsertPosition write FInsertPosition;
+    property SysItems: TacFormSystemMenuItems read FSysItems write FSysItems;
+  end;
+
+implementation

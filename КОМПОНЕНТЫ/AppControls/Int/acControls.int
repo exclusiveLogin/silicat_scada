@@ -1,0 +1,291 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acControls.pas - acCheckBox, acRadioButton and acCheckGroupBox
+            components + some base classes for visible components (ie: acLabel)
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acControls;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, StdCtrls;
+
+type
+  { TStyleFont class (used in acLabel) }
+  TStyleFont = class(TPersistent)
+  private
+    FColor: TColor;
+    FStyle: TFontStyles;
+    FUsed: Boolean;
+  public
+    constructor Create;
+  published
+    property Color: TColor read FColor write FColor default clWindowText;
+    property Style: TFontStyles read FStyle write FStyle;
+    property Used: Boolean read FUsed write FUsed;
+  end;
+
+  TVerticalAlignment = (vaTopJustify, vaBottomJustify, vaCenter);
+
+  { TacCheckBox }
+  TacCheckBox = class(TCustomCheckBox)
+  private
+    FAbout: String;
+
+    FAlignmentHorz: TAlignment;
+    FAlignmentVert: TVerticalAlignment;
+    FCtl3D: Boolean;
+    FWordWrap: Boolean;
+
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;
+
+    procedure SetAlignmentHorz(Value: TAlignment);
+    procedure SetAlignmentVert(Value: TVerticalAlignment);
+    function  GetBoxAlignment: TLeftRight;
+    procedure SetBoxAlignment(Value: TLeftRight);
+    procedure SetCtl3D(Value: Boolean);
+    procedure SetWordWrap(Value: Boolean);
+
+    procedure CMParentCtl3DChanged(var Message: TMessage); message CM_PARENTCTL3DCHANGED;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  published
+    property About: String read FAbout write FAbout stored False;
+
+    property AlignmentHorz: TAlignment read FAlignmentHorz write SetAlignmentHorz;
+    property AlignmentVert: TVerticalAlignment read FAlignmentVert write SetAlignmentVert  default vaCenter;
+    property BoxAlignment: TLeftRight read GetBoxAlignment write SetBoxAlignment default taLeftJustify;
+    property Ctl3D: Boolean read FCtl3D write SetCtl3D default True;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap;
+
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+
+    property Align;
+    property AllowGrayed;
+{$IFDEF D4}
+    property Action;
+    property Anchors;
+    property BiDiMode;
+{$ENDIF}
+    property Caption;
+    property Checked;
+    property Color;
+{$IFDEF D4}
+    property Constraints;
+{$ENDIF}    
+    property DragCursor;
+{$IFDEF D4}
+    property DragKind;
+{$ENDIF}
+    property DragMode;
+    property Enabled;
+    property Font;
+{$IFDEF D4}
+    property ParentBiDiMode;
+{$ENDIF}
+    property ParentCtl3D;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property State;
+    property TabOrder;
+    property TabStop;
+    property Visible;
+    property OnClick;
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}
+    property OnDragDrop;
+    property OnDragOver;
+{$IFDEF D4}
+    property OnEndDock;
+{$ENDIF}    
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF D4}
+    property OnStartDock;
+{$ENDIF}
+    property OnStartDrag;
+  end;
+
+  { TacRadioButton }
+  TacRadioButton = class(TButtonControl)
+  private
+    FAbout: String;
+
+    FAlignmentHorz: TAlignment;
+    FAlignmentVert: TVerticalAlignment;
+    FBoxAlignment: TLeftRight;
+    FChecked: Boolean;
+    FCtl3D: Boolean;
+    FWordWrap: Boolean;
+
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;
+
+    procedure SetAlignmentHorz(Value: TAlignment);
+    procedure SetAlignmentVert(Value: TVerticalAlignment);
+    procedure SetBoxAlignment(Value: TLeftRight);
+    procedure SetCtl3D(Value: Boolean);
+    procedure SetWordWrap(Value: Boolean);
+
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure CMParentCtl3DChanged(var Message: TMessage); message CM_PARENTCTL3DCHANGED;
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+    procedure CMDialogChar(var Message: TCMDialogChar); message CM_DIALOGCHAR;
+    procedure CNCommand(var Message: TWMCommand); message CN_COMMAND;
+
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+  protected
+    function  GetChecked: Boolean; {$IFNDEF D4} virtual; {$ELSE} override; {$ENDIF}
+    procedure SetChecked(Value: Boolean); {$IFNDEF D4} virtual; {$ELSE} override; {$ENDIF}
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure CreateWnd; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  published
+    property About: String read FAbout write FAbout stored False;
+
+    property AlignmentHorz: TAlignment read FAlignmentHorz write SetAlignmentHorz;
+    property AlignmentVert: TVerticalAlignment read FAlignmentVert write SetAlignmentVert default vaCenter;
+    property BoxAlignment: TLeftRight read FBoxAlignment write SetBoxAlignment default taLeftJustify;
+    property Checked: Boolean read GetChecked write SetChecked;
+    property Ctl3D: Boolean read FCtl3D write SetCtl3D default True;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap;
+
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+
+    property Align;
+{$IFDEF D4}
+    property Action;
+    property Anchors;
+    property BiDiMode;
+{$ENDIF}
+    property Caption;
+    property Color;
+{$IFDEF D4}
+    property Constraints;
+{$ENDIF}    
+    property DragCursor;
+{$IFDEF D4}
+    property DragKind;
+{$ENDIF}    
+    property DragMode;
+    property Enabled;
+    property Font;
+{$IFDEF D4}
+    property ParentBiDiMode;
+{$ENDIF}    
+    property ParentColor;
+    property ParentCtl3D;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property TabOrder;
+    property TabStop;
+    property Visible;
+    property OnClick;
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}    
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+{$IFDEF D4}
+    property OnEndDock;
+{$ENDIF}
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF D4}
+    property OnStartDock;
+{$ENDIF}
+    property OnStartDrag;
+  end;
+
+  { TacCheckGroupBox }
+  TacCheckGroupBox = class(TGroupBox)
+  private
+    FAbout: String;
+    FAutoDisable: Boolean;
+    FCheckBox: TacCheckBox;
+
+    FOnCheckBoxClick: TNotifyEvent;
+
+    procedure AdjustCheckBounds;
+
+    function  GetBoxAlignment: TLeftRight;
+    procedure SetBoxAlignment(Value: TLeftRight);
+    function  GetCaption: String;
+    procedure SetCaption(Value: String);
+    function  GetCursor: TCursor;
+    procedure SetCursor(Value: TCursor);
+    function  GetChecked: Boolean;
+    procedure SetChecked(Value: Boolean);
+
+    procedure CMCtl3DChanged(var Message: TMessage); message CM_CTL3DCHANGED;
+    procedure CMParentCtl3DChanged(var Message: TMessage); message CM_PARENTCTL3DCHANGED;
+    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
+  protected
+    procedure CheckBoxClick(Sender: TObject); virtual;  
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About: String read FAbout write FAbout stored False;
+    property AutoDisable: Boolean read FAutoDisable write FAutoDisable default True;
+    property BoxAlignment: TLeftRight read GetBoxAlignment write SetBoxAlignment default taLeftJustify;
+    property Caption: String read GetCaption write SetCaption;
+    property Checked: Boolean read GetChecked write SetChecked;
+    property Cursor: TCursor read GetCursor write SetCursor;    
+    property OnCheckBoxClick: TNotifyEvent read FOnCheckBoxClick write FOnCheckBoxClick;
+  end;
+
+implementation

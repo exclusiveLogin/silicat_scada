@@ -12,6 +12,13 @@ TPACQuery *PACQuery;
 __fastcall TPACQuery::TPACQuery(TComponent* Owner)
         : TForm(Owner)
 {
+   /*union
+    {
+     short    int i[2];
+     unsigned int l;
+     unsigned char s[4];
+    }  tmp;
+    tmp.l=342; */
         const_time_out=60;
         const_time_out_query=5;
         QListTags->Open();
@@ -100,16 +107,20 @@ void TPACQuery::SendCommand(int numCom, float val){
                 tmpbuf.st.i_command='r';//команда на чтение параметров
                 break;
         case 10://читаем значения
-                tmpbuf.st.i_command='c';//команда на расчет задания
+                tmpbuf.st.i_command=99;//команда на расчет задания
+                ///Application->MessageBoxA("Расчёт!","Test",MB_OK);
                 break;
         case 20://Устанавливаем активность извести
                 tmpbuf.st.i_command='i';
+                //Application->MessageBoxA("Активность извести!","Test",MB_OK);
                 break;
         case 21://Устанавливаем молотовяжущее
                 tmpbuf.st.i_command='m';
+                //Application->MessageBoxA("Маловяжущие!","Test",MB_OK);
                 break;
         case 22://Устанавливаем производительность
                 tmpbuf.st.i_command='p';
+               // Application->MessageBoxA("Производительность!","Test",MB_OK);
                 break;
         }
         ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
@@ -138,7 +149,7 @@ void __fastcall TPACQuery::ClientSocket1Lookup(TObject *Sender,
 {
  int i=0;
  statusDebug1->Caption="LookUP";
- statusDebug1->Font->Color=clGreen;
+ statusDebug1->Font->Color=clGreen;   
 }
 //---------------------------------------------------------------------------
 
@@ -397,6 +408,7 @@ void __fastcall  TPACQuery::OnWriteValue(TMessage& Message){
                 float funi;
         }uni;
         uni.luni = Message.LParam;
+        //Application->MessageBoxA("OK","OK",MB_OK);
         SendCommand(command, uni.funi);
 }
 
@@ -407,8 +419,18 @@ __fastcall TPACQuery::~TPACQuery(void)
 void __fastcall TPACQuery::ClientSocket1Connecting(TObject *Sender,
       TCustomWinSocket *Socket)
 {
- statusDebug1->Caption="Подключение...";
- statusDebug1->Font->Color=clBlue;
+ int i=0;
+/* statusDebug1->Caption="Подключение...";
+ statusDebug1->Font->Color=clBlue;    */
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TPACQuery::ClientSocket1Error(TObject *Sender,
+      TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
+{
+int i=0;
+ErrorCode=0;   
+}
+//---------------------------------------------------------------------------
+
 

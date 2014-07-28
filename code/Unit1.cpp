@@ -1691,7 +1691,7 @@ union{//Объявление временной union
                 long luni;
                 float funi;
         }tmpuni;
-float tmpcom = 20;
+long tmpcom = 20;
 if(!izvActEdToggle){
         izvActivityEdit1->Visible = true;
         izvActivityEdit1->Text = izvestActivity1_S1->Caption;
@@ -1714,7 +1714,7 @@ union{//Объявление временной union
                 long luni;
                 float funi;
         }tmpuni;
-float tmpcom = 22;
+long tmpcom = 22;
 
 if(!neededPerfToggle){
         neededPerfEdit1->Visible = true;
@@ -1738,7 +1738,7 @@ union{//Объявление временной union
                 long luni;
                 float funi;
         }tmpuni;
-float tmpcom = 21;
+long tmpcom = 21;
 if(!MVtoggle){
         MVEdit1->Visible = true;
         MVEdit1->Text = curent_MV1_S1->Caption;
@@ -1831,8 +1831,7 @@ void __fastcall TForm1::btn_confirm1_S1Click(TObject *Sender)
 {
 confirmArmed=false;
 
-float tmpcom = 10;
-
+long tmpcom = 10;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,0);
 
 }

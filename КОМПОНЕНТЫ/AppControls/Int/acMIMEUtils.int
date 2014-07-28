@@ -1,0 +1,63 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acMIMEUtls.pas - MIME (Multipurpose Internet Media Extension) utilities.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$H+}
+
+unit acMIMEUtils;
+
+interface
+
+uses
+  Classes;
+
+{ Performs "base64" encoding for the strings (size can be up to 2GB)
+ return value -- encoded string }
+function Base64Encode(const S: String): String;
+
+{ generates the boundary for multipart data }
+function GenerateAttachBoundary(Salt: Char): String;
+
+{ returns MIME-type by file extension }
+function GetMIMEType(EXT: String): String;
+
+{ attaches the file and puts the data to the stream }
+function AttachFile(const FileName, Boundary: String;
+      IsEmbedded, DoEncoding: Boolean; Stream: TStream): Boolean;
+
+{ Optional routine which puts the text string with additional
+  linebreak to the stream }
+procedure PutToStream(const Stream: TStream; const St: String);
+
+{ STRING UTILITIES (Used for parsing of email address ) }
+{ sophistically splits the string to the string list. Trims result lines }
+procedure SplitEmailEntries(SourceStr: String; const OutputStrList: TStringList);
+{ generates printable email entries (same as SplitEmailEntries but to string with #13#10#9 separators of every entrie) }
+function GetPrintableEmailEntries(SourceStr: String): String;
+{ converts string with recipients into two string list }
+procedure ExtractRecipients(Recipients: String; Names, Addresses: TStringList);
+
+implementation

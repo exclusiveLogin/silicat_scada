@@ -1,0 +1,155 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acUtils.pas - bonus routines and utilities.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acUtils;
+
+interface
+
+uses Windows, Classes;
+
+{ STRING / FILENAME ROUTINES (check out AppControls.hlp for reference) }
+type
+  TacSplitStrSide = (LEFT, RIGHT);
+  TacSplitStrSides = set of TacSplitStrSide;
+procedure SplitStr(SubStr, Str: String;
+            var FirstPart, SecondPart: String;
+            MainSide: TacSplitStrSide;
+            LeaveSeparatorOn: TacSplitStrSides);
+{$IFNDEF D5}
+function  IncludeTrailingBackslash(const St: String): String;
+function  ExcludeTrailingBackslash(const St: String): String;
+{$ENDIF}
+procedure SplitFilenameAndParams(var FileName, Params: String);
+procedure ParseURL(const URL: String; var Protocol, HostName, ObjectName: String; var PortNumber: Integer);
+{$IFNDEF D4}
+{ StringReplace replaces occurances of <oldpattern> with <newpattern> in a
+  given string.  Assumes the string may contain Multibyte characters }
+type
+  TReplaceFlags = set of (rfReplaceAll, rfIgnoreCase);
+function StringReplace(const S, OldPattern, NewPattern: String; Flags: TReplaceFlags): String;
+{$ENDIF}
+{ checks whether email address is valid }
+function IsValidEmail(Email: String): Boolean;
+
+
+{ SHELL UTILITIES ROUTINES }
+{ Executes the Control Panel }
+procedure RunControlPanel(CmdShow: Integer);
+{ Executes the CPL application }
+procedure RunCPL(const FileName: String; CmdShow: Integer);
+{ Shows "Open with..." dialog }
+function  OpenWithDlg(const FileName: String): Boolean; // returns True if succeed
+{ Repaints entire screen }
+procedure RepaintScreen;
+{ Minimizes ALL windows to the task bar }
+procedure MinimizeAll;
+{ Restores windows from the task bar}
+procedure RestoreAll;
+{ Adjust date/time dialog }
+{procedure AdjustDateTime;}
+{ Returns executable file by specified extension }
+function  GetExecutableByExtension(const Extension: String): String;
+{ Opens the specified URL address. In current or new window }
+procedure OpenURL(URL: String; InNewWindow: Boolean);
+{ Compose email in default browser }
+procedure ComposeEmail(Address: String; const Name, Subject, Message, CC, BCC: String);
+{ Returns handle to system image list }
+function  GetSystemImageList(Size: Integer): THandle; // Size can be only 16 (16x16) or 32 (32x32)
+
+
+{ NUMERICAL CONVERSION ROUTINES }
+{ Converts decimal number to string representation of hexadecimal number }
+function DecToHex(aValue: LongInt): String;
+{ Converts string which represents hexadecimal number to decimal integer value }
+function HexToDec(const aValue: String): LongInt;
+{ Converts decimal number to string representation of binary number }
+function DecToBin(aValue: LongInt): String;
+{ Converts string which represents binary number to decimal integer value }
+function BinToDec(const aValue: String): LongInt;
+{ converts the 32bit Integer to unisgned Extended (float) type }
+function IntToExt(Int: DWord): Extended;
+{ converts the two 32bit Integer to unisgned Extended (float) type }
+function Int2x32ToExt(IntHi, IntLo: DWord): Extended;
+
+
+{ SYSTEM INFORMATION ROUTINES }
+type
+  TacOSVersion = (osUnknown, os95, os95OSR2, os98, os98SE, osNT3, osNT4, os2K, osME);
+{ returns the Windows version }
+function GetOS: TacOSVersion;
+{ True when the Windows NT/2000 and False when 95/98/ME}
+function IsNT: Boolean;
+{ True when the Windows 2000 or higher }
+function IsWin2k: Boolean;
+{ returns the CPU frequency }
+function GetCPUSpeed: Integer;
+{ returns True if the screensaver currently running. False otherwise }
+function IsScreenSaverRunning: Boolean;
+{ returns path to Temporary directory }
+function GetTempDir: String;
+{ returns path to System directory }
+function GetSystemDir: String;
+{ returns path to Windows directory }
+function GetWindowsDir: String;
+{ returns the string value of Environment variable }
+function GetEnvironmentString(const St: String): String;
+{ Returns file version for EXE/DLLs }
+function GetFileVersion(const FileName: String): DWord;
+
+
+{ PC SPEAKER SOUNDS (Like old Pascal's Sound, NoSound and Delay routines ) }
+{ Plays the sound. Hz is frequency of the PC Speaker }
+procedure Sound(Hz: Word);
+{ Turn off the PC Speaker}
+procedure NoSound; assembler;
+procedure Delay(MSec: Word);
+
+
+{ MISCELLANEOUS }
+{ Determinates wether the directory exists }
+function DirectoryExists(const DirName: String): Boolean;
+{ Determinates wether the directory is empty }
+function DirectoryEmpty(const DirName: String): Boolean;
+{ Returns the file size by file name}
+function ExtractFileSize(const FileName: String): Extended;
+{ Returns the string representation of file size (in Bytes, KB or MB) }
+function FileSizeToStr(const FileName: String; const Bytes, Kb, Mb: String): String;
+{ Returns a name of pressed/released key by lParam of KeyboardMessage }
+function GetKeyName(lParam: LongInt): String;
+{ Returns current state for shift keys (Shift, Ctrl, Alt). }
+function GetShiftState: TShiftState;
+{ Calculates percents. (Result = Round(Part * 100 / Entire)) }
+function PercentsOf(Entire, Part: Extended): Byte;
+{ Starts default screen saver }
+procedure StartScreenSaver;
+
+const
+  HTTPPrefix  = 'http://';
+
+implementation

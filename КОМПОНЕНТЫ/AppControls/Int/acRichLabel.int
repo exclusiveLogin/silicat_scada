@@ -1,0 +1,82 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acRichLabel.pas - acRichLabel component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acRichLabel;
+
+interface
+
+uses
+  Windows, Messages, Graphics, Classes, Controls, StdCtrls,
+  acLabels;
+
+const
+  DEFAULT_TAG_OPEN     = '[';
+  DEFAULT_TAG_CLOSE    = ']';
+
+type
+  TacRichLabel = class(TacBaseLabel)
+  private
+    FAutoHeight: Boolean;
+    FMarginHorz, FMarginVert: Word;
+    FPlainText: Boolean;
+    FTagOpen, FTagClose: Char;
+    FShadowColor: TColor;
+    FShowFrame: Boolean;
+    FShowShadow: Boolean;
+    FWordWrap: Boolean;
+
+    procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
+
+    procedure SetAutoHeight(Value: Boolean);
+    procedure SetPlainText(Value: Boolean);
+    procedure SetMarginHorz(Value: Word);
+    procedure SetMarginVert(Value: Word);
+    procedure SetShadowColor(Value: TColor);
+    procedure SetShowFrame(Value: Boolean);
+    procedure SetShowShadow(Value: Boolean);
+    procedure SetTagOpen(Value: Char);
+    procedure SetTagClose(Value: Char);
+    procedure SetWordWrap(Value: Boolean);    
+  protected
+    procedure Paint; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  published
+    property AutoHeight: Boolean read FAutoHeight write SetAutoHeight default True;
+    property MarginHorz: Word read FMarginHorz write SetMarginHorz;
+    property MarginVert: Word read FMarginVert write SetMarginVert;
+    property PlainText: Boolean read FPlainText write SetPlainText;
+    property ShadowColor: TColor read FShadowColor write SetShadowColor default clBlack;
+    property ShowFrame: Boolean read FShowFrame write SetShowFrame;
+    property ShowShadow: Boolean read FShowShadow write SetShowShadow;
+    property TagOpen: Char read FTagOpen write SetTagOpen default DEFAULT_TAG_OPEN;
+    property TagClose: Char read FTagClose write SetTagClose default DEFAULT_TAG_CLOSE;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
+  end;
+
+implementation

@@ -1,0 +1,84 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormBackground.pas - acFormBackground component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acFormBackground;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, Forms,
+  acClasses;
+
+type
+  TacGradientDirection = (gdVertical, gdHorizontal, gdCentral);
+  TacFormBackgroundKind = (bkPicture, bkGradient);
+  TacFormBackgroundPictureStyle = (bsTile, bsStretch, bsZigzag, bsCenter);
+  TacFormBackground = class(TacFormHookComponent)
+  private
+    FActive: Boolean;
+    FGradientColor1,
+    FGradientColor2: TColor;
+    FGradientDirection: TacGradientDirection;
+    FPicture: TPicture;
+    FPictureStyle: TacFormBackgroundPictureStyle;
+    FKind: TacFormBackgroundKind;
+
+    { for internal use }
+    FCanvas: TCanvas;
+    BackgroundBusy: Boolean;
+
+    procedure SetActive(Value: Boolean);
+    procedure SetGradientColor1(Value: TColor);
+    procedure SetGradientColor2(Value: TColor);
+    procedure SetGradientDirection(Value: TacGradientDirection);
+    procedure SetKind(Value: TacFormBackgroundKind);
+    procedure SetPicture(Value: TPicture);
+    procedure SetPictureStyle(Value: TacFormBackgroundPictureStyle);
+
+    procedure PictureChanged(Sender: TObject);
+    procedure InvalidateForm;    
+  protected
+    procedure MessageBefore(var Message: TMessage; var Handled: Boolean); override;
+    procedure MessageAfter(var Message: TMessage); override;
+    procedure FormRecreate; override;        
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About;
+
+    property Active: Boolean read FActive write SetActive default True;
+    property GradientColor1: TColor read FGradientColor1 write SetGradientColor1 default clBlue;
+    property GradientColor2: TColor read FGradientColor2 write SetGradientColor2 default clBlack;
+    property GradientDirection: TacGradientDirection read FGradientDirection write SetGradientDirection default gdVertical;
+    property Kind: TacFormBackgroundKind read FKind write SetKind default bkPicture;
+    property Picture: TPicture read FPicture write SetPicture;
+    property PictureStyle: TacFormBackgroundPictureStyle read FPictureStyle write SetPictureStyle default bsTile;
+  end;
+
+implementation

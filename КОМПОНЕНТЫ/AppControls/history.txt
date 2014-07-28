@@ -1,0 +1,410 @@
+02.12.2001  2.4
+===============
+	Add 4 new components: acEmbeddedForm, acImagesComboBox,
+	acSimpleTCPServer, acSimpleTCPClient.
+
+	Improvements in the acAutoUpgrader:
+	1. Improved integration with external setup programs (in case
+	if the upgrade made by external program, the self-upgrading
+	module now will wait for termination of setup)
+	2. Corrected function that calculates the estimated time left
+	in the download progress (this also fixed in OnProgress event
+	of acHTTP component. (New formula: X := FileSize / BytesRead
+	* ElapsedTime - ElapsedTime).
+	Added Italian language support for "Application Update Wizard".
+
+	Added couple of new optional properties (Margin structure) to
+	the acFormHelp + it now completely supports Jordan Russel's
+	Toolbar2000 buttons.
+
+	Improvements in acFormHints component. Now you can select the
+	style of hint dynamically in the OnShowHint event.
+
+	Bugfixes in download mechanism of acHTTP/acAutoUpgrader
+	components (fixed problems with allocation the memory for
+	streams for big files (>4MB)).
+
+	Added forgotten in previous release the component editor for
+	Columns property of the acDBListView.
+
+	New property in acOnlyOne, new event in acFormPlacementSaver,
+	huge improvements in acListView and acFileStorage components.
+	A lot of others minor improvements and optimizations.
+
+
+31.10.2001  2.3.6
+=================
+	Added acDBListView component - db-aware version of acListView.
+
+	The acFormHelp component now supports any sophistical buttons
+	and menu items (Toolbar2000 items for instance) as controls
+	which can automatically invoke the help pointer.
+
+	Fixed minor bug in acAppBar component, discovered in Win2000
+	(Win95/98/NT4 works ok), when user tryed to undock the form
+	double-clicking it to restore it to "floating" state.
+
+	Improved acAutoUpgrader component: now it correctly supports
+	external setup-files, added new option to UpgradeMethod
+	property. Minor improvements in the self-upgrading mechanism.
+
+
+24.10.2001  2.3.5
+=================
+	Implemented couple of new features for tooltips of the acListView
+	component. First - added possibility to specify custom multiline
+	tooltips for list items. Second - added new property
+	ShowScrollTips. When it True and user drags the thumb of vertical
+	scrollbar, the list-view shows the hint with caption of top list
+	item of current sorted column.
+
+	Fixed bug in acEdit component. (Values of PasswordChar and
+	ValidateChars properties was ignored.)
+
+	Added Dutch localization resources to acAutoUpgrader component.
+	Thanks to Carl Peeraer for translation.
+
+
+18.10.2001  2.3.4
+=================
+	Added acSendMail component, extremely easy to use implementation
+	of SMTP-client.
+
+	Implemented some new properties and events for acAutoUpgrader
+	component, which allows to use external installation programs
+	for local extraction downloaded setup-file in "silent mode",
+	fixed a couple of spelling mistakes in localization of
+	Application Update Wizard.
+
+	Fixed bug in acAppBar component. (There was strange behavior on
+	docking the AppBar to the right or bottom sides of screen, with
+	pre-configured minimal size of form.) Also added new property
+	(TitleBar) which allows to show the title bar on form docked to
+	the screen edge.
+
+	Fixed major design-time bug in acFormSystemMenu component.
+	The Delphi IDE has crashed on removing the component from form
+	at design-time.
+
+	Added Range property to the acHTTP component, which allows to
+	download certain blocks of data from remote binary files or
+	implement custom mechanism for resuming of broken downloads
+	(if you don't use IE cache).
+
+	Added MIMEType property to acExtAssociation component. The new
+	property allows to specify and determinate the media type of
+	file extension.
+
+
+24.09.2001  2.3.3
+=================
+	Minor bug fixed in self-upgrading mechanism of acAutoUpgrader
+        component.
+
+
+23.09.2001  2.3.2
+=================
+	Improved acDesktopWallpaper component. Added AutoFormat
+	property.
+	Minor bugfixes in acAutoUpgrader component (in Wizard form
+	and self-upgrading module).
+
+19.09.2001  2.3.1
+=================
+	Added acUnixCrypt component.
+	Fixed some minor bugs in the acAutoUpgrader, added German
+	language support.
+
+10.09.2001  2.3
+===============
+	acAutoUpgrader Pro released! Pro-version contains built-in
+	"Application Update Wizard", a lots of customization features,
+	proxy support, multi-language support and much more! See press
+	release on AppControls.com to check out what's new in the
+	acAutoUpgrader.
+
+	Added OnPasswordRequest event to acHTTP component. This event
+	allows user to enter his username and password, required for
+	access to password protected Web directory, then retry HTTP
+	request.
+
+	Bufixes and improvements in the acFormHelp component:
+	 1.Fixed problem with appearance of context-sensitive help
+	   windows without shadow;
+	 2.Added ParentFont property which helps to make uniform
+	   appearance for context-sensitive help as well as for
+	   usual controls;
+	 3.Added UseF1 property which can allow or disallow
+	   displaying of the context-sensitive help windows when
+	   user press F1 key;
+	 4."What's This?" menu item does not pops up anymore if the
+	   control already have own popup menus (even non-standard,
+	   like Jordan's Russels Toolbar2000 menus).
+
+	Some minor bugfixes in other components...
+
+27.08.2001  2.2.2
+=================
+	Added AddHeaders property to acHTTP component.
+	This property allows to specify additional headers for
+	the HTTP request.
+
+03.08.2001  2.2.1
+=================
+	Minor bugfixes in acCaptionButton, acAppBar and
+	acFormSystemMenu components.
+
+	Added new component, acDragPanel. DragPanel is great
+	addition to acAppBar to allow user to move and dock
+	the form dragging the panel that covers form.
+	Minor bugfixes in TacACaptionButton class and
+	acFormSystemMenu component.
+
+15.07.2001  2.2
+===============
+	A lots of improvements, Delphi 6 support, and two new
+	components: acFormSystemMenu and acFormStatusControl.
+
+	Changes and improvements:
+	acFormCursors component has been completely rewritten
+	and renamed to the acAppCursors. Now just one
+	acAppCursors component can change appearance of cursor
+	images for non-clients objects in entire application,
+	in any form, even non-VCL based (i.e: Save/Open file
+	dialogs).
+
+	acGradientForm component renamed to acFormBackground.
+	Improved component can paint the form background using
+	3 various gradient effects, or 4 styles of drawing the
+	wallpaper: tiled, stretched, tiled with zigzag (like
+	bricks in the wall), or aligning the picture by center.
+
+	Added some new properties which allows the acFormHelp
+	to put "What's This?" menu item to the main and/or
+	system menu(s) of your form. Additionally you can point
+	the "What's This?" button on the toolbar (or any control,
+	in general). When user clicks the button or menu item,
+	the cursor will be changed to a question mark with a
+	pointer. If the user then clicks a control in the form,
+	the control receives a message to show the context-
+	sensitive help, taken from secondary part of the control's
+	Hint property. Also added ShowHelpPointer method which
+	allows to envoke the help-pointer "manually".
+
+	Minor bugfixes and optimizations in the acCaptionButton
+	component. The caption buttons now refreshes much faster
+	when the form's caption changes + fixed small bug in
+	buttons wich have own popup menu.
+
+	Added OnCaptionChanged event to acFormHook component +
+	minor bugfix in the NoCaption property.
+
+	Added SortMarkJustify property to the acListView
+	component. The arrow-style sort mark now can be displayed
+	either near the text or near the edge of header section.
+
+	Added oDblClickRestore option to the acTrayIcon component.
+	This option allows to prevent restoring of the form
+	associated with the tray icon on double click.
+
+	Minor bugfix in the acCheckGroupBox component.
+
+	Changes and improvements in the core structures
+	(TacComponent and TacFormHookComponent).
+
+	Added 6 new cursors to the IDE (crArrowResize,
+	cr3dArrowResize, cr3dArrowWarning, crPen, crZoomIn
+	and crZoomOut).
+
+21.05.2001  2.1
+===============
+	Fixed bug in the acTrayIcon component, which was prevented
+	the Win2000 from shutting down (or logging off) when the
+	tray icon was visible in the taskbar status area.
+
+19.05.2001  2.0
+===============
+	Second version of the AppControls. The package now
+	contains new section with improved visual controls.
+
+	Was added 15 new components: acHTTP, acLabel, acURLLabel,
+	acRichLabel, acCheckBox, acRadioButton, acCheckGroupBox,
+	acButton, acBitBtn, acEdit, acNumberEdit, acIPEdit,
+	acMRUComboBox, acTreeView, acListView.
+
+	Fixed small bug in the acFormHints component. In previous
+	releases the balloon-style hint could be displayed
+	semi-transparent (even if Transparent property is False),
+	when user moves	the mouse too quickly and hint did not
+	have time to disappear.
+
+	Added some new properties and methods the the acAppBar
+	component.
+
+04.05.2001  1.3
+===============
+	Added acFormResizeGrip component which attaches	SizeGrip
+	rectangle to the bottom-right corner of the form at
+	run-time. This allows the user to resize the form
+	dragging this grip.
+
+	Improved acAppBar. Added several new properties and
+	methods	for more flexible management of the AppBar
+	window.
+
+27.04.2001  1.2
+===============
+	Added acExtAssiciation, acShortcut and acDateTimeCalc
+	components.
+
+	Updated the acFormHelp component. The text of the
+	context sensitive help now can be adjusted within a
+	popup window. Fixed problem with triggering of the
+	OnHide event by OnShow.
+
+	Improved the acAppBar component. Fixed small bug with
+	auto-hiding the AppBar on program startup and added two
+	new events OnHiding/OnUnhiding. Fixed minor problem with
+	"unhiding" of the AppBar when it need to accept some data
+	by drag'n'drop. Also updated component able to store its
+	settings either to the system registry and INI files.
+
+06.04.2001  1.1d
+================
+	Improved the FormHelp-designer, to override ALL others
+	installed property editors for Hint property, and to let
+	you to edit the context-sensitive help in WYSIWYG mode.
+
+	Added several new useful routines to acUtils unit.
+
+04.04.2001  v1.1
+================
+	Improved the acFormHelp component. New version of the
+	FormHelp can apply the "What's This?" menu item to
+	every control with context-sensitive help in the
+	secondary part of hint, and invokes the context help
+	either after pressing the "Help" button on the title
+	bar or after selecting "What's This?" menu item.
+
+        Updated acAnimationEffect component. The smooth effect
+	now based on system-wide events istead of using the
+	OnShow and OnHide form events.
+
+	Improved the acAutoUpgrader component. Updated version
+	can upgrade the applications even if it used by many
+	users at the same time (i.e.: users starts the program
+	from network drive) and the executable file is locked.
+
+
+31.03.2001  v1.0.4
+==================
+	Fixed some bugs in the CaptionButton class and all its
+	successors (acCaptionButton, acAppAutoRun, acTrayIcon,
+	acFormHelp, acFormTopmost). New version more correctly
+	displays the caption buttons if the form don't have a
+	regular buttons (when Form.BorderStyle=bsNone). Fixed
+	some problems with appearing of the tooltips (hints)
+	when the form contains main menu. Custom cursors for
+	the caption buttons is flickersfree now.
+
+	Updated acWavPlayer component (some minor optimizations).
+
+
+28.03.2001  v1.0.3
+==================
+	Added new component, acWin2kEffects, which enables to
+	produce some special effects of the Windows 98 / 2000.
+	You can show roll, slide and alpha-blending animation
+	effects on showing and hiding windows, make your forms
+	translucent, flash the caption bars and taskbar icons.
+
+	Improved the acTrayIcon component. Now it supports the
+	cartoon-style balloon tooltips - a nonintrusive way to
+	display an explanatory message for a status bar icon,
+	implementation a balloon tooltip with its stem pointing
+	to the icon. The ToolTip will disappear when clicked,
+	but you can also specify a time-out value. The information
+	balloon can appears after minimizing of the forms to the
+	system tray or after calling the ShowInfoBalloon method.
+	New feature will works on Windows 2000 and later only.
+	You can call the information balloons in lower Windows
+	versions, however nothing will happends.
+
+	Cosmetic improvements and bugfixes in acOnlyOne and
+	acAnimationEffect components. Added 7 useful GDI routines
+	to acGraphics unit.
+
+
+20.03.2001  v1.0.2
+==================
+	Fixed the acFormMagnet component. Now forms with
+	acFormMagnet can attract and attach other forms more
+	correctly, independently of taskbar placement.
+
+	Added 5 new events to the acAppEvents component. New
+	events lets you to hook ALL keypresses and ALL mouse
+	clicks / movements within entire application.
+
+
+16.03.2001  v1.0.1
+==================
+	Improved the acFormRoller component - added smooth
+	animation effect on rolling the form + added property
+	wich let programers specify custom "Roll up / Roll
+	down" tooltips.
+
+	Fixed small bug in the acAppAutoRun component which
+	incorrectly works with long an EXE filenames in
+	previous release.
+
+
+18.02.2001  v1.0
+================
+	First official release. Distributed from AppControls.com
+	(http://www.appcontrols.com) as part of UtilMind
+	Solutions(r) Network. A lot of bugfixes and improvements
+	of the beta version. acSystemInfo component adapted for
+	Win2000.
+
+
+24.01.2001  v1.0b
+=================
+	Initial Beta release. Currently for beta-testers only.
+	Package contains set of 27 components:
+	 * acAppAutoRun (updated since release for internal usage)
+	 * acAppStartCounter (new)
+	 * acAutoUpgrader (updated)
+	 * acAppEvents (new)
+	 * acOnlyOne (updated)
+	 * acTrayIcon (updated)
+	 * acAppBar (new)
+	 * acCaptionButton (updated)
+	 * acGradientForm (new)
+	 * acAnimationEffect (updated)
+	 * acFormCursors (new)
+	 * acFormHelp (updated)
+	 * acFormHints (new)
+	 * acFormMagnet (updated)
+	 * acFormTopmost (new)
+	 * acFormRoller (new)
+	 * acFormPlacementSaver (updated)
+	 * acFormSizeRestrictions (new)
+	 * acFileStorage (updated)
+	 * acWavPlayer (new)
+	 * acCursorLocker (new)
+	 * acFormHook (new)
+	 * acThread (new)
+	 * acSystemInfo (new)
+	 * acDesktopWallpaper (updated)
+	 * acControlKeyState (updated)
+	 * acQuickAboutBox (new)
+
+	All components, even that that was distributed by
+	UtilMind before, has been completely redesigned, many
+	properties, methods and event handlers has changed, so
+	our old customers may found some incompatibility with
+	previous versions of such components like AutoRunner,
+	AutoUpgrader, Magnet and FormHelp.
+
+	Added some additional colors and cursors which installs
+	with the package to the Delphi/BCB IDE.

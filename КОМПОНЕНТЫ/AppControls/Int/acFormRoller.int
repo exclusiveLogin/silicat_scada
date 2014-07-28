@@ -1,0 +1,86 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormRoller.pas - FormRoller component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acFormRoller;
+
+interface
+
+uses
+  Windows, Messages, Classes, Graphics, Forms,
+  acCaptionButton;
+
+type
+  TacFormRollerChangedEvent = procedure(Sender: TObject; RollUp: Boolean) of object;
+  TacFormRollerAnimateSpeed = 0..10;
+  TacFormRoller = class(TacCustomCaptionButton)
+  private
+    FAnimate: Boolean;
+    FAnimateSpeed: TacFormRollerAnimateSpeed;
+    FHintRollUp: String;
+    FHintRollDown: String;
+    FRemainHeight: Word;
+    FRollUp: Boolean;
+    FOnRollerChanged: TacFormRollerChangedEvent;
+
+    { for internal use }
+    DisallowModifications: Boolean;    
+    OldHeight: Integer;
+    WinRegion: hRgn;
+    FGlyphUp: TBitmap;
+    FGlyphDown: TBitmap;
+
+    procedure SetHintRollUp(const Value: String);
+    procedure SetHintRollDown(const Value: String);
+    procedure SetRemainHeight(const Value: Word);
+    procedure SetRollUp(const Value: Boolean);
+
+    function  GetRollUpHeight: Integer;
+    procedure PaintRollUp;
+  protected
+    procedure MessageAfter(var Message: TMessage); override;
+    procedure FormRecreate; override;
+    procedure Click; override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About;
+    property CaptionButton;
+    property SystemMenu;
+
+    property Animate: Boolean read FAnimate write FAnimate;
+    property AnimateSpeed: TacFormRollerAnimateSpeed read FAnimateSpeed write FAnimateSpeed;
+    property HintRollUp: String read FHintRollUp write SetHintRollUp;
+    property HintRollDown: String read FHintRollDown write SetHintRollDown;
+    property RemainHeight: Word read FRemainHeight write SetRemainHeight;
+    property RollUp: Boolean read FRollUp write SetRollUp;
+    property OnRollerChanged: TacFormRollerChangedEvent read FOnRollerChanged write FOnRollerChanged;
+  end;
+
+implementation

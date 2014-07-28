@@ -1,0 +1,141 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acImagesComboBox.pas - acImagesComboBox component (ComboBox with images)
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acImagesComboBox;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Graphics, StdCtrls,
+  Forms, SysUtils, {$IFDEF D4} ImgList, {$ENDIF}
+  acGraphics;
+
+type
+  TacImagesComboBox = class(TCustomComboBox)
+  private
+    FAbout: String;
+    FImages: TImageList;
+
+    procedure SetImages(Value: TImageList);
+  protected
+    procedure Notification(aComponent: TComponent; aOperation: TOperation); override;
+    procedure DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+
+    property Style default csOwnerDrawFixed;{Must be published before Items}    
+  published
+    property About: String read FAbout write FAbout stored False;
+    property Images: TImageList read FImages write SetImages;
+    property ItemHeight;
+
+    { standard properties }
+    property Align;
+{$IFDEF D6}
+    property AutoComplete default True;
+    property AutoDropDown default False;
+    property BevelEdges;
+    property BevelInner;
+    property BevelKind default bkNone;
+    property BevelOuter;
+{$ENDIF}
+{$IFDEF D4}
+    property Anchors;
+    property BiDiMode;
+{$ENDIF}
+{$IFDEF D6}
+    property CharCase;
+{$ENDIF}    
+    property Color;
+{$IFDEF D4}
+    property Constraints;
+{$ENDIF}    
+    property Ctl3D;
+    property DragCursor;
+{$IFDEF D4}
+    property DragKind;
+{$ENDIF}    
+    property DragMode;
+    property DropDownCount;
+    property Enabled;
+    property Font;
+{$IFDEF D3}
+    property ImeMode;
+    property ImeName;
+{$ENDIF}    
+    property ItemIndex default -1;
+    property MaxLength;
+{$IFDEF D4}
+    property ParentBiDiMode;
+{$ENDIF}    
+    property ParentColor;
+    property ParentCtl3D;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowHint;
+    property Sorted;
+    property TabOrder;
+    property TabStop;
+    property Text;
+    property Visible;
+    property OnChange;
+    property OnClick;
+{$IFDEF D6}
+    property OnCloseUp;
+{$ENDIF}
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnDrawItem;
+    property OnDropDown;
+{$IFDEF D4}
+    property OnEndDock;
+{$ENDIF}    
+    property OnEndDrag;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMeasureItem;
+{$IFDEF D6}
+    property OnSelect;
+{$ENDIF}
+{$IFDEF D4}
+    property OnStartDock;
+{$ENDIF}    
+    property OnStartDrag;
+    property Items; { Must be published after OnMeasureItem }
+  end;
+
+implementation

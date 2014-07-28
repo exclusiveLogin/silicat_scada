@@ -1,0 +1,550 @@
+{*******************************************************************************
+
+  UtilMind Common Controls (ListView and TreeView)
+  Used by AppControls and DiskControls
+  Original Filename: umComCtrls.pas
+  Last updated: November 29, 2001
+
+  Copyright (c) 1999-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acComCtrls;
+
+interface
+
+uses Windows, Messages, Classes, Controls, Graphics,
+     ComCtrls, CommCtrl, Menus, 
+{$IFDEF APPCONTROLS}
+     acClasses, acGraphics;
+{$ELSE}
+     dcInternal;
+{$ENDIF}
+
+const
+  UM_BESTFIT = WM_USER + $29A;
+
+type
+  TacCustomListView = class;
+
+  TacListViewSortDirection = (sdAscending, sdDescending);
+  TacListViewSortMarkKind = (mkSunken, mkRaised);
+  TacListViewSortMarkAlign = (maText, maEdge);
+  TacListViewToolTipOption = (ttoInstantShow, ttoLongStay, ttoBelowItem, ttoOffset);
+  TacListViewToolTipOptions = set of TacListViewToolTipOption;
+
+  TacListViewDrawHeaderSection = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect;
+                                           ColumnIndex: Integer; Pressed: Boolean) of object;
+  TacListViewToolTipEvent = procedure(Sender: TObject; var ToolTipText: String;
+                                      Item: TListItem; LogicalCol: Integer) of object;
+
+{$IFDEF D4}
+  TacListViewCustomDrawSubItemExEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect;
+       Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean) of object;
+  TacListViewColumnDragEvent = procedure(Sender: TObject; ColumnOrders: array of Integer) of object;       
+{$ENDIF}       
+
+  { TacListViewCursors }
+  TacListViewCursors = class(TPersistent)
+  private
+    FBorder,
+    FHeader,
+{$IFDEF APPCONTROLS}
+    FHotCursor,
+{$ENDIF}    
+    FDivider,
+    FScrollHorz,
+    FScrollVert: TCursor;
+
+    { for internal use }
+    ListView: TacCustomListView;
+
+{$IFDEF APPCONTROLS}
+    procedure SetHotCursor(Value: TCursor);
+{$ENDIF}    
+  public
+    constructor Create(aListView: TacCustomListView);
+  published
+    property Border: TCursor read FBorder write FBorder default crDefault;
+    property Header: TCursor read FHeader write FHeader default crDefault;
+{$IFDEF APPCONTROLS}
+    property HotCursor: TCursor read FHotCursor write SetHotCursor default crLinkSelect;
+{$ENDIF}
+    property Divider: TCursor read FDivider write FDivider default crDefault;
+    property ScrollHorz: TCursor read FScrollHorz write FScrollHorz default crDefault;
+    property ScrollVert: TCursor read FScrollVert write FScrollVert default crDefault;
+  end;
+
+  { TacListViewHeaderMenu }
+  TacListViewHeaderMenu = class(TPersistent)
+  private
+    FAlignLeftItem: TMenuItem;
+    FAlignRightItem: TMenuItem;
+    FAlignCenterItem: TMenuItem;
+    FAscendingItem: TMenuItem;
+    FDescendingItem: TMenuItem;
+    FBestFitItem: TMenuItem;
+    FPopupMenu: TPopupMenu;
+
+    { for internal use }
+    ListView: TacCustomListView;
+
+    procedure SetAlignLeftItem(Value: TMenuItem);
+    procedure SetAlignRightItem(Value: TMenuItem);
+    procedure SetAlignCenterItem(Value: TMenuItem);
+    procedure SetAscendingItem(Value: TMenuItem);
+    procedure SetDescendingItem(Value: TMenuItem);
+    procedure SetBestFitItem(Value: TMenuItem);
+  public
+    constructor Create(aListView: TacCustomListView);
+  published
+    property AlignLeftItem: TMenuItem read FAlignLeftItem write SetAlignLeftItem;
+    property AlignRightItem: TMenuItem read FAlignRightItem write SetAlignRightItem;
+    property AlignCenterItem: TMenuItem read FAlignCenterItem write SetAlignCenterItem;
+    property AscendingItem: TMenuItem read FAscendingItem write SetAscendingItem;
+    property DescendingItem: TMenuItem read FDescendingItem write SetDescendingItem;
+    property BestFitItem: TMenuItem read FBestFitItem write SetBestFitItem;
+    property PopupMenu: TPopupMenu read FPopupMenu write FPopupMenu;
+  end;
+
+  { TacListViewRegistrySaver }
+  TacListViewRegistrySaver = class(TPersistent)
+  private
+    FEnabled: Boolean;
+    FRegKey: String;
+    FRegLocation: {$IFDEF APPCONTROLS}TacRegLocation{$ELSE}TdcRegLocation{$ENDIF};
+
+    procedure SetRegKey(Value: String);
+  public
+    constructor Create;
+  published
+    property Enabled: Boolean read FEnabled write FEnabled;
+    property RegKey: String read FRegKey write SetRegKey;
+    property RegLocation: {$IFDEF APPCONTROLS}TacRegLocation{$ELSE}TdcRegLocation{$ENDIF} read FRegLocation write FRegLocation default {$IFDEF APPCONTROLS} rlCurrentUser {$ELSE} rCurrentUser {$ENDIF};
+  end;
+
+  { TacListView }
+  {$IFNDEF D4}
+  THeaderStyle = (hsButtons, hsFlat);
+  TListHotTrackStyle = (htHandPoint, htUnderlineCold, htUnderlineHot);
+  TListHotTrackStyles = set of TListHotTrackStyle;
+  {$ENDIF}
+
+  TacCustomListView = class(TCustomListView)
+  private
+    FAbout: String;
+
+    FHeaderStyle: THeaderStyle;
+    FHeaderMenu: TacListViewHeaderMenu;
+    FCursors: TacListViewCursors;
+    FShowHeaderMenu, FShowSortMark,
+    FShowScrollTips, FShowToolTips: Boolean;
+    FSortDirection: TacListViewSortDirection;
+    FSortColumn: Word;
+    FSortMarkAlign: TacListViewSortMarkAlign;
+    FSortMarkKind: TacListViewSortMarkKind;
+    FRegistrySaver: TacListViewRegistrySaver;
+
+    {$IFNDEF D3}
+    FGridLines, FHotTrack, FRowSelect: Boolean;
+    {$ENDIF}
+    {$IFNDEF D4}
+    FFlatScrollBars, FFullDrag: Boolean;
+    FHotTrackStyles: TListHotTrackStyles;
+    {$ENDIF}
+
+    FToolTipOptions: TacListViewToolTipOptions;
+    FToolTipText: String;
+
+    FOnDrawHeaderSection: TacListViewDrawHeaderSection;
+    FOnToolTip: TacListViewToolTipEvent;
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;
+    FOnSettingsChanged: TNotifyEvent;
+    {$IFDEF D4}
+    FOnCustomDrawSubItemEx: TacListViewCustomDrawSubItemExEvent;
+    FOnColumnDragged: TacListViewColumnDragEvent;    
+    {$ENDIF}
+
+    { for internal use }
+    FDefaultMenu: TPopupMenu;
+    FDefAscendingItem: TMenuItem;
+    FDefDescendingItem: TMenuItem;
+    FHeaderHandle: hWnd;    
+    FHeaderInstance: Pointer;
+    FOldHeaderWndProc: Pointer;
+    MouseX, MouseY: Integer;
+    ClickedColumn: Integer;
+    HeaderVisible: Boolean;
+    ColumnDragging: Boolean;
+{$IFDEF D4}
+    ColumnDragged: Boolean;
+    CustomDrawRect: TRect;
+{$ENDIF}
+    {------------------}
+
+    procedure SetHeaderStyle(Value: THeaderStyle);
+    procedure SetShowSortMark(Value: Boolean);
+    procedure SetSortDirection(Value: TacListViewSortDirection);
+    procedure SetSortColumn(Value: Word);
+    procedure SetSortMarkAlign(Value: TacListViewSortMarkAlign);
+    procedure SetSortMarkKind(Value: TacListViewSortMarkKind);
+    function  GetToolTips: Boolean;
+    procedure SetToolTips(Value: Boolean);
+    procedure SetToolTipOptions(Value: TacListViewToolTipOptions);
+    function  GetViewStyle: TViewStyle;
+
+    function  GetSortType: TSortType;
+    procedure SetSortType(Value: TSortType);
+    {$IFNDEF D3}
+    procedure SetGridLines(Value: Boolean);
+    procedure SetHotTrack(Value: Boolean);
+    procedure SetRowSelect(Value: Boolean);
+    {$ENDIF}
+    {$IFNDEF D4}
+    procedure ResetExStyles;    
+    procedure SetFlatScrollBars(Value: Boolean);
+    procedure SetFullDrag(Value: Boolean);
+    procedure SetHotTrackStyles(Value: TListHotTrackStyles);
+    {$ENDIF}
+    {$IFNDEF D5}
+    function  GetHoverTime: Integer;
+    procedure SetHoverTime(Value: Integer);
+    {$ENDIF}
+    {$IFDEF D4}
+    procedure SetOnCustomDrawSubItemEx(Value: TacListViewCustomDrawSubItemExEvent);
+    procedure StdOnCustomDrawSubItemHook(Sender: TCustomListView; Item: TListItem; SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
+    {$ENDIF}
+
+    procedure HeaderWndProc(var Message: TMessage);
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+    procedure CMSysColorChange(var Message: TMessage); message CM_SYSCOLORCHANGE;
+    procedure CMWinIniChange(var Message: TMessage); message CM_WININICHANGE;
+    procedure CNKeyDown(var Message: TWMKEY); message CN_KEYDOWN;
+    {$IFDEF D4}
+    procedure CNNotify(var Message: TWMNotify); message CN_NOTIFY;
+    {$ENDIF}
+    procedure WMVScroll(var Message: TWMVScroll); message WM_VSCROLL;
+    procedure WMParentNotify(var Message: TWMParentNotify); message WM_PARENTNOTIFY;
+    procedure WMDrawHeader(var Message: TWMDrawItem); message WM_DRAWITEM;
+    procedure WMNotify(var Message: TWMNotify); message WM_NOTIFY;
+    procedure UMBestFit(var Message: TMessage); message UM_BESTFIT;
+
+    procedure AlignLeftItemClick(Sender: TObject);
+    procedure AlignRightItemClick(Sender: TObject);
+    procedure AlignCenterItemClick(Sender: TObject);
+    procedure AscendingItemClick(Sender: TObject);
+    procedure DescendingItemClick(Sender: TObject);
+    procedure BestFitItemClick(Sender: TObject);
+  protected
+    DefaultSortProc: Pointer;
+
+    procedure Notification(aComponent: TComponent; Operation: TOperation); override;
+    procedure Loaded; override;
+    procedure CreateWnd; override;
+
+    procedure SetViewStyle(Value: TViewStyle); {$IFNDEF D6} virtual; {$ELSE} reintroduce; {$ENDIF}
+    procedure ColClick(Column: TListColumn); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure WndProc(var Message: TMessage); override;
+
+    {$IFDEF D4}
+    function  CustomDrawSubItem(Item: TListItem; SubItem: Integer; State: TCustomDrawState; Stage: TCustomDrawStage): Boolean; override;
+    {$ENDIF}
+    procedure DrawHeader(Canvas: TCanvas; Rect: TRect; ColumnIndex: Integer; Pressed: Boolean); virtual;
+    procedure UpdateListItems; virtual;
+
+    procedure LoadSettings; virtual;
+    procedure StoreSettings; virtual;
+
+    { protected (hidden) properties (for internal use) }
+    property Columns;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+
+    procedure RepaintHeader; virtual;
+
+    function CountPerPage: Integer; { calculates number of items that can fit vertically in the visible area of a listview control when in list or report view }    
+    function GetColumnAt(X: Integer): TListColumn;
+    function IsScrollBarsVisible: Boolean;
+    procedure BestFit;
+
+    { public properties (not for Object Inspector) }
+    property Items;
+  published
+    { derived properties/events }
+    property Align;
+    property AllocBy;
+{$IFDEF D4}
+    property Anchors;
+    property BiDiMode;
+{$ENDIF}
+    property BorderStyle;
+{$IFDEF D4}
+    property BorderWidth;
+{$ENDIF}
+{$IFDEF D3}
+    property Checkboxes;
+{$ENDIF}
+    property Color;
+    property ColumnClick;
+{$IFDEF D4}
+    property Constraints;
+{$ENDIF}
+    property Ctl3D;
+    property Enabled;
+    property Font;
+{$IFDEF D4}
+    property FlatScrollBars;
+    property FullDrag;
+{$ENDIF}
+{$IFDEF D3}
+    property GridLines;
+{$ENDIF}
+    property HideSelection;
+{$IFDEF D3}
+    property HotTrack;
+{$ENDIF}
+{$IFDEF D4}
+    property HotTrackStyles;
+{$ENDIF}
+{$IFDEF D5}
+    property HoverTime;
+{$ENDIF}
+    property IconOptions;
+    property MultiSelect;
+{$IFDEF D4}
+    property OwnerData;
+    property OwnerDraw;
+{$ENDIF}
+    property ReadOnly default False;
+{$IFDEF D3}
+    property RowSelect;
+{$ENDIF}
+{$IFDEF D4}
+    property ParentBiDiMode;
+{$ENDIF}
+    property ParentColor default False;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property ShowColumnHeaders;
+{$IFDEF D5}
+    property ShowWorkAreas;
+{$ENDIF}
+    property ShowHint;
+    property TabOrder;
+    property TabStop default True;
+    property Visible;
+{$IFDEF D5}
+    property OnAdvancedCustomDraw;
+    property OnAdvancedCustomDrawItem;
+    property OnAdvancedCustomDrawSubItem;
+{$ENDIF}
+    property OnChange;
+    property OnChanging;
+    property OnClick;
+    property OnColumnClick;
+{$IFDEF D5}
+    property OnColumnRightClick;
+{$ENDIF}
+    property OnCompare;
+{$IFDEF D5}
+    property OnContextPopup;
+{$ENDIF}
+{$IFDEF D4}
+    property OnCustomDraw;
+    property OnCustomDrawItem;
+    property OnCustomDrawSubItem;
+    property OnData;
+    property OnDataFind;
+    property OnDataHint;
+    property OnDataStateChange;
+{$ENDIF}
+    property OnDblClick;
+    property OnDeletion;
+{$IFDEF D4}
+    property OnDrawItem;
+{$ENDIF}
+    property OnEdited;
+    property OnEditing;
+    property OnEnter;
+    property OnExit;
+{$IFDEF D4}
+    property OnGetImageIndex;
+{$ENDIF}
+{$IFDEF D5}
+    property OnGetSubItemImage;
+{$ENDIF}
+{$IFDEF D5}
+    property OnInfoTip;
+{$ENDIF}
+    property OnInsert;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
+    property OnMouseDown;
+    property OnMouseMove;
+    property OnMouseUp;
+{$IFDEF D4}
+    property OnResize;
+    property OnSelectItem;
+{$ENDIF}
+
+    { new properties/events }
+    property About: String read FAbout write FAbout stored False;
+    property ViewStyle: TViewStyle read GetViewStyle write SetViewStyle default vsReport;
+    property SortType: TSortType read GetSortType write SetSortType default stData;
+
+    property HeaderStyle: THeaderStyle read FHeaderStyle write SetHeaderStyle default hsButtons;
+    property HeaderMenu: TacListViewHeaderMenu read FHeaderMenu write FHeaderMenu;
+    property Cursors: TacListViewCursors read FCursors write FCursors;
+    property ShowHeaderMenu: Boolean read FShowHeaderMenu write FShowHeaderMenu default True;
+    property ShowSortMark: Boolean read FShowSortMark write SetShowSortMark default True;
+    property SortDirection: TacListViewSortDirection read FSortDirection write SetSortDirection default sdAscending;
+    property SortColumn: Word read FSortColumn write SetSortColumn default 0;
+    property SortMarkAlign: TacListViewSortMarkAlign read FSortMarkAlign write SetSortMarkAlign default maText;
+    property SortMarkKind: TacListViewSortMarkKind read FSortMarkKind write SetSortMarkKind default mkSunken;
+    property RegistrySaver: TacListViewRegistrySaver read FRegistrySaver write FRegistrySaver;
+
+    {$IFNDEF D3}
+    property GridLines: Boolean read FGridLines write SetGridLines;
+    property HotTrack: Boolean read FHotTrack write SetHotTrack;
+    property RowSelect: Boolean read FRowSelect write SetRowSelect;
+    {$ENDIF}
+    {$IFNDEF D4}
+    property FlatScrollBars: Boolean read FFlatScrollBars write SetFlatScrollBars;
+    property FullDrag: Boolean read FFullDrag write SetFullDrag default False;
+    property HotTrackStyles: TListHotTrackStyles read FHotTrackStyles write SetHotTrackStyles default [];
+    {$ENDIF}
+    {$IFNDEF D5}
+    property HoverTime: Integer read GetHoverTime write SetHoverTime;
+    {$ENDIF}
+
+    property ShowScrollTips: Boolean read FShowScrollTips write FShowScrollTips default True; 
+    property ShowToolTips: Boolean read GetToolTips write SetToolTips default True;
+    property ToolTipOptions: TacListViewToolTipOptions read FToolTipOptions write SetToolTipOptions default [];
+
+    property OnDrawHeaderSection: TacListViewDrawHeaderSection read FOnDrawHeaderSection write FOnDrawHeaderSection;
+    property OnToolTip: TacListViewToolTipEvent read FOnToolTip write FOnToolTip;
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+    property OnSettingsChanged: TNotifyEvent read FOnSettingsChanged write FOnSettingsChanged;
+    {$IFDEF D4}
+    property OnCustomDrawSubItemEx: TacListViewCustomDrawSubItemExEvent read FOnCustomDrawSubItemEx write SetOnCustomDrawSubItemEx;
+    property OnColumnDragged: TacListViewColumnDragEvent read FOnColumnDragged write FOnColumnDragged;
+    {$ENDIF}
+  end;
+
+
+{$IFDEF APPCONTROLS}
+type
+  TacListView = class(TacCustomListView)
+  published
+    property Columns;
+    property Items;
+    property LargeImages;
+    property SmallImages;
+    property StateImages;
+    
+    property DragCursor;
+    property DragMode;
+{$IFDEF D4}
+    property DragKind;
+    property OnStartDock;
+    property OnEndDock;
+{$ENDIF}
+    property OnStartDrag;
+    property OnEndDrag;
+    property OnDragDrop;
+    property OnDragOver;
+  end;
+
+// -- TreeView -------------------------
+
+  { TacTreeViewCursors }
+  TacTreeViewCursors = class(TPersistent)
+  private
+    FBorder,
+    FScrollHorz,
+    FScrollVert: TCursor;
+  published
+    property Border: TCursor read FBorder write FBorder default crDefault;
+    property ScrollHorz: TCursor read FScrollHorz write FScrollHorz default crDefault;
+    property ScrollVert: TCursor read FScrollVert write FScrollVert default crDefault;
+  end;
+
+  { acTreeView }
+  TacTreeView = class(TTreeView)
+  private
+    FAbout: String;
+    FCursors: TacTreeViewCursors;
+
+    FOnMouseEnter, FOnMouseLeave: TNotifyEvent;    
+
+    {$IFNDEF D4}
+    FAutoExpand,
+    FHotTrack,
+    FRowSelect,
+    FToolTips: Boolean;
+
+    procedure SetAutoExpand(Value: Boolean);
+    procedure SetHotTrack(Value: Boolean);
+    procedure SetRowSelect(Value: Boolean);
+    procedure SetToolTips(Value: Boolean);
+    {$ENDIF}
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+  protected
+    procedure WndProc(var Message: TMessage); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About: String read FAbout write FAbout stored False;
+    property Cursors: TacTreeViewCursors read FCursors write FCursors;
+
+    {$IFNDEF D4}
+    property AutoExpand: Boolean read FAutoExpand write SetAutoExpand;
+    property HotTrack: Boolean read FHotTrack write SetHotTrack;
+    property RowSelect: Boolean read FRowSelect write SetRowSelect;
+    property ToolTips: Boolean read FToolTips write SetToolTips default True;
+    {$ENDIF}
+
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+  end;
+{$ENDIF}
+
+{ converts datetime value without exception }
+function StrToDateTimeDef(const S: String; DefDateTime: TDateTime): TDateTime;
+{$IFNDEF D3}
+{ Indicates whether a specified year is a leap year (Need for Delphi 2 only) }
+function IsLeapYear(AYear: Integer): Boolean;
+{$ENDIF}
+
+function UMDefaultListViewSort(Item1, Item2: TListItem;
+  lParam: Integer): Integer; stdcall;
+
+implementation

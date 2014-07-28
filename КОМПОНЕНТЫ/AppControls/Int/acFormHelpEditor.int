@@ -1,0 +1,140 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acFormHelpEditor.pas - property editor for acFormHelp component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+{$I umDefines.inc}
+
+unit acFormHelpEditor;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
+  StdCtrls, ComCtrls, ExtCtrls, Buttons, Menus, Registry, Tabs, RichEdit,
+  acClasses, acCaptionButton, acFormHelp, acFormSizeRestrictions,
+  acFormPlacementSaver, acFormResizeGrip;
+
+type
+  TacFormHelpEditor = class(TForm)
+    RichPopupMenu: TPopupMenu;
+    RichCutItem: TMenuItem;
+    RichCopyItem: TMenuItem;
+    RichPasteItem: TMenuItem;
+    N1: TMenuItem;
+    RichSelectAllItem: TMenuItem;
+    Timer: TTimer;
+    RichDeleteItem: TMenuItem;
+    acFormHelp: TacFormHelp;
+    acFormSizeRestrictions: TacFormSizeRestrictions;
+    PageControl: TPageControl;
+    FirstPart: TTabSheet;
+    SecondPart: TTabSheet;
+    Toolbar: TPanel;
+    MemoPopupMenu: TPopupMenu;
+    MemoCutItem: TMenuItem;
+    MemoCopyItem: TMenuItem;
+    MemoPasteItem: TMenuItem;
+    MemoDeleteItem: TMenuItem;
+    MenuItem5: TMenuItem;
+    MemoSelectAllItem: TMenuItem;
+    TabSet: TTabSet;
+    RichEditor: TRichEdit;
+    TagEditor: TRichEdit;
+    Memo: TRichEdit;
+    Panel2: TPanel;
+    ColorComboBox: TComboBox;
+    StrikeBtn: TSpeedButton;
+    UnderlineBtn: TSpeedButton;
+    ItalicBtn: TSpeedButton;
+    BoldBtn: TSpeedButton;
+    RichPanel: TPanel;
+    RichUndoBtn: TSpeedButton;
+    RichCutBtn: TSpeedButton;
+    RichCopyBtn: TSpeedButton;
+    RichPasteBtn: TSpeedButton;
+    TagPanel: TPanel;
+    TagPasteBtn: TSpeedButton;
+    TagCopyBtn: TSpeedButton;
+    TagCutBtn: TSpeedButton;
+    TagUndoBtn: TSpeedButton;
+    TagPopupMenu: TPopupMenu;
+    TagCutItem: TMenuItem;
+    TagCopyItem: TMenuItem;
+    TagPasteItem: TMenuItem;
+    TagDeleteItem: TMenuItem;
+    MenuItem6: TMenuItem;
+    TagSelectAll: TMenuItem;
+    acFormPlacementSaver: TacFormPlacementSaver;
+    acFormResizeGrip: TacFormResizeGrip;
+    OkBtn: TButton;
+    CancelBtn: TButton;
+    tmpMemo: TMemo;
+    procedure RichEditorSelectionChange(Sender: TObject);
+    procedure BoldBtnClick(Sender: TObject);
+    procedure ItalicBtnClick(Sender: TObject);
+    procedure UnderlineBtnClick(Sender: TObject);
+    procedure ColorComboBoxDrawItem(Control: TWinControl; Index: Integer;
+      Rect: TRect; State: TOwnerDrawState);
+    procedure ColorComboBoxChange(Sender: TObject);
+    procedure StrikeBtnClick(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
+    procedure RichCutItemClick(Sender: TObject);
+    procedure RichCopyItemClick(Sender: TObject);
+    procedure RichPasteItemClick(Sender: TObject);
+    procedure RichSelectAllItemClick(Sender: TObject);
+    procedure RichDeleteItemClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure RichUndoBtnClick(Sender: TObject);
+    procedure PageControlChange(Sender: TObject);
+    procedure MemoSelectionChange(Sender: TObject);
+    procedure MemoCutItemClick(Sender: TObject);
+    procedure MemoCopyItemClick(Sender: TObject);
+    procedure MemoPasteItemClick(Sender: TObject);
+    procedure MemoDeleteItemClick(Sender: TObject);
+    procedure MemoSelectAllItemClick(Sender: TObject);
+    procedure TabSetChange(Sender: TObject; NewTab: Integer;
+      var AllowChange: Boolean);
+    procedure FormResize(Sender: TObject);
+    procedure TagUndoBtnClick(Sender: TObject);
+    procedure TagCutItemClick(Sender: TObject);
+    procedure TagCopyItemClick(Sender: TObject);
+    procedure TagPasteItemClick(Sender: TObject);
+    procedure TagDeleteItemClick(Sender: TObject);
+    procedure TagSelectAllClick(Sender: TObject);
+    procedure TagEditorSelectionChange(Sender: TObject);
+    procedure TagEditorKeyPress(Sender: TObject; var Key: Char);
+    procedure OkBtnClick(Sender: TObject);
+    procedure acFormHelpShow(Sender: TObject; HelpControl: TControl;
+      var HelpMessage: string);
+  private
+    procedure SetComboBoxColor(Color: TColor; UseSpecifiedColor: Boolean);
+  public
+    FormHelp: TacFormHelp;
+
+    procedure AssignFormHelp(aFormHelp: TacFormHelp);
+  end;
+
+implementation

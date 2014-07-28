@@ -1,0 +1,100 @@
+{*******************************************************************************
+
+  Advanced Application Controls v2.4
+  FILE: acAppCursors.pas - AppCursors component.
+
+  Copyright (c) 1998-2001 UtilMind Solutions
+  All rights reserved.
+  E-Mail: info@utilmind.com
+  WWW: http://www.utilmind.com, http://www.appcontrols.com
+
+  The entire contents of this file is protected by International Copyright
+Laws. Unauthorized reproduction, reverse-engineering, and distribution of all
+or any portion of the code contained in this file is strictly prohibited and
+may result in severe civil and criminal penalties and will be prosecuted to
+the maximum extent possible under the law.
+
+  Restrictions
+
+  The source code contained within this file and all related files or any
+portion of its contents shall at no time be copied, transferred, sold,
+distributed, or otherwise made available to other individuals without express
+written consent and permission from the UtilMind Solutions.
+
+  Consult the End User License Agreement (EULA) for information on additional
+restrictions.
+
+*******************************************************************************}
+
+unit acAppCursors;
+
+interface
+
+uses
+  Windows, Messages, Classes, Controls, Forms, StdCtrls,
+  acClasses;
+
+type
+  TacAppObject = (aoBorderNonResize, aoBorderBottom,
+                  aoBorderBottomLeft, aoBorderBottomRight,
+                  aoBorderLeft, aoBorderRight, aoBorderTop,
+                  aoBorderTopLeft, aoBorderTopRight,
+                  aoBtnClose, aoBtnHelp, aoBtnMaximize,
+                  aoBtnMinimize, aoCaption, aoClient,
+                  aoClientNonVCL, aoMainMenu, aoMenuItem, aoScrollHorz,
+                  aoScrollVert, aoSystemMenu, aoTransparent);
+
+  TacMouseOverObjectEvent = procedure(Sender: TObject; AppObject: TacAppObject; WndHandle: THandle; var Cursor: TCursor) of object;
+
+  TacAppCursors = class(TacComponent)
+  private
+    FActive: Boolean;
+    FCursors: Array[TacAppObject] of TCursor;
+
+    FOnMouseOverObject: TacMouseOverObjectEvent;
+
+    { for internal use }
+    FHooked: Boolean;
+    FHookedWindow: hWnd;
+    FOldWndProc, FNewWndProc: Pointer;
+
+    procedure HookWindow(Wnd: hWnd);
+    procedure UnhookWindow;
+    procedure HookWndProc(var Message: TMessage);
+  protected
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+    property About;
+
+    property Active: Boolean read FActive write FActive default True;
+    property BorderNonResize: TCursor read FCursors[aoBorderNonResize] write FCursors[aoBorderNonResize];
+    property BorderBottom: TCursor read FCursors[aoBorderBottom] write FCursors[aoBorderBottom];
+    property BorderBottomLeft: TCursor read FCursors[aoBorderBottomLeft] write FCursors[aoBorderBottomLeft];
+    property BorderBottomRight: TCursor read FCursors[aoBorderBottomRight] write FCursors[aoBorderBottomRight];
+    property BorderLeft: TCursor read FCursors[aoBorderLeft] write FCursors[aoBorderLeft];
+    property BorderRight: TCursor read FCursors[aoBorderRight] write FCursors[aoBorderRight];
+    property BorderTop: TCursor read FCursors[aoBorderTop] write FCursors[aoBorderTop];
+    property BorderTopLeft: TCursor read FCursors[aoBorderTopLeft] write FCursors[aoBorderTopLeft];
+    property BorderTopRight: TCursor read FCursors[aoBorderTopRight] write FCursors[aoBorderTopRight];
+    property BtnClose: TCursor read FCursors[aoBtnClose] write FCursors[aoBtnClose];
+    property BtnHelp: TCursor read FCursors[aoBtnHelp] write FCursors[aoBtnHelp];
+    property BtnMaximize: TCursor read FCursors[aoBtnMaximize] write FCursors[aoBtnMaximize];
+    property BtnMinimize: TCursor read FCursors[aoBtnMinimize] write FCursors[aoBtnMinimize];
+    property Caption: TCursor read FCursors[aoCaption] write FCursors[aoCaption];
+    property Client: TCursor read FCursors[aoClient] write FCursors[aoClient];
+    property ClientNonVCL: TCursor read FCursors[aoClientNonVCL] write FCursors[aoClientNonVCL];        
+    property MainMenu: TCursor read FCursors[aoMainMenu] write FCursors[aoMainMenu];
+    property MenuItem: TCursor read FCursors[aoMenuItem] write FCursors[aoMenuItem];
+    property ScrollHorz: TCursor read FCursors[aoScrollHorz] write FCursors[aoScrollHorz];
+    property ScrollVert: TCursor read FCursors[aoScrollVert] write FCursors[aoScrollVert];
+    property SystemMenu: TCursor read FCursors[aoSystemMenu] write FCursors[aoSystemMenu];
+    property Transparent: TCursor read FCursors[aoTransparent] write FCursors[aoTransparent];
+
+    property OnMouseOverObject: TacMouseOverObjectEvent read FOnMouseOverObject write FOnMouseOverObject;
+  end;
+
+function WndCallbackProc(nCode: Integer; wParam, lParam: LongInt): LongInt; stdcall;
+
+implementation

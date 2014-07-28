@@ -1,0 +1,53 @@
+package P161_R50;
+
+{$R *.RES}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'OfficePartner Components'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl50,
+  VCLDB50;
+
+contains
+  OpDbOfc in 'OpDbOfc.pas',
+  OpDbOlk in 'OpDbOlk.pas',
+  OpXL2K in 'OpXL2K.pas',
+  OpExcel in 'OpExcel.pas',
+  OpMSO in 'OpMSO.pas',
+  OpOfc2K in 'OpOfc2K.pas',
+  OpConst in 'OpConst.pas',
+  OpEvents in 'OpEvents.pas',
+  OpModels in 'OpModels.pas',
+  OpShared in 'OpShared.pas',
+  OpOlk2K in 'OpOlk2K.pas',
+  OpOlk98 in 'OpOlk98.pas',
+  OpOutlk in 'OpOutlk.pas',
+  OpPpt2K in 'OpPpt2K.pas',
+  OpPower in 'OpPower.pas',
+  OpVbId2k in 'OpVbId2k.pas',
+  OpWrd2K in 'OpWrd2K.pas',
+  OpWord in 'OpWord.pas';
+
+end.

@@ -12,13 +12,6 @@ TPACQuery *PACQuery;
 __fastcall TPACQuery::TPACQuery(TComponent* Owner)
         : TForm(Owner)
 {
-   /*union
-    {
-     short    int i[2];
-     unsigned int l;
-     unsigned char s[4];
-    }  tmp;
-    tmp.l=342; */
         const_time_out=60;
         const_time_out_query=5;
         QListTags->Open();
@@ -122,6 +115,14 @@ void TPACQuery::SendCommand(int numCom, float val){
                 tmpbuf.st.i_command='p';
                // Application->MessageBoxA("Производительность!","Test",MB_OK);
                 break;
+        case 30:break;//Установка производительности извести
+        case 40:break;//Установка производительности песка
+        case 100:
+                Application->MessageBoxA("Установлен автоматический режим!","Test",MB_OK);
+                break;//Установка режима работы в авто
+        case 101:
+                Application->MessageBoxA("Установлен ручной режим!","Test",MB_OK);
+                break;//Установка режима работы в ручной
         }
         ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
 }

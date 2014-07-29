@@ -13,11 +13,16 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
+ if (FindWindow("TPACQuery","Модуль опроса")==NULL) WinExec("opros.exe",SW_RESTORE);
+
+ //Form1->ScaleBy(1280, 1416);
  confirmArmed=false;
  izvActEdToggle = false;
  neededPerfToggle = false;
  MVtoggle = false;
- NewSizeWidth=1600;
+ setIzvestToggle = false;
+ setSandToggle = false;
+ //NewSizeWidth=1600;
  FIDTrends = 2;
  Timer2->Enabled=true;
  Lic = 100;
@@ -81,13 +86,14 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
 // int l=1;
  check_exec++;
 
- if (FindWindow("TPACQuery","Модуль опроса")==NULL){// WinExec("opros.exe",SW_RESTORE);
+ if (FindWindow("TPACQuery","Модуль опроса")==NULL){
+        WinExec("opros.exe",SW_RESTORE);
         statusDebug1_S1->Caption="Нет связи с модулем опроса";
         statusDebug1_S1->Font->Color=clRed;
     }
  else{
         statusDebug1_S1->Caption="Связь с модулем опроса в норме";
-        statusDebug1_S1->Font->Color=clLime;
+        statusDebug1_S1->Font->Color=clGreen;
     }
  if(confirmArmed){
         btn_confirm1_S1->Visible=true;
@@ -459,13 +465,17 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
                        {
                         TmpStaticText->Caption     = "АВТОМАТИЧЕСКИЙ";
                         TmpStaticText->Color       = clBlack;
-                        TmpStaticText->Font->Color = clLime;
+                        TmpStaticText->Font->Color = clGreen;
+                        Form1->setAutomaticMode->Visible = false;
+                        Form1->setManualMode->Visible = true;
                        }
                       else if(MyValTags==1)
                        {
                         TmpStaticText->Caption     = "РУЧНОЙ";
                         TmpStaticText->Color       = clBlack;
                         TmpStaticText->Font->Color = clRed;
+                        Form1->setAutomaticMode->Visible = true;
+                        Form1->setManualMode->Visible = false;
                        }
                      }
                     break;
@@ -1858,6 +1868,77 @@ void __fastcall TForm1::btn_logTabClick(TObject *Sender)
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = true;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::btn_setPerfIzv1Click(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 30;
+if(!setIzvestToggle){
+        setPerfIzvestEdit1->Visible = true;
+        setPerfIzvestEdit1->Text = setPerfomanceIzvest1_S1->Caption;
+        setPerfIzvestEdit1->Text = StringReplace(setPerfIzvestEdit1->Text,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim();
+        setIzvestToggle = true;
+        }
+else{
+        setPerfIzvestEdit1->Visible = false;
+        setIzvestToggle = false;
+        tmpuni.funi = StrToFloat(setPerfIzvestEdit1->Text);
+        PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        confirmArmed=true;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::btn_setPerfSand1Click(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 40;
+if(!setSandToggle){
+        setPerfSandEdit1->Visible = true;
+        setPerfSandEdit1->Text = setPerfomanceSand1_S1->Caption;
+        setPerfSandEdit1->Text = StringReplace(setPerfSandEdit1->Text,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim();
+        setSandToggle = true;
+        }
+else{
+        setPerfSandEdit1->Visible = false;
+        setSandToggle = false;
+        tmpuni.funi = StrToFloat(setPerfSandEdit1->Text);
+        PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        confirmArmed=true;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::setManualModeClick(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 101;
+tmpuni.luni = 0;
+PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::setAutomaticModeClick(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 100;
+tmpuni.luni = 0;
+PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
 }
 //---------------------------------------------------------------------------
 

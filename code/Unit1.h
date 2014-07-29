@@ -26,7 +26,7 @@
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
-        TImage *Image1;
+        TImage *header;
         TImage *Image2;
         TPageControl *PageControl1;
         TTabSheet *TabSheet1;
@@ -36,7 +36,6 @@ __published:	// IDE-managed Components
         TLabel *status_doz1_S1;
         TLabel *status_doz2_S1;
         TLabel *workMode1_S1;
-        TImage *Image3;
         TLabel *curentPerfomanceIzvest1_S1;
         TLabel *calcPerfomanceIzvest1_S1;
         TLabel *izvestActivity1_S1;
@@ -197,10 +196,19 @@ __published:	// IDE-managed Components
         TImage *vibroSand1_S1;
         TImage *vibroSand1Right_S1;
         TLabel *statusDebug1_S1;
-        TImage *btn_confirm1_S1;
         TImage *btn_mainTab;
         TImage *btn_trendTab;
         TImage *btn_logTab;
+        TImage *bg;
+        TImage *btn_confirm1_S1;
+        TLabel *setPerfomanceIzvest1_S1;
+        TLabel *setPerfomanceSand1_S1;
+        TEdit *setPerfIzvestEdit1;
+        TEdit *setPerfSandEdit1;
+        TImage *btn_setPerfIzv1;
+        TImage *btn_setPerfSand1;
+        TImage *setManualMode;
+        TImage *setAutomaticMode;
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall btn_logClick(TObject *Sender);
     void __fastcall BBBuilderTrendClick(TObject *Sender);
@@ -264,6 +272,10 @@ __published:	// IDE-managed Components
         void __fastcall btn_mainTabClick(TObject *Sender);
         void __fastcall btn_trendTabClick(TObject *Sender);
         void __fastcall btn_logTabClick(TObject *Sender);
+        void __fastcall btn_setPerfIzv1Click(TObject *Sender);
+        void __fastcall btn_setPerfSand1Click(TObject *Sender);
+        void __fastcall setManualModeClick(TObject *Sender);
+        void __fastcall setAutomaticModeClick(TObject *Sender);
 private:	// User declarations
         unsigned long MasBits[4][1000]               ; // массив бит дл€ отображени€ сложных элементов
         int             NewSizeWidth;
@@ -291,6 +303,8 @@ private:	// User declarations
         bool izvActEdToggle;
         bool neededPerfToggle;
         bool MVtoggle;
+        bool setIzvestToggle;
+        bool setSandToggle;
         float CalcPerfIzvest;
         float CurentPerfIzvest;
         float CalcPerfSand;

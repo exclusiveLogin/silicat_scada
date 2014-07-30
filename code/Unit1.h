@@ -276,6 +276,7 @@ __published:	// IDE-managed Components
         void __fastcall btn_setPerfSand1Click(TObject *Sender);
         void __fastcall setManualModeClick(TObject *Sender);
         void __fastcall setAutomaticModeClick(TObject *Sender);
+        void __fastcall FormDestroy(TObject *Sender);
 private:	// User declarations
         unsigned long MasBits[4][1000]               ; // массив бит дл€ отображени€ сложных элементов
         int             NewSizeWidth;

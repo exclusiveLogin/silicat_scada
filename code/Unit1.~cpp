@@ -468,6 +468,12 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
                         TmpStaticText->Font->Color = clGreen;
                         Form1->setAutomaticMode->Visible = false;
                         Form1->setManualMode->Visible = true;
+                        Form1->btn_setPerfIzv1->Visible = false;
+                        Form1->btn_setPerfSand1->Visible = false;
+                        Form1->btn_setIzvestActivity1_S1->Visible = true;
+                        Form1->btn_setPerfomanceSummary1_S1->Visible = true;
+                        Form1->btn_setMV1_S1->Visible = true;
+                        Form1->bg->Picture->LoadFromFile("bg.jpg");
                        }
                       else if(MyValTags==1)
                        {
@@ -476,6 +482,12 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
                         TmpStaticText->Font->Color = clRed;
                         Form1->setAutomaticMode->Visible = true;
                         Form1->setManualMode->Visible = false;
+                        Form1->btn_setPerfIzv1->Visible = true;
+                        Form1->btn_setPerfSand1->Visible = true;
+                        Form1->btn_setIzvestActivity1_S1->Visible = false;
+                        Form1->btn_setPerfomanceSummary1_S1->Visible = false;
+                        Form1->btn_setMV1_S1->Visible = false;
+                        Form1->bg->Picture->LoadFromFile("bg_inactive.jpg");
                        }
                      }
                     break;
@@ -1852,6 +1864,7 @@ void __fastcall TForm1::btn_mainTabClick(TObject *Sender)
 TabSheet1->TabVisible = true;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = false;
+Form1->Width = 1216;
 }
 //---------------------------------------------------------------------------
 
@@ -1860,6 +1873,7 @@ void __fastcall TForm1::btn_trendTabClick(TObject *Sender)
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = true;
 TabSheet3->TabVisible = false;
+Form1->Width = 1216;
 }
 //---------------------------------------------------------------------------
 
@@ -1868,6 +1882,7 @@ void __fastcall TForm1::btn_logTabClick(TObject *Sender)
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = true;
+Form1->Width = 1320;
 }
 //---------------------------------------------------------------------------
 

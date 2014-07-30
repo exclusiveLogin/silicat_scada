@@ -2,7 +2,7 @@ object PACQuery: TPACQuery
   Left = 305
   Top = 158
   Width = 294
-  Height = 76
+  Height = 75
   Caption = 'Модуль опроса'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -30,7 +30,7 @@ object PACQuery: TPACQuery
   end
   object ClientSocket1: TClientSocket
     Active = False
-    Address = '192.168.0.230'
+    Address = '192.168.201.230'
     ClientType = ctNonBlocking
     Port = 10000
     OnLookup = ClientSocket1Lookup

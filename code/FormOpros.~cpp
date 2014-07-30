@@ -19,6 +19,7 @@ __fastcall TPACQuery::TPACQuery(TComponent* Owner)
         Arhiv                = new MyArhiv(this,Lic,1000);
         Arhiv->OnActiveArhiv = InitArhiv;
         Arhiv->ActiveWrite   = true     ;
+        ClientSocket1->Active = true    ;
 }
 //---------------------------------------------------------------------------
 void __fastcall TPACQuery::InitArhiv(TObject *Sender, bool &Active, int *IDTag, double *Val, int *Stat)
@@ -51,7 +52,33 @@ void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
 {
  static unsigned int time_out=0 ;//тайм-аут на восстановление соединения в циклах программы цикл==1сек.
  static unsigned int time_out_query=3;//тайм аут запроса
- static unsigned int num_zap=0;
+
+ switch(statusDebug){
+        case 1:
+                statusDebug1->Caption="Ethernet подключен";
+                statusDebug1->Font->Color=clGreen;
+                break;
+        case 2:
+                statusDebug1->Caption="Контроллер отключен";
+                statusDebug1->Font->Color=clRed;
+                break;
+        case 3:
+                statusDebug1->Caption="LookUP";
+                statusDebug1->Font->Color=clGreen;
+                break;
+        case 4:
+                statusDebug1->Caption="Запись";
+                statusDebug1->Font->Color=clRed;
+                break;
+        case 5:
+                statusDebug1->Caption="Связь установлена";
+                statusDebug1->Font->Color=clGreen;
+                break;
+        default:
+                statusDebug1->Caption="Ошибка";
+                statusDebug1->Font->Color=clRed;
+                break;
+ }
 
   // Опрос переменных
  Timer1->Enabled=false;
@@ -65,7 +92,7 @@ void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
       time_out_query++;
       if ((time_out_query%const_time_out_query)==1)
        {
-        SendCommand(num_zap,0);
+        SendCommand(0,0);//чтение данных с контроллера
        }
       if (time_out_query==const_time_out_query) time_out_query=0;
      }
@@ -97,42 +124,52 @@ void TPACQuery::SendCommand(int numCom, float val){
 
         switch(numCom){
         case 0://читаем значения
-                tmpbuf.st.i_command='r';//команда на чтение параметров
+                tmpbuf.st.i_command=114;//команда на чтение параметров
                 break;
-        case 10://читаем значения
+        case 10://расчет задания
                 tmpbuf.st.i_command=99;//команда на расчет задания
-                ///Application->MessageBoxA("Расчёт!","Test",MB_OK);
                 break;
         case 20://Устанавливаем активность извести
-                tmpbuf.st.i_command='i';
-                //Application->MessageBoxA("Активность извести!","Test",MB_OK);
+                tmpbuf.st.i_command=105;//'i'
                 break;
         case 21://Устанавливаем молотовяжущее
-                tmpbuf.st.i_command='m';
-                //Application->MessageBoxA("Маловяжущие!","Test",MB_OK);
+                tmpbuf.st.i_command=109;//'m'
                 break;
         case 22://Устанавливаем производительность
-                tmpbuf.st.i_command='p';
-               // Application->MessageBoxA("Производительность!","Test",MB_OK);
+                tmpbuf.st.i_command=112;//'p'
                 break;
-        case 30:break;//Установка производительности извести
-        case 40:break;//Установка производительности песка
+        case 30:
+                tmpbuf.st.i_command=101;//'e'
+                break;//Установка производительности извести
+        case 40:
+                tmpbuf.st.i_command=115;//'s'
+                break;//Установка производительности песка
         case 100:
-                Application->MessageBoxA("Установлен автоматический режим!","Test",MB_OK);
+                tmpbuf.st.i_command=97;//'a'
                 break;//Установка режима работы в авто
         case 101:
-                Application->MessageBoxA("Установлен ручной режим!","Test",MB_OK);
+                tmpbuf.st.i_command=98;//'b'
+                //Application->MessageBoxA("Установлен ручной режим!","Test",MB_OK);
                 break;//Установка режима работы в ручной
         }
-        ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
+        if (ClientSocket1->Socket!=NULL){
+                if (ClientSocket1->Socket->Connected){
+                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
+                }
+                else{
+                        ClientSocket1->Open();
+                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
+                }
+        }
 }
 
 void __fastcall TPACQuery::ClientSocket1Connect(TObject *Sender,
       TCustomWinSocket *Socket)
 {
  int i=0;
- statusDebug1->Caption="Ethernet подключен";
- statusDebug1->Font->Color=clGreen;
+ statusDebug = 1;
+ //statusDebug1->Caption="Ethernet подключен";
+ //statusDebug1->Font->Color=clGreen;
 }
 //---------------------------------------------------------------------------
 
@@ -140,8 +177,9 @@ void __fastcall TPACQuery::ClientSocket1Disconnect(TObject *Sender,
       TCustomWinSocket *Socket)
 {
  int i=0;
- statusDebug1->Caption="Контроллер отключен";
- statusDebug1->Font->Color=clRed;
+ statusDebug = 2;
+ //statusDebug1->Caption="Контроллер отключен";
+ //statusDebug1->Font->Color=clRed;
 }
 //---------------------------------------------------------------------------
 
@@ -149,8 +187,9 @@ void __fastcall TPACQuery::ClientSocket1Lookup(TObject *Sender,
       TCustomWinSocket *Socket)
 {
  int i=0;
- statusDebug1->Caption="LookUP";
- statusDebug1->Font->Color=clGreen;   
+ statusDebug = 3;
+ //statusDebug1->Caption="LookUP";
+ //statusDebug1->Font->Color=clGreen;
 }
 //---------------------------------------------------------------------------
 
@@ -158,8 +197,9 @@ void __fastcall TPACQuery::ClientSocket1Write(TObject *Sender,
       TCustomWinSocket *Socket)
 {
  int i=0;
- statusDebug1->Caption="Запись";
- statusDebug1->Font->Color=clRed;
+ statusDebug = 4;
+ //statusDebug1->Caption="Запись";
+ //statusDebug1->Font->Color=clRed;
 }
 //---------------------------------------------------------------------------
 
@@ -167,8 +207,9 @@ void __fastcall TPACQuery::ClientSocket1Write(TObject *Sender,
 void __fastcall TPACQuery::ClientSocket1Read(TObject *Sender,  //Переделать
       TCustomWinSocket *Socket)
 {
- statusDebug1->Caption="Связь установлена";
- statusDebug1->Font->Color=clGreen;
+ statusDebug = 5;
+ //statusDebug1->Caption="Связь установлена";
+ //statusDebug1->Font->Color=clGreen;
  unsigned char buf[129];
  int           bytes=0;
  bytes=Socket->ReceiveBuf(&buf[0],128);

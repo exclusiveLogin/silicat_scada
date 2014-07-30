@@ -75,6 +75,8 @@ private:	// User declarations
         int unsigned const_time_out_query;
         void __fastcall  OnWriteValue(TMessage& Message); // запись значения в контроллер
 
+        int statusDebug;
+
         union{
         unsigned char buf[53];
         struct{

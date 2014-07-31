@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 430
-  Top = 381
+  Left = 669
+  Top = 306
   BorderStyle = bsSingle
   Caption = 'DOZATOR_SCADA'
   ClientHeight = 768
@@ -6907,9 +6907,9 @@ object Form1: TForm1
           180C06030180C06030180C06030180C06030180C06030180C060303FFFD9}
       end
       object status_doz1_S1: TLabel
-        Left = 400
+        Left = 360
         Top = 0
-        Width = 161
+        Width = 241
         Height = 33
         Alignment = taCenter
         AutoSize = False
@@ -6926,9 +6926,9 @@ object Form1: TForm1
         Layout = tlCenter
       end
       object status_doz2_S1: TLabel
-        Left = 640
+        Left = 600
         Top = 0
-        Width = 169
+        Width = 241
         Height = 33
         Alignment = taCenter
         AutoSize = False
@@ -9145,7 +9145,7 @@ object Form1: TForm1
         Visible = False
       end
       object setPerfSandEdit1: TEdit
-        Left = 952
+        Left = 944
         Top = 320
         Width = 137
         Height = 33

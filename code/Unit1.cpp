@@ -543,6 +543,10 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
                         TmpLabel->Caption = "НАРУШЕНИЕ";
                         TmpLabel->Font->Color=clYellow;
                     }
+                    else if(MyValTags==10){
+                        TmpLabel->Caption = "ЗАЛИПАНИЕ ПЕСКА";
+                        TmpLabel->Font->Color=clYellow;
+                    }
                     break;
            case 26: //Режим работы вибратора
                     TmpImage  = (TImage *)TmpCont;
@@ -1905,7 +1909,6 @@ else{
         setIzvestToggle = false;
         tmpuni.funi = StrToFloat(setPerfIzvestEdit1->Text);
         PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
-        confirmArmed=true;
         }
 }
 //---------------------------------------------------------------------------
@@ -1928,7 +1931,6 @@ else{
         setSandToggle = false;
         tmpuni.funi = StrToFloat(setPerfSandEdit1->Text);
         PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
-        confirmArmed=true;
         }
 }
 //---------------------------------------------------------------------------

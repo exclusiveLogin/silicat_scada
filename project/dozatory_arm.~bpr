@@ -28,12 +28,12 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="dozatory_arm.cpp"/>
-    <INCLUDEPATH value="..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value="..\MyCLASS;..\КОМПОНЕНТЫ\EhLib\BCB5;..\code;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\MyCLASS;..\КОМПОНЕНТЫ\EhLib\BCB5;..\code;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-I..\MyCLASS -IC:\КОМПОНЕНТЫ\EhLib\BCB5\. -I..\code -I$(BCB)\include 
+    <IDLCFLAGS value="-I..\MyCLASS -I..\КОМПОНЕНТЫ\EhLib\BCB5 -I..\code -I$(BCB)\include 
       -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
     <CFLAG1 value="-Od -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
       -tW -tWM"/>
@@ -87,29 +87,30 @@ $(BCB)\Bin\bcbie50.bpl=Borland C++Builder Internet Explorer 5 Components Package
 $(BCB)\Bin\dclocx50.bpl=Borland Sample Imported ActiveX Controls
 $(BCB)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 $(BCB)\Bin\bcb2kaxserver50.bpl=Borland C++Builder COM Server Components Sample Package
-C:\windows\system32\ibsmp50.bpl=Borland C++ InterBase Alerter Component
+C:\Windows\system32\ibsmp50.bpl=Borland C++ InterBase Alerter Component
 $(BCB)\Bin\dclmid50.bpl=Borland MIDAS Components
-$(BCB)\Projects\Bpl\P161_D51.bpl=OfficePartner Components
 
 [HistoryLists\hlIncludePath]
-Count=7
-Item0=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
-Item1=..\MyCLASS;D:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
-Item2=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl;C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS
-Item3=C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
-Item4=..\code;$(BCB)\include;$(BCB)\include\vcl;C:\КОМПОНЕНТЫ\EhLib\BCB5\
-Item5=..\code;$(BCB)\include;$(BCB)\include\vcl;C:\КОМПОНЕНТЫ\EhLib\BCB5
-Item6=..\code;$(BCB)\include;$(BCB)\include\vcl
+Count=8
+Item0=..\MyCLASS;..\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
+Item1=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
+Item2=..\MyCLASS;D:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
+Item3=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl;C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS
+Item4=C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\include;$(BCB)\include\vcl
+Item5=..\code;$(BCB)\include;$(BCB)\include\vcl;C:\КОМПОНЕНТЫ\EhLib\BCB5\
+Item6=..\code;$(BCB)\include;$(BCB)\include\vcl;C:\КОМПОНЕНТЫ\EhLib\BCB5
+Item7=..\code;$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
-Count=7
-Item0=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
-Item1=..\MyCLASS;D:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
-Item2=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib;C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS
-Item3=C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
-Item4=..\code;$(BCB)\lib\obj;$(BCB)\lib;C:\КОМПОНЕНТЫ\EhLib\BCB5\
-Item5=..\code;$(BCB)\lib\obj;$(BCB)\lib;C:\КОМПОНЕНТЫ\EhLib\BCB5
-Item6=..\code;$(BCB)\lib\obj;$(BCB)\lib
+Count=8
+Item0=..\MyCLASS;..\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
+Item1=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
+Item2=..\MyCLASS;D:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
+Item3=..\MyCLASS;C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib;C:\Users\ООО Паскаль\Desktop\Силикат\dozatory_scada\MyCLASS
+Item4=C:\КОМПОНЕНТЫ\EhLib\BCB5\;..\code;$(BCB)\lib\obj;$(BCB)\lib
+Item5=..\code;$(BCB)\lib\obj;$(BCB)\lib;C:\КОМПОНЕНТЫ\EhLib\BCB5\
+Item6=..\code;$(BCB)\lib\obj;$(BCB)\lib;C:\КОМПОНЕНТЫ\EhLib\BCB5
+Item7=..\code;$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
 Count=1

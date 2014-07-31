@@ -74,6 +74,10 @@ void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
                 statusDebug1->Caption="Связь установлена";
                 statusDebug1->Font->Color=clGreen;
                 break;
+        case 6:
+                statusDebug1->Caption="Ошибка соединения";
+                statusDebug1->Font->Color=clRed;
+                break;
         default:
                 statusDebug1->Caption="Ошибка";
                 statusDebug1->Font->Color=clRed;
@@ -215,13 +219,13 @@ void __fastcall TPACQuery::ClientSocket1Read(TObject *Sender,  //Переделать
  bytes=Socket->ReceiveBuf(&buf[0],128);
  bool error=0;
 
- for(int i=0;i<bytes-48;i++){
+ for(int i=0;i<bytes-56;i++){
     if ((buf[i]==1)&&(buf[i+1]==1)&&(buf[i+2]==1)&&(buf[i+3]==1)&&(buf[i+4]==1)){
-        if((i+53)>=bytes){
-                for(int n=0;n<53;n++){
+        if((i+61)>=bytes){
+                for(int n=0;n<61;n++){
                         recvtmpbuf.buf[n]=buf[i+n];
                 }
-                i=i+52;
+                i=i+60;
                 WriteData();
         }
         else error=1;
@@ -276,6 +280,10 @@ void TPACQuery::WriteData()
                 Val = recvtmpbuf.recvtmpstruct.data[10]; Status=0; break;
        case 12: // вибратор
                 Val = recvtmpbuf.recvtmpstruct.data[11]; Status=0; break;
+       case 13: // вибратор
+                Val = recvtmpbuf.recvtmpstruct.data[12]; Status=0; break;
+       case 14: // вибратор
+                Val = recvtmpbuf.recvtmpstruct.data[13]; Status=0; break;
       }
      if ((QListTagsValueTag->AsFloat!=Val)||(QListTagsStatusTag->AsInteger!=Status)||
          ((sh)&&(Status1==0)&&(Status2==0)&&((QListTagsMinValIn->AsFloat!=Val1)||(QListTagsMinValIn->AsFloat!=Val2)))
@@ -450,7 +458,7 @@ void __fastcall  TPACQuery::OnWriteValue(TMessage& Message){
                 float funi;
         }uni;
         uni.luni = Message.LParam;
-        //Application->MessageBoxA("OK","OK",MB_OK);
+
         SendCommand(command, uni.funi);
 }
 
@@ -471,7 +479,8 @@ void __fastcall TPACQuery::ClientSocket1Error(TObject *Sender,
       TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
 {
 int i=0;
-ErrorCode=0;   
+ErrorCode=0;
+statusDebug = 6;
 }
 //---------------------------------------------------------------------------
 

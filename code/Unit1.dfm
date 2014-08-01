@@ -1,6 +1,7 @@
 object Form1: TForm1
-  Left = 489
-  Top = 151
+  Left = 466
+  Top = 262
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'DOZATOR_SCADA'
   ClientHeight = 703

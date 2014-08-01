@@ -14,7 +14,6 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
  if (FindWindow("TPACQuery","Модуль опроса")==NULL) WinExec("opros.exe",SW_RESTORE);
-
  //Form1->ScaleBy(1280, 1416);
  confirmArmed=false;
  izvActEdToggle = false;

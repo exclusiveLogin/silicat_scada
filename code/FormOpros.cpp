@@ -20,6 +20,13 @@ __fastcall TPACQuery::TPACQuery(TComponent* Owner)
         Arhiv->OnActiveArhiv = InitArhiv;
         Arhiv->ActiveWrite   = true     ;
         ClientSocket1->Active = true    ;
+        scadaWin = FindWindow("TWinScada","Управление дозаторами");
+        if(scadaWin!=NULL){
+                //Application->MessageBoxA("Окно Нашли","Test",MB_OK);
+                Application->ShowMainForm = false;
+                PACQuery->Visible = false;
+        }
+        else Application->MessageBoxA("Не запущена SCADA","Ошибка",MB_OK);
 }
 //---------------------------------------------------------------------------
 void __fastcall TPACQuery::InitArhiv(TObject *Sender, bool &Active, int *IDTag, double *Val, int *Stat)
@@ -52,38 +59,45 @@ void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
 {
  static unsigned int time_out=0 ;//тайм-аут на восстановление соединения в циклах программы цикл==1сек.
  static unsigned int time_out_query=3;//тайм аут запроса
-
+ unsigned long statusPLC;
  switch(statusDebug){
         case 1:
                 statusDebug1->Caption="Ethernet подключен";
                 statusDebug1->Font->Color=clGreen;
+                statusPLC=statusPLC=1;
                 break;
         case 2:
                 statusDebug1->Caption="Контроллер отключен";
                 statusDebug1->Font->Color=clRed;
+                statusPLC=101;
                 break;
         case 3:
                 statusDebug1->Caption="LookUP";
                 statusDebug1->Font->Color=clGreen;
+                statusPLC=100;
                 break;
         case 4:
                 statusDebug1->Caption="Запись";
                 statusDebug1->Font->Color=clRed;
+                statusPLC=2;
                 break;
         case 5:
                 statusDebug1->Caption="Связь установлена";
                 statusDebug1->Font->Color=clGreen;
+                statusPLC=0;
                 break;
         case 6:
                 statusDebug1->Caption="Ошибка соединения";
                 statusDebug1->Font->Color=clRed;
+                statusPLC=102;
                 break;
         default:
                 statusDebug1->Caption="Ошибка";
                 statusDebug1->Font->Color=clRed;
+                statusPLC=103;
                 break;
  }
-
+ PostMessage(scadaWin,WM_USER+3,statusPLC,statusPLC);
   // Опрос переменных
  Timer1->Enabled=false;
  // Опрос раз в секунду

@@ -96,7 +96,7 @@ private:	// User declarations
               }st;
         }tmpbuf;
 
-
+        HWND scadaWin;
         MyArhiv      *Arhiv                     ;
         unsigned int TekIDSob                   ;
         unsigned int Lic                        ;  // ключ- количество тегов

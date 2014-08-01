@@ -10,9 +10,12 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
         try
         {
-                 Application->Initialize();
-                 Application->CreateForm(__classid(TPACQuery), &PACQuery);
-         Application->Run();
+         //if (FindWindow("TPACQuery","Модуль опроса")==NULL)
+         // {
+            Application->Initialize();
+            Application->CreateForm(__classid(TPACQuery), &PACQuery);
+            Application->Run();
+         // }
         }
         catch (Exception &exception)
         {

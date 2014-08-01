@@ -23,7 +23,7 @@
 #include "ClassArhiv.hpp"
 #include <CheckLst.hpp>
 //---------------------------------------------------------------------------
-class TForm1 : public TForm
+class TWinScada : public TForm
 {
 __published:	// IDE-managed Components
         TImage *header;
@@ -209,6 +209,7 @@ __published:	// IDE-managed Components
         TImage *btn_setPerfSand1;
         TImage *setManualMode;
         TImage *setAutomaticMode;
+        TLabel *statusDebug2_S1;
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall btn_logClick(TObject *Sender);
     void __fastcall BBBuilderTrendClick(TObject *Sender);
@@ -314,10 +315,14 @@ private:	// User declarations
         float NeededPerfSummary;
         bool confirmArmed;
 public:		// User declarations
-        __fastcall TForm1(TComponent* Owner);
+        __fastcall TWinScada(TComponent* Owner);
+        void __fastcall TWinScada::statusPLC(TMessage& Message);
+        BEGIN_MESSAGE_MAP
+         MESSAGE_HANDLER(WM_USER+3,TMessage, statusPLC)      // запись значения в контроллер
+        END_MESSAGE_MAP(TComponent)
 };
 //---------------------------------------------------------------------------
 MyArhiv *ActiveArhiv;
-extern PACKAGE TForm1 *Form1;
+extern PACKAGE TWinScada *WinScada;
 //---------------------------------------------------------------------------
 #endif

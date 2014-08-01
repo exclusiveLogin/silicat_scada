@@ -15,7 +15,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             Application->Initialize();
             Application->CreateForm(__classid(TPACQuery), &PACQuery);
             Application->Run();
-          }  
+          }
         }
         catch (Exception &exception)
         {

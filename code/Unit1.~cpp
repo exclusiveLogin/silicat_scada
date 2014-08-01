@@ -8,14 +8,13 @@
 #pragma package(smart_init)
 #pragma link "DBGridEh"
 #pragma resource "*.dfm"
-TForm1 *Form1;
+TWinScada *WinScada;
 //---------------------------------------------------------------------------
-__fastcall TForm1::TForm1(TComponent* Owner)
+__fastcall TWinScada::TWinScada(TComponent* Owner)
         : TForm(Owner)
 {
  if (FindWindow("TPACQuery","Модуль опроса")==NULL) WinExec("opros.exe",SW_RESTORE);
- Form1->BorderIcons[biSystemMenu=true,biMinimize=true,biMaximize=false];
- //Form1->ScaleBy(1280, 1416);
+ //WinScada->ScaleBy(1280, 1416);
  confirmArmed=false;
  izvActEdToggle = false;
  neededPerfToggle = false;
@@ -67,7 +66,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::Timer1Timer(TObject *Sender)
+void __fastcall TWinScada::Timer1Timer(TObject *Sender)
 {
 // отображение текущих данных
  static unsigned int count=0;
@@ -88,11 +87,11 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
 
  if (FindWindow("TPACQuery","Модуль опроса")==NULL){
         WinExec("opros.exe",SW_RESTORE);
-        statusDebug1_S1->Caption="Нет связи с модулем опроса";
+        statusDebug1_S1->Caption="НЕТ СВЯЗИ С МОДУЛЕМ";
         statusDebug1_S1->Font->Color=clRed;
     }
  else{
-        statusDebug1_S1->Caption="Связь с модулем опроса в норме";
+        statusDebug1_S1->Caption="СВЯЗЬ С МОДУЛЕМ В НОРМЕ";
         statusDebug1_S1->Font->Color=clGreen;
     }
  if(confirmArmed){
@@ -466,28 +465,28 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
                         TmpStaticText->Caption     = "АВТОМАТИЧЕСКИЙ";
                         TmpStaticText->Color       = clBlack;
                         TmpStaticText->Font->Color = clGreen;
-                        Form1->setAutomaticMode->Visible = false;
-                        Form1->setManualMode->Visible = true;
-                        Form1->btn_setPerfIzv1->Visible = false;
-                        Form1->btn_setPerfSand1->Visible = false;
-                        Form1->btn_setIzvestActivity1_S1->Visible = true;
-                        Form1->btn_setPerfomanceSummary1_S1->Visible = true;
-                        Form1->btn_setMV1_S1->Visible = true;
-                        Form1->bg->Picture->LoadFromFile("bg.jpg");
+                        WinScada->setAutomaticMode->Visible = false;
+                        WinScada->setManualMode->Visible = true;
+                        WinScada->btn_setPerfIzv1->Visible = false;
+                        WinScada->btn_setPerfSand1->Visible = false;
+                        WinScada->btn_setIzvestActivity1_S1->Visible = true;
+                        WinScada->btn_setPerfomanceSummary1_S1->Visible = true;
+                        WinScada->btn_setMV1_S1->Visible = true;
+                        WinScada->bg->Picture->LoadFromFile("bg.jpg");
                        }
                       else if(MyValTags==1)
                        {
                         TmpStaticText->Caption     = "РУЧНОЙ";
                         TmpStaticText->Color       = clBlack;
                         TmpStaticText->Font->Color = clRed;
-                        Form1->setAutomaticMode->Visible = true;
-                        Form1->setManualMode->Visible = false;
-                        Form1->btn_setPerfIzv1->Visible = true;
-                        Form1->btn_setPerfSand1->Visible = true;
-                        Form1->btn_setIzvestActivity1_S1->Visible = false;
-                        Form1->btn_setPerfomanceSummary1_S1->Visible = false;
-                        Form1->btn_setMV1_S1->Visible = false;
-                        Form1->bg->Picture->LoadFromFile("bg_inactive.jpg");
+                        WinScada->setAutomaticMode->Visible = true;
+                        WinScada->setManualMode->Visible = false;
+                        WinScada->btn_setPerfIzv1->Visible = true;
+                        WinScada->btn_setPerfSand1->Visible = true;
+                        WinScada->btn_setIzvestActivity1_S1->Visible = false;
+                        WinScada->btn_setPerfomanceSummary1_S1->Visible = false;
+                        WinScada->btn_setMV1_S1->Visible = false;
+                        WinScada->bg->Picture->LoadFromFile("bg_inactive.jpg");
                        }
                      }
                     break;
@@ -683,13 +682,13 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
  }
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::btn_logClick(TObject *Sender)
+void __fastcall TWinScada::btn_logClick(TObject *Sender)
 {
  Application->MessageBoxA("Нажата кнопка 'Журнал'","Внимание",MB_OK+MB_ICONSTOP);
 
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::BBBuilderTrendClick(TObject *Sender)
+void __fastcall TWinScada::BBBuilderTrendClick(TObject *Sender)
 {
  double min_v,max_v;
  // формирование выбранного тренда
@@ -818,7 +817,7 @@ void __fastcall TForm1::BBBuilderTrendClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SBPlusClick(TObject *Sender)
+void __fastcall TWinScada::SBPlusClick(TObject *Sender)
 {
  Mashtab = Mashtab * 2;
  SBMinus->Enabled = true;
@@ -836,7 +835,7 @@ void __fastcall TForm1::SBPlusClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SBMinusClick(TObject *Sender)
+void __fastcall TWinScada::SBMinusClick(TObject *Sender)
 {
  Mashtab = Mashtab / 2;
  SBPlus->Enabled = true;
@@ -857,7 +856,7 @@ void __fastcall TForm1::SBMinusClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SpeedButton3Click(TObject *Sender)
+void __fastcall TWinScada::SpeedButton3Click(TObject *Sender)
 {
  if (SpeedButton3->Down) // наблюдение за текущими параметрами в реальном времени
   {
@@ -889,7 +888,7 @@ void __fastcall TForm1::SpeedButton3Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SBTagMinusClick(TObject *Sender)
+void __fastcall TWinScada::SBTagMinusClick(TObject *Sender)
 {
  // День назад
  TDateTime beg,end;
@@ -905,7 +904,7 @@ void __fastcall TForm1::SBTagMinusClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SBHourMinusClick(TObject *Sender)
+void __fastcall TWinScada::SBHourMinusClick(TObject *Sender)
 {
  // Час назад
  TDateTime beg,end;
@@ -922,7 +921,7 @@ void __fastcall TForm1::SBHourMinusClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SBHourPlusClick(TObject *Sender)
+void __fastcall TWinScada::SBHourPlusClick(TObject *Sender)
 {
  // Час вперёд
  TDateTime beg,end;
@@ -939,7 +938,7 @@ void __fastcall TForm1::SBHourPlusClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::SBTagPlusClick(TObject *Sender)
+void __fastcall TWinScada::SBTagPlusClick(TObject *Sender)
 {
  // День вперёд
  TDateTime beg,end;
@@ -955,7 +954,7 @@ void __fastcall TForm1::SBTagPlusClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::TrendsGetAxisLabel(TChartAxis *Sender,
+void __fastcall TWinScada::TrendsGetAxisLabel(TChartAxis *Sender,
       TChartSeries *Series, int ValueIndex, AnsiString &LabelText)
 {
  // отображение шкалы по активной записи
@@ -986,14 +985,14 @@ void __fastcall TForm1::TrendsGetAxisLabel(TChartAxis *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::TrendsMouseDown(TObject *Sender,
+void __fastcall TWinScada::TrendsMouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
  if (Button == mbLeft) MoveVizir=true;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::TrendsMouseMove(TObject *Sender, TShiftState Shift,
+void __fastcall TWinScada::TrendsMouseMove(TObject *Sender, TShiftState Shift,
       int X, int Y)
 {
  if (MoveVizir)
@@ -1011,14 +1010,14 @@ void __fastcall TForm1::TrendsMouseMove(TObject *Sender, TShiftState Shift,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::TrendsMouseUp(TObject *Sender, TMouseButton Button,
+void __fastcall TWinScada::TrendsMouseUp(TObject *Sender, TMouseButton Button,
       TShiftState Shift, int X, int Y)
 {
  if (Button == mbLeft)  MoveVizir=false;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::TrendsResize(TObject *Sender)
+void __fastcall TWinScada::TrendsResize(TObject *Sender)
 {
  // изменение размера ведёт к изменению размера ползунка
  Vizir->Top    = Trends->Height*(Trends->MarginTop*0.01)+Trends->Top+13+(1600-NewSizeWidth)/45;
@@ -1028,7 +1027,7 @@ void __fastcall TForm1::TrendsResize(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::TBValueChange(TObject *Sender)
+void __fastcall TWinScada::TBValueChange(TObject *Sender)
 {
  if (Mashtab!=0)
   {
@@ -1047,7 +1046,7 @@ void __fastcall TForm1::TBValueChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::DBGridEh6MouseDown(TObject *Sender,
+void __fastcall TWinScada::DBGridEh6MouseDown(TObject *Sender,
       TMouseButton Button, TShiftState Shift, int X, int Y)
 {
  if (Shift.Contains(ssDouble)) // двойное нахатие
@@ -1063,7 +1062,7 @@ void __fastcall TForm1::DBGridEh6MouseDown(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::DBGridEh6DrawColumnCell(TObject *Sender,
+void __fastcall TWinScada::DBGridEh6DrawColumnCell(TObject *Sender,
       const TRect &Rect, int DataCol, TColumnEh *Column,
       TGridDrawState State)
 {
@@ -1099,7 +1098,7 @@ void __fastcall TForm1::DBGridEh6DrawColumnCell(TObject *Sender,
  DBGridEh6->DefaultDrawDataCell(Rect,Column->Field, State);
 }
 //---------------------------------------------------------------------------
-int __fastcall TForm1::GetCountSeries(int IDTrends, double *Shkals_min, double *Shkals_max, double *min_insh, double *max_insh, int *IDTags, unsigned int *ColorTrend, double *tmp_min, double *tmp_max)
+int __fastcall TWinScada::GetCountSeries(int IDTrends, double *Shkals_min, double *Shkals_max, double *min_insh, double *max_insh, int *IDTags, unsigned int *ColorTrend, double *tmp_min, double *tmp_max)
 {
  int ret=0;
  QConCheckTrend->Parameters->ParamByName("IDTrend")->Value = IDTrends;
@@ -1165,7 +1164,7 @@ int __fastcall TForm1::GetCountSeries(int IDTrends, double *Shkals_min, double *
  return ret;
 }
 //---------------------------------------------------------------------------
-AnsiString __fastcall TForm1::GetNameEdIzm(int IDTag)
+AnsiString __fastcall TWinScada::GetNameEdIzm(int IDTag)
 {
  Variant tmp;
  AnsiString Ret="";
@@ -1182,7 +1181,7 @@ AnsiString __fastcall TForm1::GetNameEdIzm(int IDTag)
  return Ret;
 }
 //---------------------------------------------------------------------------
-int __fastcall TForm1::RecNo(int IDTag)
+int __fastcall TWinScada::RecNo(int IDTag)
 {
  for (int pc=0;pc<Trends->SeriesCount();pc++)
   if (IDTags_Trends[pc]==IDTag) return pc;
@@ -1190,7 +1189,7 @@ int __fastcall TForm1::RecNo(int IDTag)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Timer2Timer(TObject *Sender)
+void __fastcall TWinScada::Timer2Timer(TObject *Sender)
 {
  if (SpeedButton3->Down)
   {
@@ -1204,13 +1203,13 @@ void __fastcall TForm1::Timer2Timer(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataAfterScroll(TDataSet *DataSet)
+void __fastcall TWinScada::QViewDataAfterScroll(TDataSet *DataSet)
 {
  Trends->Refresh();
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataCalcFields(TDataSet *DataSet)
+void __fastcall TWinScada::QViewDataCalcFields(TDataSet *DataSet)
 {
  int id = DataSet->FieldByName("IDTag")->AsInteger;
  id = RecNo(id);
@@ -1218,7 +1217,7 @@ void __fastcall TForm1::QViewDataCalcFields(TDataSet *DataSet)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataIDTagGetText(TField *Sender,
+void __fastcall TWinScada::QViewDataIDTagGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText)
@@ -1235,7 +1234,7 @@ void __fastcall TForm1::QViewDataIDTagGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataTDTGetText(TField *Sender,
+void __fastcall TWinScada::QViewDataTDTGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText)
@@ -1245,7 +1244,7 @@ void __fastcall TForm1::QViewDataTDTGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataValGetText(TField *Sender,
+void __fastcall TWinScada::QViewDataValGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  // текущее значение графика
@@ -1274,7 +1273,7 @@ void __fastcall TForm1::QViewDataValGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataStatusGetText(TField *Sender,
+void __fastcall TWinScada::QViewDataStatusGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText)
@@ -1291,7 +1290,7 @@ void __fastcall TForm1::QViewDataStatusGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataValProcGetText(TField *Sender,
+void __fastcall TWinScada::QViewDataValProcGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  // вычисление процента от шкалы
@@ -1319,14 +1318,14 @@ void __fastcall TForm1::QViewDataValProcGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QViewDataActiveGetText(TField *Sender,
+void __fastcall TWinScada::QViewDataActiveGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (Sender->AsBoolean) Text=" + ";
  else Text = " - ";
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::BitBtn12Click(TObject *Sender)
+void __fastcall TWinScada::BitBtn12Click(TObject *Sender)
 {
  // выборка данных
  TDateTime beg,end;
@@ -1379,14 +1378,14 @@ void __fastcall TForm1::BitBtn12Click(TObject *Sender)
  QListSob->Open();
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::BitBtn1Click(TObject *Sender)
+void __fastcall TWinScada::BitBtn1Click(TObject *Sender)
 {
  for (int i=0;i<CLBFS->Items->Count;i++) CLBFS->Checked[i]=false;
  BitBtn1->Enabled=false;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::BBLastHourClick(TObject *Sender)
+void __fastcall TWinScada::BBLastHourClick(TObject *Sender)
 {
  DTPTime_begin->DateTime = (TTime)(Now() - (TTime)"01:00:00");
  DTPDate_begin->DateTime = (TDate)(Now() - (TTime)"01:00:00");
@@ -1396,14 +1395,14 @@ void __fastcall TForm1::BBLastHourClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm1::QListSobValGetText(TField *Sender,
+void __fastcall TWinScada::QListSobValGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText) Text = GetIDTagCaptionValue(Sender);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QListSobDlitGetText(TField *Sender,
+void __fastcall TWinScada::QListSobDlitGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText)
@@ -1422,20 +1421,20 @@ void __fastcall TForm1::QListSobDlitGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QActiveSobIDTagGetText(TField *Sender,
+void __fastcall TWinScada::QActiveSobIDTagGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText) Text = GetIDTagCaption(Sender);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QActiveSobValGetText(TField *Sender,
+void __fastcall TWinScada::QActiveSobValGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText)  { Text=GetIDTagCaptionValue(Sender);  }
 }
 //---------------------------------------------------------------------------
-AnsiString __fastcall TForm1::GetIDTagCaptionValue(TField *Sender)
+AnsiString __fastcall TWinScada::GetIDTagCaptionValue(TField *Sender)
 {
  AnsiString Ret="";
  if (QListTags->Active)
@@ -1673,7 +1672,7 @@ AnsiString __fastcall TForm1::GetIDTagCaptionValue(TField *Sender)
  return Ret;
 }
 //---------------------------------------------------------------------------
-AnsiString __fastcall TForm1::GetIDTagCaption(TField *Sender)
+AnsiString __fastcall TWinScada::GetIDTagCaption(TField *Sender)
 {
  AnsiString Ret="";
  if (QListTags->Active)
@@ -1689,7 +1688,7 @@ AnsiString __fastcall TForm1::GetIDTagCaption(TField *Sender)
  return Ret;
 }
 
-void __fastcall TForm1::PageControl1Change(TObject *Sender)
+void __fastcall TWinScada::PageControl1Change(TObject *Sender)
 {
  if (PageControl1->ActivePageIndex==2)//NumPageArhivSob) // страница архивов
   {
@@ -1700,7 +1699,7 @@ void __fastcall TForm1::PageControl1Change(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::CLBFSClickCheck(TObject *Sender)
+void __fastcall TWinScada::CLBFSClickCheck(TObject *Sender)
 {
  int ret=0;
  for (int i=0;i<CLBFS->Items->Count;i++)
@@ -1711,7 +1710,7 @@ void __fastcall TForm1::CLBFSClickCheck(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm1::btn_setIzvestActivity1_S1Click(TObject *Sender)
+void __fastcall TWinScada::btn_setIzvestActivity1_S1Click(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1734,7 +1733,7 @@ else{
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_setPerfomanceSummary1_S1Click(TObject *Sender)
+void __fastcall TWinScada::btn_setPerfomanceSummary1_S1Click(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1758,7 +1757,7 @@ else{
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_setMV1_S1Click(TObject *Sender)
+void __fastcall TWinScada::btn_setMV1_S1Click(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1781,7 +1780,7 @@ else{
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::QListSobIDTagGetText(TField *Sender,
+void __fastcall TWinScada::QListSobIDTagGetText(TField *Sender,
       AnsiString &Text, bool DisplayText)
 {
  if (DisplayText)
@@ -1789,7 +1788,7 @@ void __fastcall TForm1::QListSobIDTagGetText(TField *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Timer3Timer(TObject *Sender)
+void __fastcall TWinScada::Timer3Timer(TObject *Sender)
 {
 bool error=1;
 if(curentPerfomanceIzvest1_S1->Caption!="---"){
@@ -1853,7 +1852,7 @@ else;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_confirm1_S1Click(TObject *Sender)
+void __fastcall TWinScada::btn_confirm1_S1Click(TObject *Sender)
 {
 confirmArmed=false;
 
@@ -1863,35 +1862,41 @@ PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,0);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_mainTabClick(TObject *Sender)
+void __fastcall TWinScada::btn_mainTabClick(TObject *Sender)
 {
 TabSheet1->TabVisible = true;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = false;
-Form1->Width = 1216;
+WinScada->Width = 1216;
+date1->Left = 1116;
+time1->Left = 1108;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_trendTabClick(TObject *Sender)
+void __fastcall TWinScada::btn_trendTabClick(TObject *Sender)
 {
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = true;
 TabSheet3->TabVisible = false;
-Form1->Width = 1216;
+WinScada->Width = 1216;
+date1->Left = 1116;
+time1->Left = 1108;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_logTabClick(TObject *Sender)
+void __fastcall TWinScada::btn_logTabClick(TObject *Sender)
 {
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = true;
-Form1->Width = 1320;
+WinScada->Width = 1320;
+date1->Left = 1216;
+time1->Left = 1208;
 }
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm1::btn_setPerfIzv1Click(TObject *Sender)
+void __fastcall TWinScada::btn_setPerfIzv1Click(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1913,7 +1918,7 @@ else{
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::btn_setPerfSand1Click(TObject *Sender)
+void __fastcall TWinScada::btn_setPerfSand1Click(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1935,7 +1940,7 @@ else{
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::setManualModeClick(TObject *Sender)
+void __fastcall TWinScada::setManualModeClick(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1947,7 +1952,7 @@ PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::setAutomaticModeClick(TObject *Sender)
+void __fastcall TWinScada::setAutomaticModeClick(TObject *Sender)
 {
 union{//Объявление временной union
                 long luni;
@@ -1959,9 +1964,43 @@ PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::FormDestroy(TObject *Sender)
+void __fastcall TWinScada::FormDestroy(TObject *Sender)
 {
         SendMessage(FindWindow("TPACQuery","Модуль опроса"),WM_CLOSE,0,0);
 }
 //---------------------------------------------------------------------------
-
+void __fastcall TWinScada::statusPLC(TMessage& Message){
+        unsigned long statPLC=Message.LParam;
+        switch(statPLC){
+                case 0:
+                        statusDebug2_S1->Caption="В НОРМЕ";
+                        statusDebug2_S1->Font->Color=clGreen;
+                        break;
+                case 1:
+                        statusDebug2_S1->Caption="ETHERNET ПОДКЛЮЧЕН";
+                        statusDebug2_S1->Font->Color=clGreen;
+                        break;
+                case 2:
+                        statusDebug2_S1->Caption="ЗАПИСЬ В КОНТРОЛЛЕР";
+                        statusDebug2_S1->Font->Color=clGreen;
+                        break;
+                case 100:
+                        statusDebug2_S1->Caption="ПОИСК КОНТРОЛЛЕРА";
+                        statusDebug2_S1->Font->Color=clRed;
+                        break;
+                case 101:
+                        statusDebug2_S1->Caption="КОНТРОЛЛЕР ОТКЛЮЧЕН";
+                        statusDebug2_S1->Font->Color=clRed;
+                        break;
+                case 102:
+                        statusDebug2_S1->Caption="ОШИБКА СОЕДИНЕНИЯ";
+                        statusDebug2_S1->Font->Color=clRed;
+                        break;
+                case 103:
+                        statusDebug2_S1->Caption="НЕИЗВЕСТНАЯ ОШИБКА";
+                        statusDebug2_S1->Font->Color=clRed;
+                        break;
+                default:break;
+        }
+}
+//--

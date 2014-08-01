@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 669
-  Top = 306
+  Left = 489
+  Top = 151
   BorderStyle = bsSingle
   Caption = 'DOZATOR_SCADA'
-  ClientHeight = 768
+  ClientHeight = 703
   ClientWidth = 1200
   Color = clBackground
   Font.Charset = DEFAULT_CHARSET
@@ -423,7 +423,7 @@ object Form1: TForm1
   end
   object Image2: TImage
     Left = 0
-    Top = 700
+    Top = 635
     Width = 1200
     Height = 68
     Align = alBottom
@@ -862,7 +862,7 @@ object Form1: TForm1
   end
   object workMode1_S1: TLabel
     Left = 776
-    Top = 720
+    Top = 656
     Width = 401
     Height = 33
     Alignment = taCenter
@@ -899,28 +899,28 @@ object Form1: TForm1
   end
   object btn_mainTab: TImage
     Left = 24
-    Top = 704
+    Top = 640
     Width = 57
     Height = 49
     OnClick = btn_mainTabClick
   end
   object btn_trendTab: TImage
     Left = 104
-    Top = 704
+    Top = 640
     Width = 57
     Height = 49
     OnClick = btn_trendTabClick
   end
   object btn_logTab: TImage
     Left = 176
-    Top = 704
+    Top = 640
     Width = 57
     Height = 49
     OnClick = btn_logTabClick
   end
   object btn_confirm1_S1: TImage
     Left = 432
-    Top = 720
+    Top = 648
     Width = 291
     Height = 37
     Cursor = crHandPoint
@@ -1575,8 +1575,8 @@ object Form1: TForm1
     OnClick = btn_confirm1_S1Click
   end
   object setManualMode: TImage
-    Left = 765
-    Top = 722
+    Left = 764
+    Top = 657
     Width = 30
     Height = 30
     Cursor = crHandPoint
@@ -1884,8 +1884,8 @@ object Form1: TForm1
     OnClick = setManualModeClick
   end
   object setAutomaticMode: TImage
-    Left = 765
-    Top = 722
+    Left = 764
+    Top = 657
     Width = 30
     Height = 30
     Cursor = crHandPoint
@@ -2204,7 +2204,7 @@ object Form1: TForm1
     Left = 0
     Top = 48
     Width = 1200
-    Height = 652
+    Height = 587
     ActivePage = TabSheet1
     Align = alClient
     HotTrack = True
@@ -6907,9 +6907,9 @@ object Form1: TForm1
           180C06030180C06030180C06030180C06030180C06030180C060303FFFD9}
       end
       object status_doz1_S1: TLabel
-        Left = 400
+        Left = 360
         Top = 0
-        Width = 161
+        Width = 241
         Height = 33
         Alignment = taCenter
         AutoSize = False
@@ -6926,9 +6926,9 @@ object Form1: TForm1
         Layout = tlCenter
       end
       object status_doz2_S1: TLabel
-        Left = 640
+        Left = 600
         Top = 0
-        Width = 169
+        Width = 241
         Height = 33
         Alignment = taCenter
         AutoSize = False
@@ -7825,8 +7825,8 @@ object Form1: TForm1
         OnClick = btn_setIzvestActivity1_S1Click
       end
       object btn_setPerfomanceSummary1_S1: TImage
-        Left = 536
-        Top = 584
+        Left = 672
+        Top = 512
         Width = 113
         Height = 41
         Cursor = crHandPoint
@@ -9171,7 +9171,7 @@ object Form1: TForm1
         Left = 0
         Top = 0
         Width = 1191
-        Height = 642
+        Height = 577
         Align = alClient
         BorderStyle = bsSingle
         Font.Charset = DEFAULT_CHARSET
@@ -9184,7 +9184,7 @@ object Form1: TForm1
         TabOrder = 0
         object Splitter4: TSplitter
           Left = 1
-          Top = 474
+          Top = 409
           Width = 1185
           Height = 3
           Cursor = crVSplit
@@ -9192,7 +9192,7 @@ object Form1: TForm1
         end
         object PView: TPanel
           Left = 1
-          Top = 477
+          Top = 412
           Width = 1185
           Height = 160
           Align = alBottom
@@ -9266,7 +9266,7 @@ object Form1: TForm1
           Left = 1
           Top = 21
           Width = 26
-          Height = 421
+          Height = 356
           Align = alLeft
           Max = 25
           Orientation = trVertical
@@ -9285,7 +9285,7 @@ object Form1: TForm1
           Left = 27
           Top = 21
           Width = 1159
-          Height = 421
+          Height = 356
           AllowPanning = pmNone
           AllowZoom = False
           AnimatedZoomSteps = 4
@@ -9411,7 +9411,7 @@ object Form1: TForm1
         end
         object Panel71: TPanel
           Left = 1
-          Top = 442
+          Top = 377
           Width = 1185
           Height = 32
           Align = alBottom
@@ -9705,14 +9705,14 @@ object Form1: TForm1
         Left = 465
         Top = 0
         Width = 3
-        Height = 642
+        Height = 577
         Cursor = crHSplit
       end
       object Panel64: TPanel
         Left = 0
         Top = 0
         Width = 465
-        Height = 642
+        Height = 577
         Align = alLeft
         BevelInner = bvRaised
         BorderStyle = bsSingle
@@ -9741,7 +9741,7 @@ object Form1: TForm1
           Left = 2
           Top = 59
           Width = 457
-          Height = 577
+          Height = 512
           Align = alClient
           DataSource = DSActiveSob
           Font.Charset = DEFAULT_CHARSET
@@ -9813,7 +9813,7 @@ object Form1: TForm1
         Left = 468
         Top = 0
         Width = 723
-        Height = 642
+        Height = 577
         Align = alClient
         BevelInner = bvRaised
         BorderStyle = bsSingle
@@ -9821,7 +9821,7 @@ object Form1: TForm1
         TabOrder = 1
         object Splitter2: TSplitter
           Left = 2
-          Top = 406
+          Top = 341
           Width = 715
           Height = 3
           Cursor = crVSplit
@@ -10082,7 +10082,7 @@ object Form1: TForm1
         end
         object Panel67: TPanel
           Left = 2
-          Top = 409
+          Top = 344
           Width = 715
           Height = 227
           Align = alBottom
@@ -10143,7 +10143,7 @@ object Form1: TForm1
           Left = 2
           Top = 59
           Width = 715
-          Height = 347
+          Height = 282
           Align = alClient
           DataSource = DSListSob
           Font.Charset = DEFAULT_CHARSET

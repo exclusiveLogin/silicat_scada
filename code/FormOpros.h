@@ -69,8 +69,8 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
           int &ErrorCode);
 private:	// User declarations
-        void WriteData();
-        void SendCommand(int num_zap,float value);
+        void WriteData(unsigned char NumLine);
+        void SendCommand(int num_zap,float value,unsigned char index);
         int unsigned const_time_out;
         int unsigned const_time_out_query;
         void __fastcall  OnWriteValue(TMessage& Message); // запись значения в контроллер
@@ -78,19 +78,20 @@ private:	// User declarations
         int statusDebug;
 
         union{
-        unsigned char buf[53];
+        unsigned char buf[66];
         struct{
-                unsigned char start[5];
-                float data[12];//48 bytes
+                unsigned char start[6];
+                float data[15];//48 bytes
 
         }recvtmpstruct;
        }recvtmpbuf;
 
 
        union{
-              unsigned char buf[10];
+              unsigned char buf[11];
               struct{
                 unsigned char start[5];//5 bytes
+                unsigned char index;
                 unsigned char i_command;//1 byte
                 float value;//4 bytes
               }st;

@@ -57,8 +57,9 @@ void __fastcall TPACQuery::InitArhiv(TObject *Sender, bool &Active, int *IDTag, 
 //-------------------------------------------
 void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
 {
- static unsigned int time_out=0 ;//тайм-аут на восстановление соединения в циклах программы цикл==1сек.
- static unsigned int time_out_query=3;//тайм аут запроса
+ static unsigned int  time_out=0 ;//тайм-аут на восстановление соединения в циклах программы цикл==1сек.
+ static unsigned int  time_out_query=3;//тайм аут запроса
+ static unsigned char index=0;
  unsigned long statusPLC;
  switch(statusDebug){
         case 1:
@@ -110,7 +111,8 @@ void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
       time_out_query++;
       if ((time_out_query%const_time_out_query)==1)
        {
-        SendCommand(0,0);//чтение данных с контроллера
+        SendCommand(0,0,index);//чтение данных с контроллера
+        index=1-index;
        }
       if (time_out_query==const_time_out_query) time_out_query=0;
      }
@@ -131,13 +133,16 @@ void __fastcall TPACQuery::Timer1Timer(TObject *Sender)
  Timer1->Enabled=true;
 }
 //---------------------------------------------------------------------------
-void TPACQuery::SendCommand(int numCom, float val){
+void TPACQuery::SendCommand(int numCom, float val, unsigned char index){
 
         tmpbuf.st.start[0]=1;
         tmpbuf.st.start[1]=1;
         tmpbuf.st.start[2]=1;
         tmpbuf.st.start[3]=1;
         tmpbuf.st.start[4]=1;
+        tmpbuf.st.index = index;
+
+
         tmpbuf.st.value=val;
 
         switch(numCom){
@@ -172,11 +177,11 @@ void TPACQuery::SendCommand(int numCom, float val){
         }
         if (ClientSocket1->Socket!=NULL){
                 if (ClientSocket1->Socket->Connected){
-                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
+                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,11);
                 }
                 else{
                         ClientSocket1->Open();
-                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,10);
+                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,11);
                 }
         }
 }
@@ -233,14 +238,14 @@ void __fastcall TPACQuery::ClientSocket1Read(TObject *Sender,  //Переделать
  bytes=Socket->ReceiveBuf(&buf[0],128);
  bool error=0;
 
- for(int i=0;i<bytes-56;i++){
-    if ((buf[i]==1)&&(buf[i+1]==1)&&(buf[i+2]==1)&&(buf[i+3]==1)&&(buf[i+4]==1)){
-        if((i+61)>=bytes){
-                for(int n=0;n<61;n++){
+ for(int i=0;i<bytes-60;i++){
+    if ((buf[i]==1)&&(buf[i+1]==1)&&(buf[i+2]==1)&&(buf[i+3]==1)&&(buf[i+4]==1)&&((buf[i+5]==1)||(buf[i+5]==0))){
+        if((i+66)>=bytes){
+                for(int n=0;n<66;n++){
                         recvtmpbuf.buf[n]=buf[i+n];
                 }
-                i=i+60;
-                WriteData();
+                i=i+65;
+                WriteData(buf[i+5]);
         }
         else error=1;
         if(error==1) break;
@@ -248,13 +253,13 @@ void __fastcall TPACQuery::ClientSocket1Read(TObject *Sender,  //Переделать
  }
 }
 //---------------------------------------------------------------------------
-void TPACQuery::WriteData()
+void TPACQuery::WriteData(unsigned char NumLine)
 {
  // Запись текущих данных в архив
  unsigned int CodeError;
  for (int i=0;i<Lic;i++)
   {
-   int   IDTag = i+1;
+   int   IDTag = i+1+NumLine*20;
    float Val=0;
    float Val1=0,Val2=0;
    int   Status1=1, Status2=1;
@@ -270,32 +275,46 @@ void TPACQuery::WriteData()
     {
      switch (IDTag)
       {
+       case 21:
        case 1 : // режим работы
                 Val = recvtmpbuf.recvtmpstruct.data[0];  Status=0; break;
+       case 22:
        case 2 : // текущая производительность извести
                 Val = recvtmpbuf.recvtmpstruct.data[1]; Status=0; break;
+       case 23:
        case 3 : // вычисленная производительность извести
                 Val = recvtmpbuf.recvtmpstruct.data[2]; Status=0; break;
+       case 24:
        case 4 : // текущая активность извести
                 Val = recvtmpbuf.recvtmpstruct.data[3]; Status=0; break;
+       case 25:
        case 5 : // текущая производительность песка
                 Val = recvtmpbuf.recvtmpstruct.data[4]; Status=0; break;
+       case 26:
        case 6 : // вычисленная производительность песка
                 Val = recvtmpbuf.recvtmpstruct.data[5]; Status=0; break;
+       case 27:
        case 7 : // текущее значение молотовяжущего
                 Val = recvtmpbuf.recvtmpstruct.data[6]; Status=0; break;
+       case 28:
        case 8 : // статус дозатора извести
                 Val = recvtmpbuf.recvtmpstruct.data[7]; Status=0; break;
+       case 29:
        case 9 : // статус дозатора песка
                 Val = recvtmpbuf.recvtmpstruct.data[8]; Status=0; break;
+       case 30:
        case 10: // текущая производительность
                 Val = recvtmpbuf.recvtmpstruct.data[9]; Status=0; break;
+       case 31:
        case 11: // установленная производительность
                 Val = recvtmpbuf.recvtmpstruct.data[10]; Status=0; break;
+       case 32:
        case 12: // вибратор
                 Val = recvtmpbuf.recvtmpstruct.data[11]; Status=0; break;
+       case 33:
        case 13: // вибратор
                 Val = recvtmpbuf.recvtmpstruct.data[12]; Status=0; break;
+       case 34:
        case 14: // вибратор
                 Val = recvtmpbuf.recvtmpstruct.data[13]; Status=0; break;
       }
@@ -472,8 +491,9 @@ void __fastcall  TPACQuery::OnWriteValue(TMessage& Message){
                 float funi;
         }uni;
         uni.luni = Message.LParam;
+        if (command>1000)  SendCommand(command-1000, uni.funi,1);
+        else               SendCommand(command,uni.funi,0);
 
-        SendCommand(command, uni.funi);
 }
 
 __fastcall TPACQuery::~TPACQuery(void)

@@ -19,8 +19,13 @@ __fastcall TWinScada::TWinScada(TComponent* Owner)
  izvActEdToggle = false;
  neededPerfToggle = false;
  MVtoggle = false;
+ izvActEdToggle2 = false;
+ neededPerfToggle2 = false;
+ MVtoggle2 = false;
  setIzvestToggle = false;
  setSandToggle = false;
+ setIzvestToggle2 = false;
+ setSandToggle2 = false;
  //NewSizeWidth=1600;
  FIDTrends = 2;
  Timer2->Enabled=true;
@@ -472,6 +477,12 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
                         WinScada->btn_setIzvestActivity1_S1->Visible = true;
                         WinScada->btn_setPerfomanceSummary1_S1->Visible = true;
                         WinScada->btn_setMV1_S1->Visible = true;
+                        //****
+                        WinScada->btn_setPerfIzv2->Visible = false;
+                        WinScada->btn_setPerfSand2->Visible = false;
+                        WinScada->btn_setIzvestActivity2_S2->Visible = true;
+                        WinScada->btn_setPerfomanceSummary2_S2->Visible = true;
+                        WinScada->btn_setMV2_S2->Visible = true;
                         WinScada->bg->Picture->LoadFromFile("bg.jpg");
                        }
                       else if(MyValTags==1)
@@ -486,6 +497,13 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
                         WinScada->btn_setIzvestActivity1_S1->Visible = false;
                         WinScada->btn_setPerfomanceSummary1_S1->Visible = false;
                         WinScada->btn_setMV1_S1->Visible = false;
+                        //*****
+                        WinScada->btn_setPerfIzv2->Visible = true;
+                        WinScada->btn_setPerfSand2->Visible = true;
+                        WinScada->btn_setIzvestActivity2_S2->Visible = false;
+                        WinScada->btn_setPerfomanceSummary2_S2->Visible = false;
+                        WinScada->btn_setMV2_S2->Visible = false;
+
                         WinScada->bg->Picture->LoadFromFile("bg_inactive.jpg");
                        }
                      }
@@ -1822,6 +1840,42 @@ if(neededPerfomanceSummary1_S1->Caption!="---"){
         error=0;
         }
 else error=1;
+//******************
+if(curentPerfomanceIzvest2_S2->Caption!="---"){
+        CalcPerfIzvest2 = StrToFloat(StringReplace(calcPerfomanceIzvest2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        error=0;
+        }
+else error=1;
+if(calcPerfomanceIzvest2_S2->Caption!="---"){
+        CurentPerfIzvest2 = StrToFloat(StringReplace(curentPerfomanceIzvest2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        error=0;
+        }
+//--
+if(calcPerfomanceSand2_S2->Caption!="---"){
+        CalcPerfSand2 = StrToFloat(StringReplace(calcPerfomanceSand2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        error=0;
+        }
+else error=1;
+if(curentPerfomanceSand2_S2->Caption!="---"){
+        CurentPerfSand2 = StrToFloat(StringReplace(curentPerfomanceSand2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        error=0;
+        }
+//---
+else error=1;
+if(curentPerfomanceSummary2_S2->Caption!="---"){
+        CurPerfSummary2 = StrToFloat(StringReplace(curentPerfomanceSummary2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        error=0;
+        }
+else error=1;
+if(neededPerfomanceSummary2_S2->Caption!="---"){
+        NeededPerfSummary2 = StrToFloat(StringReplace(neededPerfomanceSummary2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        error=0;
+        }
+else error=1;
+
+
+
+
 if(!error){
         if(CurentPerfIzvest<CalcPerfIzvest){
                 curentIzvPerfArrowDown1->Visible=true;
@@ -1847,6 +1901,32 @@ if(!error){
                 curentPerfSandArrowDown1->Visible=false;
                 curentPerfSandArrowUp1->Visible=true;
                 }
+        //----
+        if(CurentPerfIzvest2<CalcPerfIzvest2){
+                curentIzvPerfArrowDown2->Visible=true;
+                curentIzvPerfArrowUp2->Visible=false;
+                }
+        else{
+                curentIzvPerfArrowDown2->Visible=false;
+                curentIzvPerfArrowUp2->Visible=true;
+                }
+        if(CurPerfSummary2<NeededPerfSummary2){
+                curentPerfSummArrowDown2->Visible=true;
+                curentPerfSummArrowUp2->Visible=false;
+                }
+        else{
+                curentPerfSummArrowDown2->Visible=false;
+                curentPerfSummArrowUp2->Visible=true;
+                }
+        if(CurentPerfSand2<CalcPerfSand2){
+                curentPerfSandArrowDown2->Visible=true;
+                curentPerfSandArrowUp2->Visible=false;
+                }
+        else{
+                curentPerfSandArrowDown2->Visible=false;
+                curentPerfSandArrowUp2->Visible=true;
+                }
+
         }
 else;
 }
@@ -1867,6 +1947,7 @@ void __fastcall TWinScada::btn_mainTabClick(TObject *Sender)
 TabSheet1->TabVisible = true;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = false;
+TabSheet4->TabVisible = false;
 WinScada->Width = 1216;
 date1->Left = 1116;
 time1->Left = 1108;
@@ -1881,6 +1962,7 @@ void __fastcall TWinScada::btn_trendTabClick(TObject *Sender)
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = true;
 TabSheet3->TabVisible = false;
+TabSheet4->TabVisible = false;
 WinScada->Width = 1216;
 date1->Left = 1116;
 time1->Left = 1108;
@@ -1895,6 +1977,7 @@ void __fastcall TWinScada::btn_logTabClick(TObject *Sender)
 TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = true;
+TabSheet4->TabVisible = false;
 WinScada->Width = 1320;
 date1->Left = 1216;
 time1->Left = 1208;
@@ -1958,6 +2041,8 @@ union{//Объявление временной union
 long tmpcom = 101;
 tmpuni.luni = 0;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+long tmpcom = 1101;
+PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
 }
 //---------------------------------------------------------------------------
 
@@ -1969,6 +2054,8 @@ union{//Объявление временной union
         }tmpuni;
 long tmpcom = 100;
 tmpuni.luni = 0;
+PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+long tmpcom = 1100;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
 }
 //---------------------------------------------------------------------------
@@ -2013,3 +2100,133 @@ void __fastcall TWinScada::statusPLC(TMessage& Message){
         }
 }
 //--
+void __fastcall TWinScada::Image20Click(TObject *Sender)
+{
+        TabSheet1->TabVisible = false;
+        TabSheet2->TabVisible = false;
+        TabSheet3->TabVisible = false;
+        TabSheet4->TabVisible = true;
+        WinScada->Width = 1216;
+        date1->Left = 1116;
+        time1->Left = 1108;
+        statusDebug1_S1->Left = 400;
+        statusDebug2_S1->Left = 760;
+        workMode1_S1->Left = 776;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TWinScada::btn_setPerfIzv2Click(TObject *Sender)
+{
+        union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+        long tmpcom = 1030;
+        if(!setIzvestToggle2){
+                setPerfIzvestEdit2->Visible = true;
+                setPerfIzvestEdit2->Text = setPerfomanceIzvest2_S2->Caption;
+                setPerfIzvestEdit2->Text = StringReplace(setPerfIzvestEdit2->Text,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim();
+                setIzvestToggle2 = true;
+        }
+        else{
+                setPerfIzvestEdit2->Visible = false;
+                setIzvestToggle2 = false;
+                tmpuni.funi = StrToFloat(setPerfIzvestEdit2->Text);
+                PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TWinScada::btn_setIzvestActivity2_S2Click(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 1020;
+if(!izvActEdToggle2){
+        izvActivityEdit2->Visible = true;
+        izvActivityEdit2->Text = izvestActivity2_S2->Caption;
+        izvActivityEdit2->Text = StringReplace(izvActivityEdit2->Text,"%","",TReplaceFlags()<<rfReplaceAll).Trim();
+        izvActEdToggle2 = true;
+        }
+else{
+        izvActivityEdit2->Visible = false;
+        izvActEdToggle2 = false;
+        tmpuni.funi = StrToFloat(izvActivityEdit2->Text);
+        PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        confirmArmed=true;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TWinScada::btn_setPerfomanceSummary2_S2Click(
+      TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 1022;
+
+if(!neededPerfToggle2){
+        neededPerfEdit2->Visible = true;
+        neededPerfEdit2->Text = neededPerfomanceSummary2_S2->Caption;
+        neededPerfEdit2->Text = StringReplace(neededPerfEdit2->Text,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim();
+        neededPerfToggle2 = true;
+        }
+else{
+        neededPerfEdit2->Visible = false;
+        neededPerfToggle2 = false;
+        tmpuni.funi = StrToFloat(neededPerfEdit2->Text);
+        PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        confirmArmed=true;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TWinScada::btn_setMV2_S2Click(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 1021;
+if(!MVtoggle2){
+        MVEdit2->Visible = true;
+        MVEdit2->Text = curent_MV2_S2->Caption;
+        MVEdit2->Text = StringReplace(MVEdit2->Text,"%","",TReplaceFlags()<<rfReplaceAll).Trim();
+        MVtoggle2 = true;
+        }
+else{
+        MVEdit2->Visible = false;
+        MVtoggle2 = false;
+        tmpuni.funi = StrToFloat(MVEdit2->Text);
+        PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        confirmArmed=true;
+        }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TWinScada::btn_setPerfSand2Click(TObject *Sender)
+{
+union{//Объявление временной union
+                long luni;
+                float funi;
+        }tmpuni;
+long tmpcom = 1040;
+if(!setSandToggle2){
+        setPerfSandEdit2->Visible = true;
+        setPerfSandEdit2->Text = setPerfomanceSand2_S2->Caption;
+        setPerfSandEdit2->Text = StringReplace(setPerfSandEdit2->Text,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim();
+        setSandToggle2 = true;
+        }
+else{
+        setPerfSandEdit2->Visible = false;
+        setSandToggle2 = false;
+        tmpuni.funi = StrToFloat(setPerfSandEdit2->Text);
+        PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
+        }
+}
+//---------------------------------------------------------------------------
+

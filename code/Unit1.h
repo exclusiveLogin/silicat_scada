@@ -210,6 +210,43 @@ __published:	// IDE-managed Components
         TImage *setManualMode;
         TImage *setAutomaticMode;
         TLabel *statusDebug2_S1;
+        TTabSheet *TabSheet4;
+        TImage *Image1;
+        TLabel *curentPerfomanceIzvest2_S2;
+        TLabel *calcPerfomanceIzvest2_S2;
+        TLabel *izvestActivity2_S2;
+        TLabel *curentPerfomanceSand2_S2;
+        TLabel *calcPerfomanceSand2_S2;
+        TLabel *curentPerfomanceSummary2_S2;
+        TLabel *neededPerfomanceSummary2_S2;
+        TLabel *curent_MV2_S2;
+        TImage *work_doz1_S2;
+        TImage *work_doz2_S2;
+        TImage *stop_doz1_S2;
+        TImage *stop_doz2_S2;
+        TImage *btn_setIzvestActivity2_S2;
+        TImage *btn_setPerfomanceSummary2_S2;
+        TImage *btn_setMV2_S2;
+        TImage *curentIzvPerfArrowUp2;
+        TImage *curentIzvPerfArrowDown2;
+        TImage *curentPerfSummArrowDown2;
+        TImage *curentPerfSummArrowUp2;
+        TImage *curentPerfSandArrowUp2;
+        TImage *curentPerfSandArrowDown2;
+        TImage *vibroSand2_S2;
+        TImage *vibroSand2Right_S2;
+        TLabel *setPerfomanceIzvest2_S2;
+        TLabel *setPerfomanceSand2_S2;
+        TImage *btn_setPerfIzv2;
+        TImage *btn_setPerfSand2;
+        TEdit *izvActivityEdit2;
+        TEdit *neededPerfEdit2;
+        TEdit *MVEdit2;
+        TEdit *setPerfIzvestEdit2;
+        TEdit *setPerfSandEdit2;
+        TLabel *status_doz1_2_S2;
+        TLabel *status_doz2_2_S2;
+        TImage *Image20;
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall btn_logClick(TObject *Sender);
     void __fastcall BBBuilderTrendClick(TObject *Sender);
@@ -278,6 +315,12 @@ __published:	// IDE-managed Components
         void __fastcall setManualModeClick(TObject *Sender);
         void __fastcall setAutomaticModeClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
+        void __fastcall Image20Click(TObject *Sender);
+        void __fastcall btn_setPerfIzv2Click(TObject *Sender);
+        void __fastcall btn_setIzvestActivity2_S2Click(TObject *Sender);
+        void __fastcall btn_setPerfomanceSummary2_S2Click(TObject *Sender);
+        void __fastcall btn_setMV2_S2Click(TObject *Sender);
+        void __fastcall btn_setPerfSand2Click(TObject *Sender);
 private:	// User declarations
         unsigned long MasBits[4][1000]               ; // массив бит дл€ отображени€ сложных элементов
         int             NewSizeWidth;
@@ -313,6 +356,13 @@ private:	// User declarations
         float CurentPerfSand;
         float CurPerfSummary;
         float NeededPerfSummary;
+        //**
+        float CalcPerfIzvest2;
+        float CurentPerfIzvest2;
+        float CalcPerfSand2;
+        float CurentPerfSand2;
+        float CurPerfSummary2;
+        float NeededPerfSummary2;
         bool confirmArmed;
 public:		// User declarations
         __fastcall TWinScada(TComponent* Owner);

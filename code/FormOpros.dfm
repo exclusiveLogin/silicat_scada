@@ -1,10 +1,10 @@
 object PACQuery: TPACQuery
-  Left = 264
-  Top = 193
+  Left = 234
+  Top = 127
   BorderStyle = bsSingle
   Caption = 'Модуль опроса'
-  ClientHeight = 35
-  ClientWidth = 278
+  ClientHeight = 204
+  ClientWidth = 408
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

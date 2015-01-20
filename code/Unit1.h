@@ -247,6 +247,27 @@ __published:	// IDE-managed Components
         TLabel *status_doz1_2_S2;
         TLabel *status_doz2_2_S2;
         TImage *btn_mainform2;
+        TTabSheet *TabSheet5;
+        TImage *bg_summary;
+        TImage *btn_formsummary;
+        TLabel *curentPerfomanceIzvest1_S3;
+        TLabel *curentPerfomanceSand1_S3;
+        TLabel *Label3;
+        TLabel *Label4;
+        TLabel *calcPerfomanceIzvest1_S3;
+        TLabel *calcPerfomanceSand1_S3;
+        TLabel *curentPerfomanceSummary1_S3;
+        TLabel *izvestActivity1_S3;
+        TLabel *curentPerfomanceIzvest2_S3;
+        TLabel *curentPerfomanceSand2_S3;
+        TLabel *calcPerfomanceIzvest2_S3;
+        TLabel *calcPerfomanceSand2_S3;
+        TLabel *curentPerfomanceSummary2_S3;
+        TLabel *izvestActivity2_S3;
+        TLabel *status_doz1_S3;
+        TLabel *status_doz2_S3;
+        TLabel *status_doz1_2_S3;
+        TLabel *status_doz2_2_S3;
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall btn_logClick(TObject *Sender);
     void __fastcall BBBuilderTrendClick(TObject *Sender);
@@ -321,6 +342,7 @@ __published:	// IDE-managed Components
         void __fastcall btn_setPerfomanceSummary2_S2Click(TObject *Sender);
         void __fastcall btn_setMV2_S2Click(TObject *Sender);
         void __fastcall btn_setPerfSand2Click(TObject *Sender);
+        void __fastcall btn_formsummaryClick(TObject *Sender);
 private:	// User declarations
         unsigned long MasBits[4][1000]               ; // массив бит дл€ отображени€ сложных элементов
         int             NewSizeWidth;

@@ -115,7 +115,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
 
    check_exec=0;
   }
- if (PageControl1->ActivePageIndex==2)
+ if (PageControl1->ActivePageIndex==3)
   {
    if (SpeedButton3->Down)
     {
@@ -128,7 +128,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
      Timer1->Enabled = true;
     }
   }
- else if (PageControl1->ActivePageIndex==3)
+ else if (PageControl1->ActivePageIndex==4)
   {
    Timer1->Enabled=false;
    try
@@ -146,7 +146,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
    catch (...) { }
    Timer1->Enabled=true;
   }
- else if ((PageControl1->ActivePageIndex>=0)&&(PageControl1->ActivePageIndex<=1)) // отображение активных данных
+ else if ((PageControl1->ActivePageIndex>=0)&&(PageControl1->ActivePageIndex<=2)) // отображение активных данных
   {
    if (QListTags->Active) QListTags->Requery(TExecuteOptions());
    else                   QListTags->Open();
@@ -155,7 +155,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
     {
      case 0: NumAct=1; break;
      case 1: NumAct=2; break;
-    // case 2: NumAct=4; break;
+     case 2: NumAct=4; break;
     // case 3: NumAct=8; break;
    //  case 4: NumAct=16;break;
     }
@@ -1953,6 +1953,7 @@ TabSheet1->TabVisible = true;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = false;
 TabSheet4->TabVisible = false;
+TabSheet5->TabVisible = false;
 WinScada->Width = 1216;
 /*date1->Left = 1116;
 time1->Left = 1108;
@@ -1968,6 +1969,7 @@ TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = true;
 TabSheet3->TabVisible = false;
 TabSheet4->TabVisible = false;
+TabSheet5->TabVisible = false;
 WinScada->Width = 1216;
 /*date1->Left = 1116;
 time1->Left = 1108;
@@ -1983,6 +1985,7 @@ TabSheet1->TabVisible = false;
 TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = true;
 TabSheet4->TabVisible = false;
+TabSheet5->TabVisible = false;
 WinScada->Width = 1320;
 /*date1->Left = 1216;
 time1->Left = 1208;
@@ -2111,6 +2114,7 @@ void __fastcall TWinScada::btn_mainform2Click(TObject *Sender)
         TabSheet2->TabVisible = false;
         TabSheet3->TabVisible = false;
         TabSheet4->TabVisible = true;
+        TabSheet5->TabVisible = false;
         WinScada->Width = 1216;
         /*date1->Left = 1116;
         time1->Left = 1108;
@@ -2232,6 +2236,17 @@ else{
         tmpuni.funi = StrToFloat(setPerfSandEdit2->Text);
         PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
         }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TWinScada::btn_formsummaryClick(TObject *Sender)
+{
+TabSheet1->TabVisible = false;
+TabSheet2->TabVisible = false;
+TabSheet3->TabVisible = false;
+TabSheet4->TabVisible = false;
+TabSheet5->TabVisible = true;
+WinScada->Width = 1216;
 }
 //---------------------------------------------------------------------------
 

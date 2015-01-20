@@ -12,6 +12,7 @@
 #include <ExtCtrls.hpp>
 #include <ScktComp.hpp>
 #include "ClassArhiv.hpp"
+#include <Psock.hpp>
 //---------------------------------------------------------------------------
 class TPACQuery : public TForm
 {
@@ -57,8 +58,6 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket);
         void __fastcall ClientSocket1Disconnect(TObject *Sender,
           TCustomWinSocket *Socket);
-        void __fastcall ClientSocket1Lookup(TObject *Sender,
-          TCustomWinSocket *Socket);
         void __fastcall ClientSocket1Write(TObject *Sender,
           TCustomWinSocket *Socket);
         void __fastcall ClientSocket1Read(TObject *Sender,
@@ -69,7 +68,7 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
           int &ErrorCode);
 private:	// User declarations
-        void WriteData(unsigned char NumLine);
+        void WriteData(void);
         void SendCommand(int num_zap,float value,unsigned char index);
         int unsigned const_time_out;
         int unsigned const_time_out_query;
@@ -84,7 +83,7 @@ private:	// User declarations
                 float data[15];//48 bytes
 
         }recvtmpstruct;
-       }recvtmpbuf;
+       }recvtmpbuf[2];
 
 
        union{

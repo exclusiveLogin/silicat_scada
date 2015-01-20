@@ -2,7 +2,7 @@
 
 #include <vcl.h>
 #pragma hdrstop
-USERES("opros.res");
+USERES("Opros.res");
 USEUNIT("..\MyCLASS\ClassArhiv.cpp");
 USEFORM("..\code\FormOpros.cpp", PACQuery);
 //---------------------------------------------------------------------------
@@ -14,7 +14,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
           {
             Application->Initialize();
             Application->CreateForm(__classid(TPACQuery), &PACQuery);
-            Application->Run();
+                 Application->Run();
           }
         }
         catch (Exception &exception)

@@ -19,14 +19,15 @@ __fastcall TPACQuery::TPACQuery(TComponent* Owner)
         Arhiv                = new MyArhiv(this,Lic,1000);
         Arhiv->OnActiveArhiv = InitArhiv;
         Arhiv->ActiveWrite   = true     ;
-        ClientSocket1->Active = true    ;
+        //ClientSocket1->Open();
+        //Active = true    ;
         scadaWin = FindWindow("TWinScada","”правление дозаторами");
-        if(scadaWin!=NULL){
+       if(scadaWin!=NULL){
                 //Application->MessageBoxA("ќкно Ќашли","Test",MB_OK);
                 Application->ShowMainForm = false;
                 PACQuery->Visible = false;
         }
-        else Application->MessageBoxA("Ќе запущена SCADA","ќшибка",MB_OK);
+        else Application->MessageBoxA("Ќе запущена SCADA","ќшибка",MB_OK); 
 }
 //---------------------------------------------------------------------------
 void __fastcall TPACQuery::InitArhiv(TObject *Sender, bool &Active, int *IDTag, double *Val, int *Stat)
@@ -144,7 +145,8 @@ void TPACQuery::SendCommand(int numCom, float val, unsigned char index){
 
 
         tmpbuf.st.value=val;
-
+        //AnsiString ttt="NumCom="+IntToStr(numCom)+";"+IntToStr(index);
+        //Application->MessageBoxA(ttt.c_str(),ttt.c_str(),MB_OK);
         switch(numCom){
         case 0://читаем значени€
                 tmpbuf.st.i_command=114;//команда на чтение параметров
@@ -181,7 +183,7 @@ void TPACQuery::SendCommand(int numCom, float val, unsigned char index){
                 }
                 else{
                         ClientSocket1->Open();
-                        ClientSocket1->Socket->SendBuf(tmpbuf.buf,11);
+                    //    ClientSocket1->Socket->SendBuf(tmpbuf.buf,11);
                 }
         }
 }
@@ -206,15 +208,6 @@ void __fastcall TPACQuery::ClientSocket1Disconnect(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TPACQuery::ClientSocket1Lookup(TObject *Sender,
-      TCustomWinSocket *Socket)
-{
- int i=0;
- statusDebug = 3;
- //statusDebug1->Caption="LookUP";
- //statusDebug1->Font->Color=clGreen;
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TPACQuery::ClientSocket1Write(TObject *Sender,
       TCustomWinSocket *Socket)
@@ -235,17 +228,17 @@ void __fastcall TPACQuery::ClientSocket1Read(TObject *Sender,  //ѕеределать
  //statusDebug1->Font->Color=clGreen;
  unsigned char buf[129];
  int           bytes=0;
- bytes=Socket->ReceiveBuf(&buf[0],128);
+ bytes=Socket->ReceiveBuf(&buf[0],256);
  bool error=0;
 
  for(int i=0;i<bytes-60;i++){
     if ((buf[i]==1)&&(buf[i+1]==1)&&(buf[i+2]==1)&&(buf[i+3]==1)&&(buf[i+4]==1)&&((buf[i+5]==1)||(buf[i+5]==0))){
-        if((i+66)>=bytes){
+        if((i+66)<=bytes){
                 for(int n=0;n<66;n++){
-                        recvtmpbuf.buf[n]=buf[i+n];
+                        recvtmpbuf[buf[i+5]].buf[n]=buf[i+n];
                 }
                 i=i+65;
-                WriteData(buf[i+5]);
+                WriteData();
         }
         else error=1;
         if(error==1) break;
@@ -253,13 +246,14 @@ void __fastcall TPACQuery::ClientSocket1Read(TObject *Sender,  //ѕеределать
  }
 }
 //---------------------------------------------------------------------------
-void TPACQuery::WriteData(unsigned char NumLine)
+void TPACQuery::WriteData()
 {
  // «апись текущих данных в архив
  unsigned int CodeError;
+
  for (int i=0;i<Lic;i++)
   {
-   int   IDTag = i+1+NumLine*20;
+   int   IDTag = i+1;
    float Val=0;
    float Val1=0,Val2=0;
    int   Status1=1, Status2=1;
@@ -275,48 +269,48 @@ void TPACQuery::WriteData(unsigned char NumLine)
     {
      switch (IDTag)
       {
-       case 21:
+       case 21: Val = recvtmpbuf[1].recvtmpstruct.data[0];  Status=0; break;
        case 1 : // режим работы
-                Val = recvtmpbuf.recvtmpstruct.data[0];  Status=0; break;
-       case 22:
+                Val = recvtmpbuf[0].recvtmpstruct.data[0];  Status=0; break;
+       case 22: Val = recvtmpbuf[1].recvtmpstruct.data[1]; Status=0; break;
        case 2 : // текуща€ производительность извести
-                Val = recvtmpbuf.recvtmpstruct.data[1]; Status=0; break;
-       case 23:
+                Val = recvtmpbuf[0].recvtmpstruct.data[1]; Status=0; break;
+       case 23: Val = recvtmpbuf[1].recvtmpstruct.data[2]; Status=0; break;
        case 3 : // вычисленна€ производительность извести
-                Val = recvtmpbuf.recvtmpstruct.data[2]; Status=0; break;
-       case 24:
+                Val = recvtmpbuf[0].recvtmpstruct.data[2]; Status=0; break;
+       case 24: Val = recvtmpbuf[1].recvtmpstruct.data[3]; Status=0; break;
        case 4 : // текуща€ активность извести
-                Val = recvtmpbuf.recvtmpstruct.data[3]; Status=0; break;
-       case 25:
+                Val = recvtmpbuf[0].recvtmpstruct.data[3]; Status=0; break;
+       case 25: Val = recvtmpbuf[1].recvtmpstruct.data[4]; Status=0; break;
        case 5 : // текуща€ производительность песка
-                Val = recvtmpbuf.recvtmpstruct.data[4]; Status=0; break;
-       case 26:
+                Val = recvtmpbuf[0].recvtmpstruct.data[4]; Status=0; break;
+       case 26: Val = recvtmpbuf[1].recvtmpstruct.data[5]; Status=0; break;
        case 6 : // вычисленна€ производительность песка
-                Val = recvtmpbuf.recvtmpstruct.data[5]; Status=0; break;
-       case 27:
+                Val = recvtmpbuf[0].recvtmpstruct.data[5]; Status=0; break;
+       case 27: Val = recvtmpbuf[1].recvtmpstruct.data[6]; Status=0; break;
        case 7 : // текущее значение молотов€жущего
-                Val = recvtmpbuf.recvtmpstruct.data[6]; Status=0; break;
-       case 28:
+                Val = recvtmpbuf[0].recvtmpstruct.data[6]; Status=0; break;
+       case 28: Val = recvtmpbuf[1].recvtmpstruct.data[7]; Status=0; break;
        case 8 : // статус дозатора извести
-                Val = recvtmpbuf.recvtmpstruct.data[7]; Status=0; break;
-       case 29:
+                Val = recvtmpbuf[0].recvtmpstruct.data[7]; Status=0; break;
+       case 29: Val = recvtmpbuf[1].recvtmpstruct.data[8]; Status=0; break;
        case 9 : // статус дозатора песка
-                Val = recvtmpbuf.recvtmpstruct.data[8]; Status=0; break;
-       case 30:
+                Val = recvtmpbuf[0].recvtmpstruct.data[8]; Status=0; break;
+       case 30: Val = recvtmpbuf[1].recvtmpstruct.data[9]; Status=0; break;
        case 10: // текуща€ производительность
-                Val = recvtmpbuf.recvtmpstruct.data[9]; Status=0; break;
-       case 31:
+                Val = recvtmpbuf[0].recvtmpstruct.data[9]; Status=0; break;
+       case 31: Val = recvtmpbuf[1].recvtmpstruct.data[10]; Status=0; break;
        case 11: // установленна€ производительность
-                Val = recvtmpbuf.recvtmpstruct.data[10]; Status=0; break;
-       case 32:
+                Val = recvtmpbuf[0].recvtmpstruct.data[10]; Status=0; break;
+       case 32: Val = recvtmpbuf[1].recvtmpstruct.data[11]; Status=0; break;
        case 12: // вибратор
-                Val = recvtmpbuf.recvtmpstruct.data[11]; Status=0; break;
-       case 33:
+                Val = recvtmpbuf[0].recvtmpstruct.data[11]; Status=0; break;
+       case 33: Val = recvtmpbuf[1].recvtmpstruct.data[12]; Status=0; break;
        case 13: // вибратор
-                Val = recvtmpbuf.recvtmpstruct.data[12]; Status=0; break;
-       case 34:
+                Val = recvtmpbuf[0].recvtmpstruct.data[12]; Status=0; break;
+       case 34: Val = recvtmpbuf[1].recvtmpstruct.data[13]; Status=0; break;
        case 14: // вибратор
-                Val = recvtmpbuf.recvtmpstruct.data[13]; Status=0; break;
+                Val = recvtmpbuf[0].recvtmpstruct.data[13]; Status=0; break;
       }
      if ((QListTagsValueTag->AsFloat!=Val)||(QListTagsStatusTag->AsInteger!=Status)||
          ((sh)&&(Status1==0)&&(Status2==0)&&((QListTagsMinValIn->AsFloat!=Val1)||(QListTagsMinValIn->AsFloat!=Val2)))

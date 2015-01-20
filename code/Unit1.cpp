@@ -108,14 +108,14 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
 
  date1->Caption = Now().FormatString("dd.mm.yyyy");
  time1->Caption = Now().FormatString("hh:nn:ss")  ;
- 
+
  if (check_exec>10)
   {
    if (!ModeApp)
 
    check_exec=0;
   }
- if (PageControl1->ActivePageIndex==1)
+ if (PageControl1->ActivePageIndex==2)
   {
    if (SpeedButton3->Down)
     {
@@ -128,7 +128,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
      Timer1->Enabled = true;
     }
   }
- else if (PageControl1->ActivePageIndex==2)
+ else if (PageControl1->ActivePageIndex==3)
   {
    Timer1->Enabled=false;
    try
@@ -146,7 +146,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
    catch (...) { }
    Timer1->Enabled=true;
   }
- else if ((PageControl1->ActivePageIndex>=0)&&(PageControl1->ActivePageIndex<=0)) // отображение активных данных
+ else if ((PageControl1->ActivePageIndex>=0)&&(PageControl1->ActivePageIndex<=1)) // отображение активных данных
   {
    if (QListTags->Active) QListTags->Requery(TExecuteOptions());
    else                   QListTags->Open();
@@ -155,9 +155,9 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
     {
      case 0: NumAct=1; break;
      case 1: NumAct=2; break;
-     case 2: NumAct=4; break;
-     case 3: NumAct=8; break;
-     case 4: NumAct=16;break;
+    // case 2: NumAct=4; break;
+    // case 3: NumAct=8; break;
+   //  case 4: NumAct=16;break;
     }
    if (!PLUS_COUNT) count++;
    vismig = (count%4)<2;
@@ -181,7 +181,10 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
       } */
      if ((QListTagsNumEkran->AsInteger&NumAct)==NumAct)
       {
-       TmpCont = (TControl *)FindComponent(QListTagsNameTag->AsString.Trim()+"_S"+IntToStr(PageControl1->ActivePageIndex+1));
+       if (QListTagsNameTag->AsString.Trim()=="workMode1")
+        TmpCont = (TControl *)FindComponent(QListTagsNameTag->AsString.Trim()+"_S3");
+       else
+        TmpCont = (TControl *)FindComponent(QListTagsNameTag->AsString.Trim()+"_S"+IntToStr(PageControl1->ActivePageIndex+1));
        if (TmpCont!=NULL)
         {
          TmpCont->ShowHint = true;
@@ -484,6 +487,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
                         WinScada->btn_setPerfomanceSummary2_S2->Visible = true;
                         WinScada->btn_setMV2_S2->Visible = true;
                         WinScada->bg->Picture->LoadFromFile("bg.jpg");
+                        WinScada->bg2->Picture->LoadFromFile("bg.jpg");
                        }
                       else if(MyValTags==1)
                        {
@@ -505,6 +509,7 @@ void __fastcall TWinScada::Timer1Timer(TObject *Sender)
                         WinScada->btn_setMV2_S2->Visible = false;
 
                         WinScada->bg->Picture->LoadFromFile("bg_inactive.jpg");
+                        WinScada->bg2->Picture->LoadFromFile("bg_inactive.jpg");
                        }
                      }
                     break;
@@ -1842,33 +1847,33 @@ if(neededPerfomanceSummary1_S1->Caption!="---"){
 else error=1;
 //******************
 if(curentPerfomanceIzvest2_S2->Caption!="---"){
-        CalcPerfIzvest2 = StrToFloat(StringReplace(calcPerfomanceIzvest2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+      //  CalcPerfIzvest2 = StrToFloat(StringReplace(calcPerfomanceIzvest2_S2->Caption,"T.","",TReplaceFlags()<<rfReplaceAll).Trim());
         error=0;
         }
 else error=1;
 if(calcPerfomanceIzvest2_S2->Caption!="---"){
-        CurentPerfIzvest2 = StrToFloat(StringReplace(curentPerfomanceIzvest2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+       // CurentPerfIzvest2 = StrToFloat(StringReplace(curentPerfomanceIzvest2_S2->Caption,"T.","",TReplaceFlags()<<rfReplaceAll).Trim());
         error=0;
         }
 //--
 if(calcPerfomanceSand2_S2->Caption!="---"){
-        CalcPerfSand2 = StrToFloat(StringReplace(calcPerfomanceSand2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        //CalcPerfSand2 = StrToFloat(StringReplace(calcPerfomanceSand2_S2->Caption,"T.","",TReplaceFlags()<<rfReplaceAll).Trim());
         error=0;
         }
 else error=1;
 if(curentPerfomanceSand2_S2->Caption!="---"){
-        CurentPerfSand2 = StrToFloat(StringReplace(curentPerfomanceSand2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+       // CurentPerfSand2 = StrToFloat(StringReplace(curentPerfomanceSand2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
         error=0;
         }
 //---
 else error=1;
 if(curentPerfomanceSummary2_S2->Caption!="---"){
-        CurPerfSummary2 = StrToFloat(StringReplace(curentPerfomanceSummary2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        //CurPerfSummary2 = StrToFloat(StringReplace(curentPerfomanceSummary2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
         error=0;
         }
 else error=1;
 if(neededPerfomanceSummary2_S2->Caption!="---"){
-        NeededPerfSummary2 = StrToFloat(StringReplace(neededPerfomanceSummary2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
+        //NeededPerfSummary2 = StrToFloat(StringReplace(neededPerfomanceSummary2_S2->Caption,"Т.","",TReplaceFlags()<<rfReplaceAll).Trim());
         error=0;
         }
 else error=1;
@@ -1949,11 +1954,11 @@ TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = false;
 TabSheet4->TabVisible = false;
 WinScada->Width = 1216;
-date1->Left = 1116;
+/*date1->Left = 1116;
 time1->Left = 1108;
 statusDebug1_S1->Left = 400;
 statusDebug2_S1->Left = 760;
-workMode1_S1->Left = 776;
+workMode1_S3->Left = 776;*/
 }
 //---------------------------------------------------------------------------
 
@@ -1964,11 +1969,11 @@ TabSheet2->TabVisible = true;
 TabSheet3->TabVisible = false;
 TabSheet4->TabVisible = false;
 WinScada->Width = 1216;
-date1->Left = 1116;
+/*date1->Left = 1116;
 time1->Left = 1108;
 statusDebug1_S1->Left = 400;
 statusDebug2_S1->Left = 760;
-workMode1_S1->Left = 776;
+workMode1_S3->Left = 776;  */
 }
 //---------------------------------------------------------------------------
 
@@ -1979,11 +1984,11 @@ TabSheet2->TabVisible = false;
 TabSheet3->TabVisible = true;
 TabSheet4->TabVisible = false;
 WinScada->Width = 1320;
-date1->Left = 1216;
+/*date1->Left = 1216;
 time1->Left = 1208;
 statusDebug1_S1->Left = 450;
 statusDebug2_S1->Left = 810;
-workMode1_S1->Left = 876;
+workMode1_S3->Left = 876;  */
 }
 //---------------------------------------------------------------------------
 
@@ -2041,7 +2046,7 @@ union{//Объявление временной union
 long tmpcom = 101;
 tmpuni.luni = 0;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
-long tmpcom = 1101;
+tmpcom = 1101;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
 }
 //---------------------------------------------------------------------------
@@ -2055,7 +2060,7 @@ union{//Объявление временной union
 long tmpcom = 100;
 tmpuni.luni = 0;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
-long tmpcom = 1100;
+tmpcom = 1100;
 PostMessage(FindWindow("TPACQuery","Модуль опроса"),WM_USER+1,tmpcom,tmpuni.luni);
 }
 //---------------------------------------------------------------------------
@@ -2100,18 +2105,18 @@ void __fastcall TWinScada::statusPLC(TMessage& Message){
         }
 }
 //--
-void __fastcall TWinScada::Image20Click(TObject *Sender)
+void __fastcall TWinScada::btn_mainform2Click(TObject *Sender)
 {
         TabSheet1->TabVisible = false;
         TabSheet2->TabVisible = false;
         TabSheet3->TabVisible = false;
         TabSheet4->TabVisible = true;
         WinScada->Width = 1216;
-        date1->Left = 1116;
+        /*date1->Left = 1116;
         time1->Left = 1108;
         statusDebug1_S1->Left = 400;
         statusDebug2_S1->Left = 760;
-        workMode1_S1->Left = 776;
+        workMode1_S3->Left = 776;*/
 }
 //---------------------------------------------------------------------------
 

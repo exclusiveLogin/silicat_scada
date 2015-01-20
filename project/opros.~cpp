@@ -2,20 +2,20 @@
 
 #include <vcl.h>
 #pragma hdrstop
-USERES("opros.res");
+USERES("Opros.res");
+USEFORM("..\CPP\FormOpros.cpp", PACQuery);
 USEUNIT("..\MyCLASS\ClassArhiv.cpp");
-USEFORM("..\code\FormOpros.cpp", PACQuery);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
         try
         {
-         //if (FindWindow("TPACQuery","Модуль опроса")==NULL)
-         // {
+         if (FindWindow("TPACQuery","Модуль опроса")==NULL)
+          {
             Application->Initialize();
             Application->CreateForm(__classid(TPACQuery), &PACQuery);
-            Application->Run();
-         // }
+                 Application->Run();
+          }
         }
         catch (Exception &exception)
         {

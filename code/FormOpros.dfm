@@ -34,7 +34,6 @@ object PACQuery: TPACQuery
     Address = '192.168.0.230'
     ClientType = ctNonBlocking
     Port = 10000
-    OnLookup = ClientSocket1Lookup
     OnConnecting = ClientSocket1Connecting
     OnConnect = ClientSocket1Connect
     OnDisconnect = ClientSocket1Disconnect

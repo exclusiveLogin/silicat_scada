@@ -1,29 +1,21 @@
 [Closed Files]
 File_0=SourceModule,'C:\Borland\CBuilder5\Projects\КОТЕЛОКТ\Silikat\CPP\FormViewData.cpp',0,1,1,1,1,1,0
-File_1=SourceModule,'E:\КОМПОНЕНТЫ\OPartner\OpModels.hpp',0,1,1,23,13,0,0
-File_2=SourceModule,'E:\BUILDER\SILIKAT\CPP\FormSilikat.cpp',0,1,698,49,700,1,1
-File_3=SourceModule,'E:\BUILDER\FOK\CPP\FormOpros.cpp',0,1,783,1,783,1,0
-File_4=SourceModule,'C:\PROGRAM FILES\BORLAND\CBUILDER5\INCLUDE\VCL\sysset.h',0,1,22,1,36,0,0
-File_5=SourceModule,'C:\PROGRAM FILES\BORLAND\CBUILDER5\INCLUDE\VCL\sysvari.h',0,1,289,1,304,0,0
-File_6=SourceModule,'E:\BUILDER\FOK\CPP\MainForm.cpp',0,1,1220,59,1224,1,1
-File_7=SourceModule,'E:\BUILDER\FOK\CPP\ModalFormCheckRez.cpp',0,1,1,22,10,0,1
-File_8=SourceModule,'C:\PROGRAM FILES\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp',0,1,924,1,940,0,0
 
 [Modules]
-Module0=C:\SCADA\code\FormOpros.cpp
-Module1=C:\SCADA\project\opros.bpr
+Module0=C:\Users\ООО Паскаль\Documents\GitHub\silicat_scada\code\FormOpros.cpp
+Module1=C:\SCADA\code\FormOpros.cpp
 Module2=C:\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp
 Count=3
 EditWindowCount=1
 
+[C:\Users\ООО Паскаль\Documents\GitHub\silicat_scada\code\FormOpros.cpp]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=1
+
 [C:\SCADA\code\FormOpros.cpp]
 ModuleType=SourceModule
 FormState=1
-FormOnTop=0
-
-[C:\SCADA\project\opros.bpr]
-ModuleType=SourceModule
-FormState=0
 FormOnTop=0
 
 [C:\BORLAND\CBUILDER5\INCLUDE\VCL\forms.hpp]
@@ -35,9 +27,17 @@ FormOnTop=0
 FormState=0
 FormOnTop=0
 
+[C:\Users\ООО Паскаль\Documents\GitHub\silicat_scada\project\opros.bpr]
+FormState=0
+FormOnTop=0
+
+[C:\SCADA\project\opros.bpr]
+FormState=0
+FormOnTop=0
+
 [EditWindow0]
 ViewCount=4
-CurrentView=0
+CurrentView=1
 View0=0
 View1=1
 View2=2
@@ -72,17 +72,17 @@ TopLine=400
 LeftCol=1
 
 [View1]
+Module=C:\Users\ООО Паскаль\Documents\GitHub\silicat_scada\code\FormOpros.cpp
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+
+[View2]
 Module=C:\SCADA\code\FormOpros.h
 CursorX=46
 CursorY=76
 TopLine=100
-LeftCol=1
-
-[View2]
-Module=C:\SCADA\project\opros.cpp
-CursorX=27
-CursorY=13
-TopLine=1
 LeftCol=1
 
 [View3]
@@ -118,8 +118,8 @@ Left=51
 Top=19
 Width=1315
 Height=122
-MaxLeft=-1
-MaxTop=-1
+MaxLeft=-8
+MaxTop=-8
 MaxWidth=1382
 MaxHeight=122
 ClientWidth=1366
@@ -275,7 +275,7 @@ LRDockWidth=190
 Dockable=1
 SplitPos=85
 ArrangeBy=Name
-SelectedItem=Name
+SelectedItem=Tag
 ExpandedItems=Anchors,Font.Style,Title,Value
 HiddenCategories=
 ShowStatusBar=1

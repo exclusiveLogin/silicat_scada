@@ -29,13 +29,13 @@ __published:	// IDE-managed Components
         TImage *header;
         TImage *Image2;
         TPageControl *PageControl1;
-        TTabSheet *TabSheet1;
+        TTabSheet *TabSheet4;
         TLabel *time1;
         TTimer *Timer1;
         TLabel *date1;
         TLabel *status_doz1_S1;
         TLabel *status_doz2_S1;
-        TLabel *workMode1_S1;
+        TLabel *workMode1_S3;
         TLabel *curentPerfomanceIzvest1_S1;
         TLabel *calcPerfomanceIzvest1_S1;
         TLabel *izvestActivity1_S1;
@@ -210,8 +210,8 @@ __published:	// IDE-managed Components
         TImage *setManualMode;
         TImage *setAutomaticMode;
         TLabel *statusDebug2_S1;
-        TTabSheet *TabSheet4;
-        TImage *Image1;
+        TTabSheet *TabSheet1;
+        TImage *bg2;
         TLabel *curentPerfomanceIzvest2_S2;
         TLabel *calcPerfomanceIzvest2_S2;
         TLabel *izvestActivity2_S2;
@@ -246,7 +246,7 @@ __published:	// IDE-managed Components
         TEdit *setPerfSandEdit2;
         TLabel *status_doz1_2_S2;
         TLabel *status_doz2_2_S2;
-        TImage *Image20;
+        TImage *btn_mainform2;
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall btn_logClick(TObject *Sender);
     void __fastcall BBBuilderTrendClick(TObject *Sender);
@@ -315,7 +315,7 @@ __published:	// IDE-managed Components
         void __fastcall setManualModeClick(TObject *Sender);
         void __fastcall setAutomaticModeClick(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
-        void __fastcall Image20Click(TObject *Sender);
+        void __fastcall btn_mainform2Click(TObject *Sender);
         void __fastcall btn_setPerfIzv2Click(TObject *Sender);
         void __fastcall btn_setIzvestActivity2_S2Click(TObject *Sender);
         void __fastcall btn_setPerfomanceSummary2_S2Click(TObject *Sender);
@@ -350,6 +350,13 @@ private:	// User declarations
         bool MVtoggle;
         bool setIzvestToggle;
         bool setSandToggle;
+
+        bool izvActEdToggle2;
+        bool neededPerfToggle2;
+        bool MVtoggle2;
+        bool setIzvestToggle2;
+        bool setSandToggle2;
+
         float CalcPerfIzvest;
         float CurentPerfIzvest;
         float CalcPerfSand;
